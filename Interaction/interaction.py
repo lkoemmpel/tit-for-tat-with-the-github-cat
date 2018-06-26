@@ -13,12 +13,12 @@ def interaction(G, set_nodes, b, c, f):
   for v in set_nodes:
     N=neighborhood(v)
     w=random.choice(N)
-    interact1(v,w)
+    #interact1(v,w)
     p=random.random()
     if p<=w.prob(t):
       w.y(t)+=b-c
-      v.y(t)+=b
-      v.Y(t)=v.Y(t-1)+v.y(t)
+      v.y(t+1)=v.y()+b
+      v.Y(t+1)=v.Y(t)+v.y(t+1)
       v.prob(t+1)=f(v.Y(t))
   #return modified graph 
   return G 
