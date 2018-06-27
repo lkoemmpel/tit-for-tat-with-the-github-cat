@@ -39,4 +39,4 @@ def generate_graph(n, m, type = 'hypercube', periodic=False, with_positions=True
 	except ValueError:
 		print("The specified graph type was invalid.")
 
-generate_lattice(3,4)
+print(generate_lattice(3,4))

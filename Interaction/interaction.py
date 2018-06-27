@@ -1,6 +1,6 @@
-import igraph
+
 import random
-import networkx
+import networkx as nx
 
 b=2
 c=1
