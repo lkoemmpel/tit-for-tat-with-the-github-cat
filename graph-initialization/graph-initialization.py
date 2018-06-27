@@ -9,10 +9,29 @@ OUTPUTS:
 '''
 
 
-import igraph
-pip install networkx
-n=10000
-m=10000
-G1=networkx.barbarasi_albert_graph(n,m[,seed])
-d=70
-G2=networkx.random_egular_graph(n,d[,seed])
+import networkx as nx
+import matplotlib.pyplot as plt
+
+def generate_lattice(n, m, type, dim, periodic = False, with_positions = True, create_using = None):
+	if type == 'triangular':
+		lattice = nx.triangular_lattice_graph(10, 20, periodic=False, create_using=None)
+		nx.draw(lattice)
+		plt.show()
+	return lattice
+
+
+
+def generate_graph(n, m, type = hypercube, periodic=False, with_positions=True, create_using=None):
+	
+	if type == 'hypercube':
+		graph = nx.hypercube_graph(i)
+	else:
+		raise NameError
+
+	nx.draw(hg)
+
+	plt.show()
+
+	return graph
+
+
