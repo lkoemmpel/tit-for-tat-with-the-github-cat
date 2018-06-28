@@ -30,6 +30,14 @@ def interaction2(G, set_nodes, b, c, f, asynchronous=False):
       v.y+=b
       v.Y+=v.y(t)
       if asynchronous:
+<<<<<<< HEAD
+=======
+
+      else:  
+        v.prob=f(v.Y)
+  #return modified graph 
+  return G 
+>>>>>>> 059d7ea20a79512ff69a385dd60f593993de8916
 
       else:  
         v.prob=f(v.Y)
