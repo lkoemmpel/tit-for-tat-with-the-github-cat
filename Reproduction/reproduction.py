@@ -31,30 +31,41 @@ class strategy_update():
         self.G = G
     def birth_death(self):
         fitness_dict = nx.get_node_attributes(G, 'fitness')
-        print("The fitness dictionary is ", fitness_dict)
+        #print("The fitness dictionary is ", fitness_dict)
         fitness_sum = sum(fitness_dict.values())
-        print("The fitness sum is ", fitness_sum)
+        #print("The fitness sum is ", fitness_sum)
 
         cutoff = random.uniform(0, fitness_sum)
         print("The cutoff is ", cutoff)
 
         # Iterate through all nodes of the graoh
         # Note, i is a coordinate whose dimension depends on the dimension of the graph
+        current_place_in_sum = 0
+        prev_place_in_sum = 0
         for i in nx.nodes(G):
+            current_place_in_sum += G.node[i]['fitness']
             print("Currently examining node ", i, " which has fitness ", G.node[i]['fitness'])
-            if G.node[i]['fitness'] < cutoff < G.node[i]['fitness']:
+            print("Current place in the fitness sum is ", current_place_in_sum)
+            if prev_place_in_sum < cutoff < current_place_in_sum:
                 print("We have found a node to reproduce")
+                print("        It is node ", i, " has fitness ", G.node[i]['fitness'], " and strategy ", G.node[i]['strategy'])
                 #This is the node that will reproduce
                 #so we now find a neighbor it can replace
                 reproduced_strategy = G.node[i]['strategy'] 
 
-                num_neighbors = len(all_neighbors(G,i))
-                k = randint(0, num_neighbors)
-                j = all_neighbors(G,i)[k]
+                print("-----------------------------------")
+                neighbors = list(G.adj[i].keys())
+                print("Neighbors are ", neighbors)
+                num_neighbors = len(neighbors)
+                k = random.randint(0, num_neighbors)
+                j = neighbors[k]
                 # set the strategy of the node selected to die to the strategy of the node selected to reproduce
                 print("Updating the strategy of node ", j, " from ", G.node[j]['strategy'], " to ", reproduced_strategy)
                 G.node[j]['strategy'] = reproduced_strategy
                 print("reproduction has finished for this round")
+                # no need to examine any more nodes for reproducibility, so we break our for loop
+                break
+            prev_place_in_sum = current_place_in_sum
 
         # Creates picture of graph 
         nx.draw(G,with_labels=True)
@@ -114,11 +125,5 @@ new_graph = graph.birth_death()
 
 
 
-
-
-
-
-
-
-print(new_graph.adj)
+#print(new_graph.adj)
     
