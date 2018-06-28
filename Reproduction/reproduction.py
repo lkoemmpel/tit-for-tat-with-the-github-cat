@@ -41,13 +41,16 @@ class strategy_update():
         # Iterate through all nodes of the graoh
         # Note, i is a coordinate whose dimension depends on the dimension of the graph
         for i in nx.nodes(G):
+            print("Currently examining node ", i, " which has fitness ", G.node[i]['fitness'])
             if G.node[i]['fitness'] < cutoff < G.node[i]['fitness']:
+                print("We have found a node to reproduce")
                 #This is the node that will reproduce
                 #so we now find a neighbor it can replace
                 reproduced_strategy = G.node[i]['strategy'] 
 
                 num_neighbors = len(all_neighbors(G,i))
-                j = randint(0, num_neighbors)
+                k = randint(0, num_neighbors)
+                j = all_neighbors(G,i)[k]
                 # set the strategy of the node selected to die to the strategy of the node selected to reproduce
                 print("Updating the strategy of node ", j, " from ", G.node[j]['strategy'], " to ", reproduced_strategy)
                 G.node[j]['strategy'] = reproduced_strategy
@@ -64,7 +67,58 @@ class strategy_update():
     def pairwise_comparison(self):
         return self.G
 
+
+def color_graph(G):
+    '''
+    INPUTS:     A graph object
+
+    OUTPUTS:    The same graph but with color attributes 
+                according to strategies at each node
+    '''
+
+    # create empty list for node colors
+    node_color = []
+
+    # iterate through each node in the graph
+    for node in G.nodes(data=True):
+
+        # iterate through all strategyies
+        for strat in nx.get_node_attributes(G, 'strategy'):
+
+            # if the node has the attribute group1
+            if 'cooperate' in node[1]['strategy']:
+                node_color.append('blue')
+
+            # if the node has the attribute group1
+            elif 'group2' in node[1]['group']:
+                node_color.append('red')
+
+            # if the node has the attribute group1
+            elif 'group3' in node[1]['group']:
+                node_color.append('green')
+
+            # if the node has the attribute group1
+            elif 'group4' in node[1]['group']:
+                node_color.append('yellow')
+
+            # if the node has the attribute group1
+            elif 'group5' in node[1]['group']:
+                node_color.append('orange')  
+
+    # draw graph with node attribute color
+    nx.draw(g, with_labels=False, node_size=25, node_color=node_color)
+    return G
+
 graph = strategy_update(G)
 new_graph = graph.birth_death()
+
+
+
+
+
+
+
+
+
 print(new_graph.adj)
     
