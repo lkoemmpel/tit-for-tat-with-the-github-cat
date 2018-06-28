@@ -57,7 +57,7 @@ class strategy_update():
                 neighbors = list(G.adj[i].keys())
                 print("Neighbors are ", neighbors)
                 num_neighbors = len(neighbors)
-                k = random.randint(0, num_neighbors)
+                k = random.randint(0, num_neighbors - 1)
                 j = neighbors[k]
                 # set the strategy of the node selected to die to the strategy of the node selected to reproduce
                 print("Updating the strategy of node ", j, " from ", G.node[j]['strategy'], " to ", reproduced_strategy)
@@ -68,8 +68,8 @@ class strategy_update():
             prev_place_in_sum = current_place_in_sum
 
         # Creates picture of graph 
-        nx.draw(G,with_labels=True)
-        plt.show()
+        #nx.draw(G,with_labels=True)
+        #plt.show()
         return self.G
 
     def death_birth(self):
@@ -120,8 +120,13 @@ def color_graph(G):
     nx.draw(g, with_labels=False, node_size=25, node_color=node_color)
     return G
 
-graph = strategy_update(G)
-new_graph = graph.birth_death()
+t = 5
+for i in range(t):
+    graph = strategy_update(G)
+    new_graph = graph.birth_death()
+    # Creates picture of graph 
+    nx.draw(G,with_labels=True)
+    plt.show()
 
 
 
