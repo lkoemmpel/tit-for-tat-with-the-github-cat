@@ -22,7 +22,7 @@ import sys
 
 
 # Initialization of graph to use for testing purposes
-G = nx.triangular_lattice_graph(4,3)
+G = nx.triangular_lattice_graph(2,3)
 for n in nx.nodes(G):
     # Assign node attributes
     # Initial strategy is C or D, chosen randomly
@@ -36,11 +36,6 @@ for n in nx.nodes(G):
     # fitness attributes are chosen randomly
     # print("The current strategy of node ", n, " is ", G.node[n]['strategy'] )
     G.node[n]['fitness'] = random.uniform(0,1)
-
-
-#F_i=1+delta*f_i
-#F_i=some number from 0 to 1
-#F_i= f(total payoff)
 
 
 strat_list = ['Cooperate', 'Defect']
@@ -87,17 +82,18 @@ class strategy_update():
                 print("Node ", i, " has been chosen to reproduce strategy ", reproduced_strategy)
 
                 #print("-----------------------------------")
-                neighbors = G.neighbors(i)
+                neighbors = list(G.adj[i].keys())
                 #print("Neighbors are ", neighbors)
                 num_neighbors = len(neighbors)
                 k = random.randint(0, num_neighbors - 1)
                 j = neighbors[k]
+                old_strategy = G.node[j]['strategy']
                 # set the strategy of the node selected to die to the strategy of the node selected to reproduce
-                print("Updating the strategy of node ", j, " from ", G.node[j]['strategy'], " to ", reproduced_strategy)
+                print("Updating the strategy of node ", j, " from ", old_strategy, " to ", reproduced_strategy)
                 
 
                 mistake_indicator = random.uniform(0, 1)
-                if mistake_indicator < u:
+                if mistake_indicator < self.u:
                     # there is a mutation
                     print("There has been a mutation!")
                     mutation_list = [x for x in strat_list if x != reproduced_strategy]
@@ -123,7 +119,7 @@ class strategy_update():
         # Creates picture of graph 
         #nx.draw(G,with_labels=True)
         #plt.show()
-        return self.G
+        return [self.G, G.node[j]['strategy'], old_strategy]
 
     def death_birth(self):
         return self.G
@@ -187,15 +183,38 @@ def color_and_draw_graph(G):
             color_map.append('red')
 
     # draws colored graph
+    #plt.ion()
     nx.draw(G,node_color = color_map,with_labels = True)
     plt.show()
+    #plt.pause(2.0)
 
     return G
 
+def plot_proportion_data(time, strat_dict):
+    for strat in strat_dict:
+        #scatter plot
+        X = time
+        Y = strat_dict[strat]
+        plt.scatter(X, Y, s=60, c='red', marker='^')
+
+        #change axes ranges
+        plt.xlim(0,max(time))
+        plt.ylim(0,1)
+
+        #add title
+        plt.title('Relationship between time and proportion of nodes with strategy ' + strat)
+
+        #add x and y labels
+        plt.xlabel('Proportion of nodes with strategy ' + strat)
+        plt.ylabel('Time')
+
+        #show plot
+        plt.show()
+
+    return None
 
 
-
-def run_simulation(G, u, t):
+def run_simulation(G, u, t, plotting = False, show_graph = False):
     '''
     INPUTS:     G: networkx graph object with fitness and strategy attributes
                 u: rate of mutation for reproduction
@@ -206,19 +225,27 @@ def run_simulation(G, u, t):
     Prints graph at every stage of strategy updating
     Plots how proportions of each strategy change over time
     '''
-    color_and_draw_graph(G)
-    print(nx.get_node_attributes(G, 'strategy'))
-    print("-----------------------------------------------")
+    if show_graph:
+        color_and_draw_graph(G)
+        print(nx.get_node_attributes(G, 'strategy'))
+        print("-----------------------------------------------")
 
-    time_data = [0]
-    strat_data_dict = {}
-    # initialize strategy tallies to 0
-    for strat in strat_list:
-        strat_data_dict[strat] = [0]
+    if plotting:
+        time_data = [0]
+        final_data = {}
+        proportions_dict = {}
+        strat_data_dict = {}
+        # initialize strategy tallies to 0
+        for strat in strat_list:
+            strat_data_dict[strat] = 0
+            final_data[strat] = []
 
-    # if a strategy is found in the graph, adjust its tally
-    for n in nx.nodes(G):
-        strat_data_dict[G.node[n]['strategy']][0] += 1
+        # if a strategy is found in the graph, adjust its tally
+        for n in nx.nodes(G):
+            strat_data_dict[G.node[n]['strategy']] += 1
+        for strat in strat_data_dict:
+            final_data[strat].append(strat_data_dict[strat]/nx.number_of_nodes(G))
+
 
     
 
@@ -226,29 +253,36 @@ def run_simulation(G, u, t):
     for i in range(t):
         graph = strategy_update(G, u, strat_list)
 
-        birth_death_results = graph.birth_death()[0]
+        birth_death_results = graph.birth_death()
         new_graph = birth_death_results[0]
-        birth_node = birth_death_results[1]
-        death_node = birth_death_results[2]
+        new_strategy = birth_death_results[1]
+        old_strategy = birth_death_results[2]
 
         print(nx.get_node_attributes(G, 'strategy'))
         print('\n')
 
-        # Creates picture of graph 
-        color_and_draw_graph(new_graph)
+        if show_graph:
+            # Creates picture of graph 
+            color_and_draw_graph(new_graph)
 
 
+        if plotting:
+            # update tallies for each strategy
+            strat_data_dict[new_strategy] += 1
+            strat_data_dict[old_strategy] -= 1
 
-        # update data
-        time_data.append(i)
-        for strat in strat_data_dict:
-            # Calculate the proportion of nodes in the graph with this strategy
-            #TODO --------------------------------------------------------
-            # add way to adjust proportions of only strategies updated
+            # update strategy proportions for each strategy
+            for strat in strat_data_dict:
+                final_data[strat].append(strat_data_dict[strat]/nx.number_of_nodes(G))
 
-            strat_data_dict[strat].append(proportion)
-   
+            #print("Current time data is", time_data)
+            time_data.append(i+1)
+
+        #print(time_data)
+        #print(final_data)
+    plot_proportion_data(time_data, final_data)
+
     #print(new_graph.adj)
     return new_graph
 
-run_simulation(G, .2, 5)
+run_simulation(G, .2, 10, plotting = True, show_graph = False)
