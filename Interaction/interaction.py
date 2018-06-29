@@ -10,6 +10,8 @@ TESTING GRAPH 1
 G=nx.triangular_lattice_graph(2,3)
 for v in nx.nodes(G):
 
+
+
   #BIRTH DEATH MODEL
   #assign strategy with probability 1/2
   choice=random.choice([0,1])
@@ -20,6 +22,8 @@ for v in nx.nodes(G):
   #itness takes some random value from 0 to 1
   G.node[v]['fitness']=random.uniform(0,1)
   G.node[v]['payoffs']=[]
+
+
 
   #UTKOVSKI MODEL
   #cooperative_state = probability of helping another node
@@ -61,12 +65,14 @@ def bernoulli(p):
 INTERACTION CLASS
 '''
 
-class interaction():
+class interaction_process():
   '''
   To realize all the pertinent pairwise interactions in a turn 
   '''
-  def __init__(self, G):
+  def __init__(self, G, b, c):
     self.graph = G
+    self.b=b
+    self.c=c
 
   def general_reciprocity_simple(self, set_nodes, b, c, f, asynchronous=False): 
     G=self.graph
