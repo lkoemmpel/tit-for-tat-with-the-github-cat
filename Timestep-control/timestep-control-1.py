@@ -11,8 +11,8 @@ importlib.__import__('graph-initialization')
 importlib.__import__('interaction')
 importlib.__import__('reproduction')
 
-class game():
-	def __init__(self, G, name):
+class gameFIRST_TRY():
+	def __init__(self, strat_update, name):
 		#initialize the game with the parameters: 
 		#graph
 		#time
@@ -20,9 +20,11 @@ class game():
 		self.graph=G
 		self.name=name
 		self.t=0
-	def step(self):
+	def step_BD(self):
 		#standard kind of step
 		G=self.graph
+		g=strategy_update(G,u,strat_list)
+
 		G=interaction(G)
 		G=reproduction(G)
 		return G
@@ -36,51 +38,70 @@ class game():
 		x=random.choice(nodes, [W[i]/SF for i in range(n)])
 		return x
 
-n=20
-m=30
-T=100000
-G=generate_lattice(n, m, 'triangular', 4)
-plt.show()
+import igraph
+import random
+import networkx as nx
+import matplotlib.pyplot as plt
+import importlib
+
+list_strategies=['Cooperate', 'Defect', 'Tit_for_tat']
+
+
+class game():
+	def __init__(self, graph, name, u=None, delta=None, ):
+		self.graph=graph
+		#name of the game
+		self.name=name
+		self.strategy_update=strategy_update(graph, u, strat_list)
+		self.fitness_update=interaction_process(graph, 2, 1)
+		self.time=0
+	def timestep(self):
+		if name=='BD':
+			self.time+=1
+			G=self.strategy_update.birth_death()
+			G=self.interaction_process.birth_death()
+			self.graph=G
+
+'''--------------------------
+		SIMULATION 1
+--------------------------'''
+
+#Initialize a graph
+G=generate_lattice(4,5)
+game1=game(G, 'DB', 0.5, 0)
+#run birth death process 1000 times
+for t in range(1000):
+	game1.timestep()
+
+
+# n=20
+# m=30
+# T=100000
+# G=generate_lattice(n, m, 'triangular', 4)
+# plt.show()
 
 '''
 INITIALIZE GRAPHS
 '''
 
-#get the fitness values of the vertices in the graph
-SF=0
-S=[0]
-for v in G:
+# #get the fitness values of the vertices in the graph
+# SF=0
+# S=[0]
+# for v in G:
 
-F=[random.randrange(1,2) for i in range(n)]
-for i in range(n):
-	SF+=F[i]
-	S.append(F[i])
-C=[1 for i in range(n)]
+# F=[random.randrange(1,2) for i in range(n)]
+# for i in range(n):
+# 	SF+=F[i]
+# 	S.append(F[i])
+# C=[1 for i in range(n)]
 
 
-for t in range(T):
-	G=timestep_control(G)
-nx.draw(hg)
-plt.show()
+# for t in range(T):
+# 	G=timestep_control(G)
+# nx.draw(hg)
+# plt.show()
 
-'''
-GRAPH 1
-'''
-G=nx.triangular_lattice_graph(5,6)
-for v in nx.nodes(G):
-  #assign strategy with probability 1/2
-  choice=random.choice([0,1])
-  if choice==0:
-    G.node[v]['strategy']='Cooperate'
-  else:
-    G.node[v]['strategy']='Defect'
-  #itness takes some random value from 0 to 1
-  G.node[v]['fitness']=random.uniform(0,1)
-  #cooperative_state = probability of helping another node
-  G.node[v]['coop-state']=random.uniform(0,1)
 
-  #payoff from interactions
-  G.node[v]['turn-payoff']=0
   G.node[v]['total-payoff']=0
 
 
