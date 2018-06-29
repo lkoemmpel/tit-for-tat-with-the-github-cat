@@ -18,6 +18,7 @@ class game():
 		self.name=name
 		self.t=0
 	def step(self):
+		#standard kind of step
 		G=self.graph
 		G=interaction(G)
 		G=reproduction(G)
