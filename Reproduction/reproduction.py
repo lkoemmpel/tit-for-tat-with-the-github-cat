@@ -1,6 +1,7 @@
 import networkx as nx
 import random
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 
@@ -18,7 +19,7 @@ import sys
 #sys.path.append()
 
 
-color_map = []
+
 
 # Initialization of graph to use for testing purposes
 G = nx.triangular_lattice_graph(4,3)
@@ -28,10 +29,10 @@ for n in nx.nodes(G):
     strategy_indicator = random.randrange(0, 2, 1)
     if strategy_indicator == 1:
         G.node[n]['strategy'] = 'Cooperate'
-        color_map.append('blue')
+        #color_map.append('blue')
     else:
         G.node[n]['strategy'] = 'Defect'
-        color_map.append('red')
+        #color_map.append('red')
     # fitness attributes are chosen randomly
     # print("The current strategy of node ", n, " is ", G.node[n]['strategy'] )
     G.node[n]['fitness'] = random.uniform(0,1)
@@ -78,6 +79,7 @@ class strategy_update():
                 #This is the node that will reproduce
                 #so we now find a neighbor it can replace
                 reproduced_strategy = G.node[i]['strategy'] 
+                print("Node ", i, " has been chosen to reproduce strategy ", reproduced_strategy)
 
                 #print("-----------------------------------")
                 neighbors = list(G.adj[i].keys())
@@ -97,7 +99,8 @@ class strategy_update():
                     if mutation_list == []:
                         print("There cannot be mutations in this population.")
                     else:
-                        G.node[n]['strategy'] = numpy.random.choice(mutation_list)
+                        G.node[j]['strategy'] = np.random.choice(mutation_list)
+                    print("Node ", j, " now has strategy ", G.node[j]['strategy'])
                      
                 else:
                     # there is not a mutation
@@ -119,14 +122,12 @@ class strategy_update():
     def pairwise_comparison(self):
         return self.G
 
-
+'''
 def color_graph(G):
-    '''
-    INPUTS:     A graph object
+    #INPUTS:     A graph object
 
-    OUTPUTS:    The same graph but with color attributes 
-                according to strategies at each node
-    '''
+    #OUTPUTS:    The same graph but with color attributes 
+    #            according to strategies at each node
 
     # create empty list for node colors
     node_color = []
@@ -160,18 +161,43 @@ def color_graph(G):
     # draw graph with node attribute color
     nx.draw(g, with_labels=False, node_size=25, node_color=node_color)
     return G
+'''
+
+def color_and_draw_graph(G):
+    '''
+    INPUTS:     Graph with strategy node attributes
+    OUTPUTS:    Graph where color maps has colors according to 
+                node strategy attributes
+    '''
+    # initializes color map
+    color_map = []
+    for n in nx.nodes(G):
+        if G.node[n]['strategy'] == 'Cooperate':
+            color_map.append('green')
+        else:
+            color_map.append('red')
+
+    # draws colored graph
+    nx.draw(G,node_color = color_map,with_labels = True)
+    plt.show()
+
+    return G
 
 
 
 t = 5
 u = .2
+color_and_draw_graph(G)
+print(nx.get_node_attributes(G, 'strategy'))
+print("-----------------------------------------------")
 for i in range(t):
     graph = strategy_update(G, u, strat_list)
     new_graph = graph.birth_death()
-    # Creates picture of graph 
     print(nx.get_node_attributes(G, 'strategy'))
-    nx.draw(G,node_color = color_map,with_labels = True)
-    plt.show()
+    print('\n')
 
+    # Creates picture of graph 
+    color_and_draw_graph(new_graph)
+    
 #print(new_graph.adj)
     
