@@ -95,7 +95,7 @@ class interaction():
     G=self.graph
     #realize all of the interactions between pairs of players belonging to the set
     for v in set_nodes:
-      requested=random.choice(G.adj[v].keys())
+      requested=random.choice(G.neighbors(v))
       #set x for node v
       G.node[v]['x']=bernoulli(G.node[v]['coop-state'])
       x_v=G.node[v]['x']
@@ -125,8 +125,8 @@ class interaction():
     #some randomly chosen set of its neighbors
     G=self.graph
     record=set()
-    for v in G.adj.keys():
-      for w in G.adj[v].keys():
+    for v in nx.nodes(G):
+      for w in G.neighbors(v):
         occurs=random.choice([True,False])
         #does interaction occur?
         if occurs:
@@ -152,7 +152,7 @@ def action(G, v, noise):
   if random.random()<=noise:
     if strat=='Cooperate':
       strat='Defect'
-      strat='Cooperate'
+    strat='Cooperate'
   return coop_index[strat]
      
 '''

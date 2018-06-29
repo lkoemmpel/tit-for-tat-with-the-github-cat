@@ -4,6 +4,9 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import importlib
 
+import sys
+sys.path.append()
+
 importlib.__import__('graph-initialization')
 importlib.__import__('interaction')
 importlib.__import__('reproduction')
@@ -79,3 +82,9 @@ for v in nx.nodes(G):
   #payoff from interactions
   G.node[v]['turn-payoff']=0
   G.node[v]['total-payoff']=0
+
+
+
+  #D={'C':color1, 'D':color2, 'T':color3}
+  #for v in the graph:
+

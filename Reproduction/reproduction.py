@@ -38,6 +38,11 @@ for n in nx.nodes(G):
     G.node[n]['fitness'] = random.uniform(0,1)
 
 
+#F_i=1+delta*f_i
+#F_i=some number from 0 to 1
+#F_i= f(total payoff)
+
+
 strat_list = ['Cooperate', 'Defect']
 
 

@@ -40,3 +40,14 @@ def generate_graph(n, m, type = 'hypercube', periodic=False, with_positions=True
 		print("The specified graph type was invalid.")
 
 print(generate_lattice(3,4))
+
+
+def label_strategies(G):
+  strat_list = ['Cooperate', 'Defect', 'Tit_for_tat']
+  for v in nx.nodes(G):
+    G.node[n]['strategy']=random.choice(strat_list)
+
+def label_fitness(G):
+  for n in nx.nodes(G):
+    G.node[n]['fitness'] = random.uniform(0,1)
+
