@@ -9,9 +9,13 @@ importlib.__import__('interaction')
 importlib.__import__('reproduction')
 
 class game():
-	def __init__(self, G, game):
+	def __init__(self, G, name):
+		#initialize the game with the parameters: 
+		#graph
+		#time
+		#name of game played 
 		self.graph=G
-		self.game=game
+		self.name=name
 		self.t=0
 	def step(self):
 		G=self.graph

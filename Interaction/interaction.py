@@ -34,6 +34,8 @@ C=1
 this_lambda=0.5
 kappa=0.5
 val0=0.5
+matrix=[ [(B-C, B-C), (-C, B)] , [(B, -C), (0,0)] ]
+coop_index={'C':0, 'D':1}
 
 '''
 HELPER FUNCTIONS
@@ -115,7 +117,41 @@ class interaction():
                     G.node[v]['coop-state']=f(G.node[v]['total-payoff'])
                G.node[v]['turn-payoff']=0
           #return modified graph 
-          return G  
+          return G
+     def interaction_BD(self, noise=0, payoff_mtx, delta=0):
+          #Simulation of the process where every edge interacts with
+          #some randomly chosen set of its neighbors
+          G=self.graph
+          record=set()
+          for v in G.adj.keys():
+               for w in G.adj[v].keys():
+                    occurs=random.choice([True,False])
+                    #does interaction occur?
+                    if occurs:
+                         #they haven't interacted yet
+                         if (w,v) not in record:
+                              action_v=action(G, v, noise)
+                              action_w=action(G, w,noise)
+                              record.add((v,w))
+                              G.node[v]['payoffs'].append(payoff_mtx[action_v][action_w][0])
+                              G.node[w]['payoffs'].append(payoff_mtx[action_v][action_w][1])
+               avg_v=sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs'])
+               G.node['fitness']=1+delta*(avg_v)
+
+
+
+
+def action(G, v, noise):
+     strat=G.node[v]['strategy']
+     if random.random()<=noise:
+          if strat=='C':
+               strat='D'
+          strat='C'
+     return coop_index[strat]
+
+
+               
+
 
 '''
 TEST
