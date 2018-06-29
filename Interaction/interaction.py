@@ -1,6 +1,7 @@
 import networkx as nx
 import random
 import matplotlib.pyplot as plt
+import math
 
 '''
 TESTING GRAPH 1
@@ -23,24 +24,25 @@ for v in nx.nodes(G):
   G.node[v]['turn-payoff']=0
   G.node[v]['total-payoff']=0
 
+
 '''
 IMPORTANT VARIABLES
 '''
 
-b=2
-c=1
+B=2
+C=1
 this_lambda=0.5
 kappa=0.5
-omega0=0.5
+val0=0.5
 
 '''
 HELPER FUNCTIONS
 '''
 
-def f(val):
+def F(val):
      #sigmoid logictic function used to determine 
      #next-round probabilities
-     return (1+exp(-kappa*(val-val0)))**(-1)
+     return (1+math.exp(-kappa*(val-val0)))**(-1)
 
 def bernoulli(p):
      #random variable with parameter p
@@ -58,12 +60,14 @@ class interaction():
      To realize all the pertinent pairwise interactions in a turn 
      '''
      def __init__(self, G):
-          self.G = G
+          self.Graph = G
 
-     def general_reciprocity_simple(G, set_nodes, b, c, f, asynchronous=False): 
+     def general_reciprocity_simple(self, set_nodes, b, c, f, asynchronous=False): 
+          G=self.Graph
+          print(G)
           #realize all of the interactions between pairs of players belonging to the set
           for v in set_nodes:
-               requested=random.choice(G.adj[v].keys())
+               requested=random.choice(list(G.adj[v].keys()))
                #interact1(v,w)
                p=random.random()
                #If the node w decides to help (with probability p_w(t)
@@ -82,7 +86,8 @@ class interaction():
           #return modified graph 
           return G  
 
-     def general_reciprocity_bernoulli(G, set_nodes, b, c, f, asynchronous=False):
+     def general_reciprocity_bernoulli(self, set_nodes, b, c, f, asynchronous=False):
+          G=self.Graph
           #realize all of the interactions between pairs of players belonging to the set
           for v in set_nodes:
                requested=random.choice(G.adj[v].keys())
@@ -111,5 +116,19 @@ class interaction():
                G.node[v]['turn-payoff']=0
           #return modified graph 
           return G  
+
+'''
+TEST
+'''
+
+T=10
+for t in range(T):
+
+     g=interaction(G)
+     set_nodes=G.adj.keys()
+     new_graph = g.general_reciprocity_simple(set_nodes, B, C, F, False)
+     # Creates picture of graph 
+     nx.draw(G,with_labels=True)
+     plt.show()
 
 
