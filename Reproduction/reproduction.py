@@ -38,7 +38,7 @@ for n in nx.nodes(G):
     G.node[n]['fitness'] = random.uniform(0,1)
 
 
-strat_list = ['Cooperate', 'Defect']
+strat_list = ['Cooperate', 'Defect', 'Tit-for-tat']
 
 
 
@@ -79,7 +79,7 @@ class strategy_update():
                 #This is the node that will reproduce
                 #so we now find a neighbor it can replace
                 reproduced_strategy = G.node[i]['strategy'] 
-                print("Node ", i, " has been chosen to reproduce strategy ", reproduced_strategy)
+                #print("Node ", i, " has been chosen to reproduce strategy ", reproduced_strategy)
 
                 #print("-----------------------------------")
                 neighbors = list(G.adj[i].keys())
@@ -89,7 +89,7 @@ class strategy_update():
                 j = neighbors[k]
                 old_strategy = G.node[j]['strategy']
                 # set the strategy of the node selected to die to the strategy of the node selected to reproduce
-                print("Updating the strategy of node ", j, " from ", old_strategy, " to ", reproduced_strategy)
+                #print("Updating the strategy of node ", j, " from ", old_strategy, " to ", reproduced_strategy)
                 
 
                 mistake_indicator = random.uniform(0, 1)
@@ -98,11 +98,11 @@ class strategy_update():
                     print("There has been a mutation!")
                     mutation_list = [x for x in strat_list if x != reproduced_strategy]
                     if mutation_list == []:
-                        print("There cannot be mutations in this population.")
+                        #print("There cannot be mutations in this population.")
                         G.node[j]['strategy'] = reproduced_strategy
                     else:
                         G.node[j]['strategy'] = np.random.choice(mutation_list)
-                    print("Node ", j, " now has strategy ", G.node[j]['strategy'])
+                    #print("Node ", j, " now has strategy ", G.node[j]['strategy'])
                      
                 else:
                     # there is not a mutation
@@ -110,7 +110,7 @@ class strategy_update():
 
                 # Node j has now just been born, so we set its fitness to 0
                 G.node[j]['fitness'] = 0
-                print("------------------------------------------------------------------------")
+                #print("------------------------------------------------------------------------")
                 #print("reproduction has finished for this round")
                 # no need to examine any more nodes for reproducibility, so we break our for loop
                 break
@@ -195,7 +195,7 @@ def plot_proportion_data(time, strat_dict):
         #scatter plot
         X = time
         Y = strat_dict[strat]
-        plt.scatter(X, Y, s=60, c='red', marker='^')
+        plt.plot(X, Y, color='blue', marker='^', linestyle = '-')
 
         #change axes ranges
         plt.xlim(0,max(time))
@@ -258,8 +258,8 @@ def run_simulation(G, u, t, plotting = False, show_graph = False):
         new_strategy = birth_death_results[1]
         old_strategy = birth_death_results[2]
 
-        print(nx.get_node_attributes(G, 'strategy'))
-        print('\n')
+        #print(nx.get_node_attributes(G, 'strategy'))
+        #print('\n')
 
         if show_graph:
             # Creates picture of graph 
@@ -285,4 +285,4 @@ def run_simulation(G, u, t, plotting = False, show_graph = False):
     #print(new_graph.adj)
     return new_graph
 
-run_simulation(G, .2, 10, plotting = True, show_graph = False)
+run_simulation(G, .2, 30, plotting = True, show_graph = False)
