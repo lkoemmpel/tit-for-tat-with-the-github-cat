@@ -87,7 +87,7 @@ class strategy_update():
                 print("Node ", i, " has been chosen to reproduce strategy ", reproduced_strategy)
 
                 #print("-----------------------------------")
-                neighbors = list(G.adj[i].keys())
+                neighbors = G.neighbors(i)
                 #print("Neighbors are ", neighbors)
                 num_neighbors = len(neighbors)
                 k = random.randint(0, num_neighbors - 1)
@@ -103,6 +103,7 @@ class strategy_update():
                     mutation_list = [x for x in strat_list if x != reproduced_strategy]
                     if mutation_list == []:
                         print("There cannot be mutations in this population.")
+                        G.node[j]['strategy'] = reproduced_strategy
                     else:
                         G.node[j]['strategy'] = np.random.choice(mutation_list)
                     print("Node ", j, " now has strategy ", G.node[j]['strategy'])
@@ -110,6 +111,9 @@ class strategy_update():
                 else:
                     # there is not a mutation
                     G.node[j]['strategy'] = reproduced_strategy
+
+                # Node j has now just been born, so we set its fitness to 0
+                G.node[j]['fitness'] = 0
                 print("------------------------------------------------------------------------")
                 #print("reproduction has finished for this round")
                 # no need to examine any more nodes for reproducibility, so we break our for loop
@@ -190,19 +194,61 @@ def color_and_draw_graph(G):
 
 
 
-t = 5
-u = .2
-color_and_draw_graph(G)
-print(nx.get_node_attributes(G, 'strategy'))
-print("-----------------------------------------------")
-for i in range(t):
-    graph = strategy_update(G, u, strat_list)
-    new_graph = graph.birth_death()
-    print(nx.get_node_attributes(G, 'strategy'))
-    print('\n')
 
-    # Creates picture of graph 
-    color_and_draw_graph(new_graph)
+def run_simulation(G, u, t):
+    '''
+    INPUTS:     G: networkx graph object with fitness and strategy attributes
+                u: rate of mutation for reproduction
+                t: number of times to have stratgies update
+
+    OUTPUTS:    new_graph: updated networkx graph object where strategies have been updated
+
+    Prints graph at every stage of strategy updating
+    Plots how proportions of each strategy change over time
+    '''
+    color_and_draw_graph(G)
+    print(nx.get_node_attributes(G, 'strategy'))
+    print("-----------------------------------------------")
+
+    time_data = [0]
+    strat_data_dict = {}
+    # initialize strategy tallies to 0
+    for strat in strat_list:
+        strat_data_dict[strat] = [0]
+
+    # if a strategy is found in the graph, adjust its tally
+    for n in nx.nodes(G):
+        strat_data_dict[G.node[n]['strategy']][0] += 1
+
     
-#print(new_graph.adj)
-    
+
+
+    for i in range(t):
+        graph = strategy_update(G, u, strat_list)
+
+        birth_death_results = graph.birth_death()[0]
+        new_graph = birth_death_results[0]
+        birth_node = birth_death_results[1]
+        death_node = birth_death_results[2]
+
+        print(nx.get_node_attributes(G, 'strategy'))
+        print('\n')
+
+        # Creates picture of graph 
+        color_and_draw_graph(new_graph)
+
+
+
+        # update data
+        time_data.append(i)
+        for strat in strat_data_dict:
+            # Calculate the proportion of nodes in the graph with this strategy
+            #TODO --------------------------------------------------------
+            # add way to adjust proportions of only strategies updated
+
+            strat_data_dict[strat].append(proportion)
+   
+    #print(new_graph.adj)
+    return new_graph
+
+run_simulation(G, .2, 5)
