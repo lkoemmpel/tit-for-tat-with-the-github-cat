@@ -3,6 +3,16 @@ import random
 import matplotlib.pyplot as plt
 import math
 
+'''-------------------
+    IMPORTS
+-------------------'''
+import sys
+sys.path.insert(0, r'/Users/olgachuy/Downloads/SPUR+/tit-for-tat-with-the-github-cat/graph_initialization')
+import graph_initialization as init
+
+
+
+
 '''
 TESTING GRAPH 1
 '''

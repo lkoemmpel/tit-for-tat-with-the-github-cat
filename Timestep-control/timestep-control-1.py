@@ -14,8 +14,8 @@ import importlib
 -------------------'''
 
 import sys
-sys.path.insert(0, r'/Users/olgachuy/Downloads/SPUR+/tit-for-tat-with-the-github-cat/Reproduction')
-import grap_initialization as init
+sys.path.insert(0, r'/Users/olgachuy/Downloads/SPUR+/tit-for-tat-with-the-github-cat/graph_initialization')
+import graph_initialization as init
 sys.path.insert(0, r'/Users/olgachuy/Downloads/SPUR+/tit-for-tat-with-the-github-cat/Reproduction')
 import reproduction as rep
 sys.path.insert(0, r'/Users/olgachuy/Downloads/SPUR+/tit-for-tat-with-the-github-cat/Interaction')
