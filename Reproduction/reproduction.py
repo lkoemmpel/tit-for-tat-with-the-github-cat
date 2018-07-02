@@ -54,7 +54,6 @@ class strategy_update():
 
     '''
     make all of the reproduction process based on the fitness, weight and mutation parameters.
-
     '''
 
     # iterate through all nodes of the graph
