@@ -1,10 +1,14 @@
+'''-------------------
+      PACKAGES
+-------------------'''
+
 import networkx as nx
 import random
 import matplotlib.pyplot as plt
 import math
 
 '''-------------------
-    IMPORTS
+      IMPORTS
 -------------------'''
 import sys
 sys.path.insert(0, r'/Users/olgachuy/Downloads/SPUR+/tit-for-tat-with-the-github-cat/graph_initialization')
