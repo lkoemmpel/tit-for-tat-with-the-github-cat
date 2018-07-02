@@ -2,6 +2,8 @@ import networkx as nx
 import random
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
+
 
 
 
@@ -13,10 +15,6 @@ import numpy as np
 # do work on 3d lattice
 
 
-
-
-import sys
-#sys.path.append()
 
 
 

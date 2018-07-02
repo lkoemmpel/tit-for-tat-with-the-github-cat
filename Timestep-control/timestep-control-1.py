@@ -1,15 +1,25 @@
+
+'''-------------------
+		PACKAGES
+-------------------'''
+
 import igraph
 import random
 import networkx as nx
 import matplotlib.pyplot as plt
 import importlib
 
-import sys
-sys.path.append()
+'''-------------------
+		IMPORTS
+-------------------'''
 
-importlib.__import__('graph-initialization')
-importlib.__import__('interaction')
-importlib.__import__('reproduction')
+import sys
+sys.path.insert(0, r'/Users/olgachuy/Downloads/SPUR+/tit-for-tat-with-the-github-cat/Reproduction')
+import grap_initialization as init
+sys.path.insert(0, r'/Users/olgachuy/Downloads/SPUR+/tit-for-tat-with-the-github-cat/Reproduction')
+import reproduction as rep
+sys.path.insert(0, r'/Users/olgachuy/Downloads/SPUR+/tit-for-tat-with-the-github-cat/Interaction')
+import interaction as inter
 
 class gameFIRST_TRY():
 	def __init__(self, strat_update, name):
@@ -102,7 +112,6 @@ INITIALIZE GRAPHS
 # plt.show()
 
 
-  G.node[v]['total-payoff']=0
 
 
 
