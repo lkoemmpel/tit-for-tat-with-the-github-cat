@@ -30,7 +30,7 @@ def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_
 
 
 
-def generate_graph(n, d, type = 'random', periodic=False, with_positions=True, create_using=None):
+def generate_graph(n, d, m=0, type = 'random', periodic=False, with_positions=True, create_using=None):
   '''
   n = number of nodes
   d = average degree of the graph
@@ -39,10 +39,11 @@ def generate_graph(n, d, type = 'random', periodic=False, with_positions=True, c
     if type == 'hypercube':
       graph = nx.hypercube_graph(n)
       return graph
-    else:
-      if type == 'random':
+    elif type == 'random':
         graph = nx.random_regular_graph(d, n)
         return graph
+    elif type == 'erdos_renyi':
+        graph=nx.erdos_renyi_graph(n, m)
 
 
   except ValueError:

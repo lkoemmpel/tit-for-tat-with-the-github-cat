@@ -165,12 +165,29 @@ delta = 0
 n=20
 d=3
 
-# Initialize graph
+'''-------
+TYPES OF GRAPHS
+-------'''
+
+#Lattice
 #G=init.generate_lattice(5,5)
 
-G = init.generate_graph(n, d, type = 'random')
+#Random regular graph
+#G = init.generate_graph(n, d, type = 'random')
+
+#Erdos-Reyni
+G = init.generate_graph(n, d, 40, type = 'erdos_renyi')
+
+'''-------
+Initialize labels
+-------'''
+
 init.label_birth_death(G, strat_list)
 rep.color_and_draw_graph(G)
+
+'''-------
+Timestep
+-------'''
 
 game.timestep(G, u=.2, t=100, name= 'BD', plotting = True, show_graph = False)
 
