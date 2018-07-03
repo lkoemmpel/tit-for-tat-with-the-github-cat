@@ -1,0 +1,26 @@
+-----------------TODO List---------------------------
+
+
+
+
+-------------------General---------------------------
+	Improve/organize class structure
+
+
+
+---------------Reproduction--------------------------
+	Handle colors for each strategy
+	Implement other reproduction functions like death-birth
+
+
+
+---------------Timestep--------------------------
+	plot relationship between b/c and proportion cooperators 
+
+
+
+
+---------------Interaction--------------------------
+	Debug interaction code
+	make action handle other strategies
+	make payoff matrix an input that varies on parts of the graph
