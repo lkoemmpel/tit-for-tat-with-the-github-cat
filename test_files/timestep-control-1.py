@@ -141,14 +141,15 @@ class game():
                     #print(time_data)
                     #print(final_data)
                     #print("Plotting data at time ", t)
-                    #rep.plot_proportion_data(time_data, final_data)
+                    rep.plot_proportion_data(time_data, final_data)
 
                 #print(new_graph.adj)
                 graph = new_graph
 
             # These two lines are just for testing
             rep.plot_proportion_data(time_data, final_data)
-            rep.color_and_draw_graph(new_graph)
+
+            #rep.color_and_draw_graph(new_graph)
 
             return new_graph
 
@@ -158,12 +159,17 @@ class game():
 --------------------------'''
 #strat_list = ['Cooperate', 'Defect', 'Tit_for_tat']
 strat_list = ['Cooperate', 'Defect']
+u = .2
+
 b = 2
 c = 100
 delta = 0
 
 n=20
 d=3
+graph_type = 'random'
+update_name = 'BD'
+time_length = 100
 
 '''-------
 TYPES OF GRAPHS
@@ -171,6 +177,7 @@ TYPES OF GRAPHS
 
 #Lattice
 #G=init.generate_lattice(5,5)
+
 
 #Random regular graph
 #G = init.generate_graph(n, d, type = 'random')
@@ -190,6 +197,17 @@ Timestep
 -------'''
 
 game.timestep(G, u=.2, t=100, name= 'BD', plotting = True, show_graph = False)
+
+G = init.generate_graph(n, d, graph_type)
+init.label_birth_death(G, strat_list)
+rep.color_and_draw_graph(G)
+
+for i in range(0,20):
+	game.timestep(G, u, time_length, name= update_name, plotting = True, show_graph = False)
+	
+	#Uncomment this to automatically save plot as a file
+	plt.savefig(graph_type + '_' + str(time_length) + '_' + update_name + '_n=' + str(n) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
+
 
 
 '''
