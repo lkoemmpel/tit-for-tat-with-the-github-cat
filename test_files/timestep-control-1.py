@@ -120,7 +120,7 @@ class game():
                 #play the game
                 payoff_mtx = [ [(b-c, b-c), (-c, b)] , [(b, -c), (0,0)] ]
                 coop_index={'Cooperate':0, 'Defect':1}
-                new_graph = inter.interaction_process(new_graph, b, c).interaction_BD(payoff_mtx, delta, noise=0)
+                new_graph = inter.interaction_BD(new_graph, payoff_mtx, delta, noise=0)
 
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print('\n')

@@ -75,7 +75,7 @@ def general_reciprocity_simple(G, set_nodes, b, c, f, asynchronous=False):
   #return modified graph 
   return G
 
-def general_reciprocity_bernoulli(self, set_nodes, b, c, f, asynchronous=False):    G=self.graph
+def general_reciprocity_bernoulli(self, set_nodes, b, c, f, asynchronous=False):    
   #realize all of the interactions between pairs of players belonging to the set
   for v in set_nodes:
     requested=random.choice(G.neighbors(v))
@@ -132,7 +132,7 @@ GRAPH FOR TESTING
 
 strat_list=['Cooperate', 'Defect']
 G=init.generate_lattice(3,4)
-init.label_birth_death(G)
+init.label_birth_death(G, strat_list)
 init.label_utkovski(G)
 
 

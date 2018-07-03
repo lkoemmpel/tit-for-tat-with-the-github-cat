@@ -55,8 +55,8 @@ def label_birth_death(G, strat_list):
 
 def label_utkovski(G):
   for n in nx.nodes(G):
-    G.node[v]['turn-payoff']=0
-    G.node[v]['total-payoff']=0
+    G.node[n]['turn-payoff']=0
+    G.node[n]['total-payoff']=0
     #cooperative_state = probability of helping another node
     G.node[n]['coop-state'] = random.uniform(0,1)
 
