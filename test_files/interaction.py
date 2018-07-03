@@ -123,6 +123,7 @@ def interaction_BD(G, payoff_mtx, delta=0, noise=0):
         G.node[v]['fitness']=1
       else:
         G.node[v]['fitness']=1+delta*sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs'])
+        #restart payoff list for next round
         G.node[v]['payoffs']=[]
   return G
      
