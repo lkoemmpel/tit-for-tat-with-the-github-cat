@@ -30,20 +30,23 @@ def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_
 
 
 
-def generate_graph(n, m, type = 'hypercube', periodic=False, with_positions=True, create_using=None):
-	try:
-		if type == 'hypercube':
-			graph = nx.hypercube_graph(i)
-		else:
-			raise NameError
+def generate_graph(n, d, type = 'random', periodic=False, with_positions=True, create_using=None):
+  '''
+  n = number of nodes
+  d = average degree of the graph
+  '''
+  try:
+    if type == 'hypercube':
+      graph = nx.hypercube_graph(n)
+      return graph
+    else:
+      if type == 'random':
+        graph = nx.random_regular_graph(d, n)
+        return graph
 
-		nx.draw(hg)
 
-		plt.show()
-
-		return graph
-	except ValueError:
-		print("The specified graph type was invalid.")
+  except ValueError:
+    print("The specified graph type was invalid.")
 
 #print(generate_lattice(3,4))
 

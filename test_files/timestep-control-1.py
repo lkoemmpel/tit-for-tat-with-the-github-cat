@@ -49,11 +49,7 @@ class gameFIRST_TRY():
 '''
 
 
-#strat_list = ['Cooperate', 'Defect', 'Tit_for_tat']
-strat_list = ['Cooperate', 'Defect']
-b = 2
-c = 10
-delta = 0
+
 
 
 class game():
@@ -160,11 +156,23 @@ class game():
 '''--------------------------
         SIMULATION 1
 --------------------------'''
-# Initialize graph
-G=init.generate_lattice(5,5)
-init.label_birth_death(G, strat_list)
+#strat_list = ['Cooperate', 'Defect', 'Tit_for_tat']
+strat_list = ['Cooperate', 'Defect']
+b = 2
+c = 100
+delta = 0
 
-game.timestep(G, u=.2, t=50, name= 'BD', plotting = True, show_graph = False)
+n=20
+d=3
+
+# Initialize graph
+#G=init.generate_lattice(5,5)
+
+G = init.generate_graph(n, d, type = 'random')
+init.label_birth_death(G, strat_list)
+rep.color_and_draw_graph(G)
+
+game.timestep(G, u=.2, t=100, name= 'BD', plotting = True, show_graph = False)
 
 
 '''
