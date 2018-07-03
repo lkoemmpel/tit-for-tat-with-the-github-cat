@@ -16,12 +16,12 @@ import graph_initialization as init
 '''-------------------
 IMPORTANT VARIABLES
 -------------------'''
-B=2
-C=1
+#B=2
+#C=1
 this_lambda=0.5
 kappa=0.5
 val0=0.5
-matrix=[ [(B-C, B-C), (-C, B)] , [(B, -C), (0,0)] ]
+#matrix=[ [(B-C, B-C), (-C, B)] , [(B, -C), (0,0)] ]
 coop_index={'Cooperate':0, 'Defect':1}
 
 '''-------------------
@@ -172,6 +172,9 @@ for t in range(T):
   nx.draw(G,with_labels=True)
   plt.show()
 '''
+
+
+
 
 
 
