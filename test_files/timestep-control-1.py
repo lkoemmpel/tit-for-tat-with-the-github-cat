@@ -52,7 +52,7 @@ class gameFIRST_TRY():
 #strat_list = ['Cooperate', 'Defect', 'Tit_for_tat']
 strat_list = ['Cooperate', 'Defect']
 b = 2
-c = 1
+c = 10
 delta = 0
 
 
@@ -144,11 +144,16 @@ class game():
 
                     #print(time_data)
                     #print(final_data)
-                    print("Plotting data at time ", t)
-                    rep.plot_proportion_data(time_data, final_data)
+                    #print("Plotting data at time ", t)
+                    #rep.plot_proportion_data(time_data, final_data)
 
                 #print(new_graph.adj)
                 graph = new_graph
+
+            # These two lines are just for testing
+            rep.plot_proportion_data(time_data, final_data)
+            rep.color_and_draw_graph(new_graph)
+
             return new_graph
 
 
@@ -156,10 +161,10 @@ class game():
         SIMULATION 1
 --------------------------'''
 # Initialize graph
-G=init.generate_lattice(10,10)
+G=init.generate_lattice(5,5)
 init.label_birth_death(G, strat_list)
 
-game.timestep(G, u=.2, t=10, name= 'BD', plotting = True, show_graph = False)
+game.timestep(G, u=.2, t=50, name= 'BD', plotting = True, show_graph = False)
 
 
 '''
