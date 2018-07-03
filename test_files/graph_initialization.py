@@ -45,14 +45,19 @@ def generate_graph(n, m, type = 'hypercube', periodic=False, with_positions=True
 	except ValueError:
 		print("The specified graph type was invalid.")
 
-print(generate_lattice(3,4))
+#print(generate_lattice(3,4))
 
-
-def label_strategies(G, strat_list):
+def label_birth_death(G, strat_list):
   for n in nx.nodes(G):
     G.node[n]['strategy']=random.choice(strat_list)
-
-def label_fitness(G):
-  for n in nx.nodes(G):
     G.node[n]['fitness'] = random.uniform(0,1)
+    G.node[n]['payoffs'] = []
+
+def label_utkovski(G):
+  for n in nx.nodes(G):
+    G.node[v]['turn-payoff']=0
+    G.node[v]['total-payoff']=0
+    #cooperative_state = probability of helping another node
+    G.node[n]['coop-state'] = random.uniform(0,1)
+
 
