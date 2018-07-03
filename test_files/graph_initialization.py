@@ -49,7 +49,29 @@ def generate_graph(n, d, m=0, type = 'random', periodic=False, with_positions=Tr
   except ValueError:
     print("The specified graph type was invalid.")
 
-#print(generate_lattice(3,4))
+def generate_weighted(n, d, m=0, type = 'random', periodic=False, with_positions=True, create_using=None):
+  '''
+  n = number of nodes
+  d = average degree of the graph
+  '''
+  try:
+    if type == 'hypercube':
+      graph = nx.hypercube_graph(n)
+      return graph
+    elif type == 'random':
+        graph = nx.random_regular_graph(d, n)
+        return graph
+    elif type == 'erdos_renyi':
+        graph=nx.erdos_renyi_graph(n, m)
+    weights={}
+    for edge in graph.edges:
+      weights[edge]=random.random()
+    nx.set_edge_attributes(graph, 'weight', weights)
+
+
+  except ValueError:
+    print("The specified graph type was invalid.")
+
 
 def label_birth_death(G, strat_list):
   for n in nx.nodes(G):

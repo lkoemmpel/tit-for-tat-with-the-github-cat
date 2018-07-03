@@ -12,11 +12,6 @@ import sys
 '''-------------------
         IMPORTS
 -------------------'''
-'''
-import sys
-#sys.path.insert(0, r'/Users/olgachuy/Downloads/SPUR+/tit-for-tat-with-the-github-cat/graph_initialization')
-sys.path.insert(0, r'C:/Users/Laura/Documents/MIT/Summer stuff 2018/Github work - SPUR 2018/tit-for-tat-with-the-github-cat/graph-initialization')
-'''
 import graph_initialization as init
 
 
@@ -126,8 +121,29 @@ def birth_death(G, strat_list, u):
     #plt.show()
     return [G, G.node[j]['strategy'], old_strategy]
 
-def death_birth(G):
-    return 
+def death_birth(G, strat_list, u):
+    replaced=random.choice(nx.nodes(G))
+    #competition dictionary through which neighbors will compete
+    weights=nx.get_edge_attributes(G, 'weight')
+    competition={}
+    for n in G.neighbors(replaced):
+        competition[n]=G.node[n]['fitness']* weights[(n,replaced)]
+    sum_competition=sum(competition.values())
+    cutoff=random.uniform(0,sum_competition)
+    sum_so_far=0
+    for node in G.neighbors(replaced):
+        sum_so_far+=competition[node]
+        if cutoff<sum_so_far:
+            reproduced=node
+    #now place reproduced into the replaced node, 
+    #consider mutation
+    mistake_indicator = random.uniform(0, 1)
+    if mistake_indicator<u:
+        #there is a mutation
+        G.node[replaced]['strategy']=random.choice(strat_list)
+    else:
+        G.node[replaced]['strategy']=G.node[reproduced]['strategy']
+    return G
 
 def pairwise_comparison(G):
     return 
