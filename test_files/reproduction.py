@@ -196,30 +196,6 @@ def color_and_draw_graph(G):
 
     return G
 
-def plot_proportion_data(time, strat_dict, save=False):
-    for strat in strat_dict:
 
-        # IMPORTANT -- UNDO THIS IF STATEMENT WHEN EXAMINING MORE STRATEGIES
-        if strat == 'Cooperate':
-            #scatter plot
-            X = time
-            Y = strat_dict[strat]
-            plt.plot(X, Y, color='blue', marker='^', linestyle = '-')
-
-            #change axes ranges
-            plt.xlim(0,max(time))
-            plt.ylim(0,1)
-
-            #add title
-            plt.title('Relationship between time and proportion of nodes with strategy ' + strat)
-
-            #add x and y labels
-            plt.ylabel('Proportion of nodes with strategy ' + strat)
-            plt.xlabel('Time')
-
-            #show plot
-            plt.show()
-
-    return None
 
 

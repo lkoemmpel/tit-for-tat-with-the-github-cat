@@ -68,7 +68,7 @@ class game():
         self.plotting = plotting
         self.show_graph = show_graph
 
-    def timestep(G, n, d, i, u, t, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False):
+    def timestep(G, n, d, i, u, t, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False, saving = False):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -146,15 +146,42 @@ class game():
                 #print(new_graph.adj)
                 graph = new_graph
 
-            # These two lines are just for testing
-            rep.plot_proportion_data(time_data, final_data)
-
-            #Uncomment this to automatically save plot as a file
-            plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
+            if plotting:
+            	plot_proportion_data(time_data, final_data, saving, graph_type,t, update_name, n, u, d, i)
 
             #rep.color_and_draw_graph(new_graph)
 
             return new_graph
+
+def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n, u, d, i):
+    for strat in strat_dict:
+
+        # IMPORTANT -- UNDO THIS IF STATEMENT WHEN EXAMINING MORE STRATEGIES
+        if strat == 'Cooperate':
+            #scatter plot
+            X = time
+            Y = strat_dict[strat]
+            plt.plot(X, Y, color='blue', marker='^', linestyle = '-')
+
+            #change axes ranges
+            plt.xlim(0,max(time))
+            plt.ylim(0,1)
+
+            #add title
+            plt.title('Relationship between time and proportion of nodes with strategy ' + strat)
+
+            #add x and y labels
+            plt.ylabel('Proportion of nodes with strategy ' + strat)
+            plt.xlabel('Time')
+
+            #show plot
+            plt.show()
+
+            if saving:
+            	plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
+
+
+    return None
 
 
 '''--------------------------
@@ -199,7 +226,7 @@ Timestep
 -------'''
 
 for i in range(20):
-	game.timestep(G, n, d, i, u, time_length, graph_type, update_name= 'BD', plotting = True, show_graph = False)
+	game.timestep(G, n, d, i, u, time_length, graph_type, update_name= 'BD', plotting = True, show_graph = False, saving = True)
 
 
 
