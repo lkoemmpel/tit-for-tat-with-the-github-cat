@@ -103,12 +103,12 @@ class game():
 
 
             for i in range(t):
-                #adjust node strategies 
-                graph = rep.strategy_update(G, u, strat_list)
                 # TODO-----------------------------
                 # figure out why variables have to be directly input
                 # into the birth-death function
-                birth_death_results = graph.birth_death(G, strat_list)
+
+                #adjust node strategies 
+                birth_death_results = rep.birth_death(G, strat_list, u)
                 new_graph = birth_death_results[0]
                 new_strategy = birth_death_results[1]
                 old_strategy = birth_death_results[2]

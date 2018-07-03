@@ -54,30 +54,23 @@ strat_list = ['Cooperate', 'Defect', 'Tit-for-tat']
 
 
 
-class strategy_update():
 
-    '''
-    make all of the reproduction process based on the fitness, weight and mutation parameters.
+'''------
+REPRODUCTION
+make all of the reproduction process based on the fitness, weight and mutation parameters.
+--------'''
 
-    '''
-
-    # iterate through all nodes of the graph
+def birth_death(G, strat_list, u):
     # choose a random node proportinal to its fitness to reproduce
-    def __init__(self, G, u, strat_list):
-        self.G = G
-        self.u = u
-        self.strat_list = strat_list
 
-def birth_death(self, G, strat_list):
     fitness_dict = nx.get_node_attributes(G, 'fitness')
     #print("The fitness dictionary is ", fitness_dict)
     fitness_sum = sum(fitness_dict.values())
     #print("The fitness sum is ", fitness_sum)
-
     cutoff = random.uniform(0, fitness_sum)
     #print("The cutoff is ", cutoff)
 
-    # Iterate through all nodes of the graoh
+    # Iterate through all nodes of the graph
     # Note, i is a coordinate whose dimension depends on the dimension of the graph
     current_place_in_sum = 0
     prev_place_in_sum = 0
@@ -105,7 +98,7 @@ def birth_death(self, G, strat_list):
                 
 
             mistake_indicator = random.uniform(0, 1)
-            if mistake_indicator < self.u:
+            if mistake_indicator < u:
                 # there is a mutation
                 #print("There has been a mutation!")
                 mutation_list = [x for x in strat_list if x != reproduced_strategy]
@@ -131,12 +124,12 @@ def birth_death(self, G, strat_list):
     # Creates picture of graph 
     #nx.draw(G,with_labels=True)
     #plt.show()
-    return [self.G, G.node[j]['strategy'], old_strategy]
+    return [G, G.node[j]['strategy'], old_strategy]
 
-def death_birth(self):
+def death_birth(G):
     return 
 
-def pairwise_comparison(self):
+def pairwise_comparison(G):
     return 
 
 # The following code may be modified to ''
