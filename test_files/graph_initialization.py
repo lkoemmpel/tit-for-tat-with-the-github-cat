@@ -1,3 +1,13 @@
+'''-------------------
+    PACKAGES
+-------------------'''
+
+import networkx as nx
+import random
+import matplotlib.pyplot as plt
+import numpy as np
+import sys
+
 '''
 INPUTS: 
   Number of nodes
@@ -7,11 +17,6 @@ INPUTS:
 OUTPUTS:
   Some form of a graph
 '''
-
-
-import networkx as nx
-import matplotlib.pyplot as plt
-import random
 
 def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_positions = True, create_using = None):
     try:

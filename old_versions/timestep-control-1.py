@@ -1,13 +1,12 @@
-
 '''-------------------
 		PACKAGES
 -------------------'''
 
-import igraph
-import random
 import networkx as nx
+import random
 import matplotlib.pyplot as plt
-import importlib
+import numpy as np
+import sys
 
 '''-------------------
 		IMPORTS
@@ -17,38 +16,10 @@ import graph_initialization as init
 import reproduction as rep
 import interaction as inter
 
-class gameFIRST_TRY():
-	def __init__(self, strat_update, name):
-		#initialize the game with the parameters: 
-		#graph
-		#time
-		#name of game played 
-		self.graph=G
-		self.name=name
-		self.t=0
-	def step_BD(self):
-		#standard kind of step
-		G=self.graph
-		g=strategy_update(G,u,strat_list)
+'''-------------------
+		DEFS
+-------------------'''
 
-		G=interaction(G)
-		G=reproduction(G)
-		return G
-	def set_nodes(self, game='BD'):
-		G=self.graph
-		if game=='BD':
-			return set(G.adj.keys())
-
-	def choose_node_weighted_F(G, W):
-		nodes=G.nodes
-		x=random.choice(nodes, [W[i]/SF for i in range(n)])
-		return x
-
-import igraph
-import random
-import networkx as nx
-import matplotlib.pyplot as plt
-import importlib
 
 list_strategies=['Cooperate', 'Defect', 'Tit_for_tat']
 

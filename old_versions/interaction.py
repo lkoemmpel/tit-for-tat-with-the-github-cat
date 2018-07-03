@@ -5,7 +5,8 @@
 import networkx as nx
 import random
 import matplotlib.pyplot as plt
-import math
+import numpy as np
+import sys
 
 '''-------------------
       IMPORTS
