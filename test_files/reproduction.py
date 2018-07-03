@@ -68,76 +68,76 @@ class strategy_update():
         self.u = u
         self.strat_list = strat_list
 
-    def birth_death(self, G, strat_list):
-        fitness_dict = nx.get_node_attributes(G, 'fitness')
-        #print("The fitness dictionary is ", fitness_dict)
-        fitness_sum = sum(fitness_dict.values())
-        #print("The fitness sum is ", fitness_sum)
+def birth_death(self, G, strat_list):
+    fitness_dict = nx.get_node_attributes(G, 'fitness')
+    #print("The fitness dictionary is ", fitness_dict)
+    fitness_sum = sum(fitness_dict.values())
+    #print("The fitness sum is ", fitness_sum)
 
-        cutoff = random.uniform(0, fitness_sum)
-        #print("The cutoff is ", cutoff)
+    cutoff = random.uniform(0, fitness_sum)
+    #print("The cutoff is ", cutoff)
 
-        # Iterate through all nodes of the graoh
-        # Note, i is a coordinate whose dimension depends on the dimension of the graph
-        current_place_in_sum = 0
-        prev_place_in_sum = 0
-        for i in nx.nodes(G):
-            current_place_in_sum += G.node[i]['fitness']
-            #print("Currently examining node ", i, " which has fitness ", G.node[i]['fitness'])
-            #print("Current place in the fitness sum is ", current_place_in_sum)
-            if prev_place_in_sum < cutoff < current_place_in_sum:
-                #print("We have found a node to reproduce")
-                #print("        It is node ", i, " has fitness ", G.node[i]['fitness'], " and strategy ", G.node[i]['strategy'])
-                #This is the node that will reproduce
-                #so we now find a neighbor it can replace
-                reproduced_strategy = G.node[i]['strategy'] 
-                #print("Node ", i, " has been chosen to reproduce strategy ", reproduced_strategy)
+    # Iterate through all nodes of the graoh
+    # Note, i is a coordinate whose dimension depends on the dimension of the graph
+    current_place_in_sum = 0
+    prev_place_in_sum = 0
+    for i in nx.nodes(G):
+        current_place_in_sum += G.node[i]['fitness']
+        #print("Currently examining node ", i, " which has fitness ", G.node[i]['fitness'])
+        #print("Current place in the fitness sum is ", current_place_in_sum)
+        if prev_place_in_sum < cutoff < current_place_in_sum:
+            #print("We have found a node to reproduce")
+            #print("        It is node ", i, " has fitness ", G.node[i]['fitness'], " and strategy ", G.node[i]['strategy'])
+            #This is the node that will reproduce
+            #so we now find a neighbor it can replace
+            reproduced_strategy = G.node[i]['strategy'] 
+            #print("Node ", i, " has been chosen to reproduce strategy ", reproduced_strategy)
 
-                #print("-----------------------------------")
-                neighbors = list(G.adj[i].keys())
-                #print("Neighbors are ", neighbors)
-                num_neighbors = len(neighbors)
-                k = random.randint(0, num_neighbors - 1)
-                j = neighbors[k]
-                old_strategy = G.node[j]['strategy']
-                # set the strategy of the node selected to die to the strategy of the node selected to reproduce
-                #print("Updating the strategy of node ", j, " from ", old_strategy, " to ", reproduced_strategy)
+            #print("-----------------------------------")
+            neighbors = list(G.adj[i].keys())
+            #print("Neighbors are ", neighbors)
+            num_neighbors = len(neighbors)
+            k = random.randint(0, num_neighbors - 1)
+            j = neighbors[k]
+            old_strategy = G.node[j]['strategy']
+            # set the strategy of the node selected to die to the strategy of the node selected to reproduce
+            #print("Updating the strategy of node ", j, " from ", old_strategy, " to ", reproduced_strategy)
                 
 
-                mistake_indicator = random.uniform(0, 1)
-                if mistake_indicator < self.u:
-                    # there is a mutation
-                    #print("There has been a mutation!")
-                    mutation_list = [x for x in strat_list if x != reproduced_strategy]
-                    if mutation_list == []:
-                        #print("There cannot be mutations in this population.")
-                        G.node[j]['strategy'] = reproduced_strategy
-                    else:
-                        G.node[j]['strategy'] = np.random.choice(mutation_list)
-                    #print("Node ", j, " now has strategy ", G.node[j]['strategy'])
-                     
-                else:
-                    # there is not a mutation
+            mistake_indicator = random.uniform(0, 1)
+            if mistake_indicator < self.u:
+                # there is a mutation
+                #print("There has been a mutation!")
+                mutation_list = [x for x in strat_list if x != reproduced_strategy]
+                if mutation_list == []:
+                    #print("There cannot be mutations in this population.")
                     G.node[j]['strategy'] = reproduced_strategy
+                else:
+                    G.node[j]['strategy'] = np.random.choice(mutation_list)
+                #print("Node ", j, " now has strategy ", G.node[j]['strategy'])
+                     
+            else:
+                # there is not a mutation
+                G.node[j]['strategy'] = reproduced_strategy
 
-                # Node j has now just been born, so we set its fitness to 0
-                G.node[j]['fitness'] = 0
-                #print("------------------------------------------------------------------------")
-                #print("reproduction has finished for this round")
-                # no need to examine any more nodes for reproducibility, so we break our for loop
-                break
-            prev_place_in_sum = current_place_in_sum
+            # Node j has now just been born, so we set its fitness to 0
+            G.node[j]['fitness'] = 0
+            #print("------------------------------------------------------------------------")
+            #print("reproduction has finished for this round")
+            # no need to examine any more nodes for reproducibility, so we break our for loop
+            break
+        prev_place_in_sum = current_place_in_sum
 
-        # Creates picture of graph 
-        #nx.draw(G,with_labels=True)
-        #plt.show()
-        return [self.G, G.node[j]['strategy'], old_strategy]
+    # Creates picture of graph 
+    #nx.draw(G,with_labels=True)
+    #plt.show()
+    return [self.G, G.node[j]['strategy'], old_strategy]
 
-    def death_birth(self):
-        return self.G
+def death_birth(self):
+    return 
 
-    def pairwise_comparison(self):
-        return self.G
+def pairwise_comparison(self):
+    return 
 
 # The following code may be modified to ''
 '''
