@@ -68,7 +68,7 @@ class game():
         self.plotting = plotting
         self.show_graph = show_graph
 
-    def timestep(G, u, t, name = 'BD', plotting = False, show_graph = False):
+    def timestep(G, n, d, i, u, t, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -141,13 +141,17 @@ class game():
                     #print(time_data)
                     #print(final_data)
                     #print("Plotting data at time ", t)
-                    rep.plot_proportion_data(time_data, final_data)
+                    #rep.plot_proportion_data(time_data, final_data)
 
                 #print(new_graph.adj)
                 graph = new_graph
 
             # These two lines are just for testing
             rep.plot_proportion_data(time_data, final_data)
+
+            #Uncomment this to automatically save plot as a file
+            plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
+
 
             #rep.color_and_draw_graph(new_graph)
 
@@ -196,18 +200,10 @@ rep.color_and_draw_graph(G)
 Timestep
 -------'''
 
-game.timestep(G, u=.2, t=100, name= 'BD', plotting = True, show_graph = False)
+for i in range(20):
+	game.timestep(G, n, d, i, u, time_length, graph_type, name= 'BD', plotting = True, show_graph = False)
 
-G = init.generate_graph(n, d, graph_type)
-init.label_birth_death(G, strat_list)
-rep.color_and_draw_graph(G)
-
-for i in range(0,20):
-	game.timestep(G, u, time_length, name= update_name, plotting = True, show_graph = False)
 	
-	#Uncomment this to automatically save plot as a file
-	plt.savefig(graph_type + '_' + str(time_length) + '_' + update_name + '_n=' + str(n) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
-
 
 
 '''
