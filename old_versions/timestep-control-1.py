@@ -14,7 +14,7 @@ import sys
 
 import graph_initialization as init
 import reproduction as rep
-import interaction as inter
+import interaction as inter 
 
 '''-------------------
 		DEFS

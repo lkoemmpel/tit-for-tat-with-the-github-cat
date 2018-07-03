@@ -2,35 +2,17 @@
 '''-------------------
         PACKAGES
 -------------------'''
-
 import random
 import networkx as nx
 import matplotlib.pyplot as plt
-import importlib
-import sys
+import math 
+import numpy as np 
 
 '''-------------------
         IMPORTS
 -------------------'''
-
-
-# Switch comments if running on another computer
-'''
-import sys
-sys.path.insert(0, r'C:/Users/Laura/Documents/MIT/Summer stuff 2018/Github work - SPUR 2018/tit-for-tat-with-the-github-cat/graph-initialization')
-#sys.path.insert(0, r'/Users/olgachuy/Downloads/SPUR+/tit-for-tat-with-the-github-cat/graph-initialization')
-'''
 import graph_initialization as init
-
-'''
-sys.path.insert(0, r'C:/Users/Laura/Documents/MIT/Summer stuff 2018/Github work - SPUR 2018/tit-for-tat-with-the-github-cat/reproduction')
-#sys.path.insert(0, r'/Users/olgachuy/Downloads/SPUR+/tit-for-tat-with-the-github-cat/reproduction')
-'''
 import reproduction as rep
-'''
-sys.path.insert(0, r'C:/Users/Laura/Documents/MIT/Summer stuff 2018/Github work - SPUR 2018/tit-for-tat-with-the-github-cat/interaction')
-#sys.path.insert(0, r'/Users/olgachuy/Downloads/SPUR+/tit-for-tat-with-the-github-cat/interaction')
-'''
 import interaction as inter
 
 '''
@@ -136,7 +118,8 @@ class game():
                 old_strategy = birth_death_results[2]
 
                 #play the game
-                payoff_mtx = [[b-c, -c], [b, 0]]
+                payoff_mtx = [ [(b-c, b-c), (-c, b)] , [(b, -c), (0,0)] ]
+                coop_index={'Cooperate':0, 'Defect':1}
                 new_graph = inter.interaction_process(new_graph, b, c).interaction_BD(payoff_mtx, delta, noise=0)
 
                 #print(nx.get_node_attributes(G, 'strategy'))

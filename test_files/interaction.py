@@ -6,6 +6,7 @@ import networkx as nx
 import random
 import matplotlib.pyplot as plt
 import math
+#import numpy as np
 
 '''-------------------
       IMPORTS
@@ -176,7 +177,8 @@ def action(G, v, noise):
   if random.random()<=noise:
     if strat=='Cooperate':
       strat='Defect'
-    strat='Cooperate'
+    else:
+      strat='Cooperate'
   return coop_index[strat]
      
 '''
