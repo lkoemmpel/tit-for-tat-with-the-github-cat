@@ -79,7 +79,7 @@ class game():
         Prints graph at every stage of strategy updating
         Plots how proportions of each strategy change over time
         '''
-        if name=='BD':
+        if update_name=='BD':
             if show_graph:
                 rep.color_and_draw_graph(G)
                 #print(nx.get_node_attributes(G, 'strategy'))
@@ -152,7 +152,6 @@ class game():
             #Uncomment this to automatically save plot as a file
             plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
 
-
             #rep.color_and_draw_graph(new_graph)
 
             return new_graph
@@ -182,12 +181,11 @@ TYPES OF GRAPHS
 #Lattice
 #G=init.generate_lattice(5,5)
 
-
 #Random regular graph
 #G = init.generate_graph(n, d, type = 'random')
 
 #Erdos-Reyni
-G = init.generate_graph(n, d, 40, type = 'erdos_renyi')
+G = init.generate_graph(n, d, 40, type = 'random')
 
 '''-------
 Initialize labels
@@ -201,9 +199,9 @@ Timestep
 -------'''
 
 for i in range(20):
-	game.timestep(G, n, d, i, u, time_length, graph_type, name= 'BD', plotting = True, show_graph = False)
+	game.timestep(G, n, d, i, u, time_length, graph_type, update_name= 'BD', plotting = True, show_graph = False)
 
-	
+
 
 
 '''
