@@ -175,8 +175,8 @@ def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n
             plt.xlabel('Time')
 
             #show plot
-            plt.ion()   
-            plt.close()     
+            #plt.show()   
+            #plt.close()     
 
             if saving:
             	print("Attempting to save plot ", data_iteration)
@@ -233,9 +233,9 @@ b = 2
 c = 100
 delta = 0
 
-n=20
+n=22
 d=3
-graph_type = 'random'
+graph_type = 'triangular_lattice'
 update_name = 'BD'
 time_length = 40
 
@@ -244,13 +244,13 @@ TYPES OF GRAPHS
 -------'''
 
 #Lattice
-#G=init.generate_lattice(5,5)
+G=init.generate_lattice(30,30)
 
 #Random regular graph
 #G = init.generate_graph(n, d, type = 'random')
 
 #Erdos-Reyni
-G = init.generate_graph(n, d, 40, type = 'random')
+#G = init.generate_graph(n, d, 40, type = 'random')
 
 '''-------
 Initialize labels

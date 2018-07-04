@@ -19,6 +19,10 @@
 	graph many trials in same graph
 	fix errors with saving images
 
+	Make aggregated data object to handle data averages
+
+	Make plotting functions to plot data and averages of data
+
 
 
 
