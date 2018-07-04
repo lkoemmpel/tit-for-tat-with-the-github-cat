@@ -175,13 +175,23 @@ def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n
             plt.xlabel('Time')
 
             #show plot
-            plt.show()
+            plt.ion()        
 
             if saving:
+            	print("Attempting to save plot ", i)
             	plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
-
+            plt.close()
 
     return None
+
+def plot_many_tests():
+	'''
+	Like plot proportional data, but handles many dictionaries
+	from the data of many graphs
+
+	Plots each data a different color/style on the same plot
+	'''
+	return None
 
 
 '''--------------------------
@@ -199,7 +209,7 @@ n=20
 d=3
 graph_type = 'random'
 update_name = 'BD'
-time_length = 100
+time_length = 10
 
 '''-------
 TYPES OF GRAPHS
