@@ -68,7 +68,7 @@ class game():
         self.plotting = plotting
         self.show_graph = show_graph
 
-    def timestep(G, n, d, i, u, t, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False, saving = False):
+    def timestep(G, n, d, data_iteration, u, t, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False, saving = False):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -147,13 +147,13 @@ class game():
                 graph = new_graph
 
             if plotting:
-            	plot_proportion_data(time_data, final_data, saving, graph_type,t, update_name, n, u, d, i)
+            	plot_proportion_data(time_data, final_data, saving, graph_type,t, update_name, n, u, d, data_iteration)
 
             #rep.color_and_draw_graph(new_graph)
 
             return new_graph
 
-def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n, u, d, i):
+def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n, u, d, data_iteration):
     for strat in strat_dict:
 
         # IMPORTANT -- UNDO THIS IF STATEMENT WHEN EXAMINING MORE STRATEGIES
@@ -175,24 +175,52 @@ def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n
             plt.xlabel('Time')
 
             #show plot
-            plt.ion()        
+            plt.ion()   
+            plt.close()     
 
             if saving:
-            	print("Attempting to save plot ", i)
-            	plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
-            plt.close()
+            	print("Attempting to save plot ", data_iteration)
+            	plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
+            #plt.close()
 
     return None
-
-def plot_many_tests():
-	'''
+'''
+def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, d, i):
+	
 	Like plot proportional data, but handles many dictionaries
 	from the data of many graphs
 
 	Plots each data a different color/style on the same plot
-	'''
-	return None
+	
+	for strat in strat_dict:
+		# IMPORTANT -- UNDO THIS IF STATEMENT WHEN EXAMINING MORE STRATEGIES
+	    if strat == 'Cooperate':
+	        #scatter plot
+	        X = time
+	        Y = strat_dict[strat]
+	        plt.plot(X, Y, color='blue', marker='^', linestyle = '-')
 
+	        #change axes ranges
+	        plt.xlim(0,max(time))
+	        plt.ylim(0,1)
+
+	        #add title
+	        plt.title('Relationship between time and proportion of nodes with strategy ' + strat)
+
+	        #add x and y labels
+	        plt.ylabel('Proportion of nodes with strategy ' + strat)
+	        plt.xlabel('Time')
+
+	        #show plot
+	        plt.ion()        
+
+	        if saving:
+	        	print("Attempting to save plot ", i)
+	        	plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
+	        plt.close()
+
+	return None
+'''
 
 '''--------------------------
         SIMULATION 1
@@ -209,7 +237,7 @@ n=20
 d=3
 graph_type = 'random'
 update_name = 'BD'
-time_length = 10
+time_length = 40
 
 '''-------
 TYPES OF GRAPHS
@@ -235,8 +263,8 @@ rep.color_and_draw_graph(G)
 Timestep
 -------'''
 
-for i in range(20):
-	game.timestep(G, n, d, i, u, time_length, graph_type, update_name= 'BD', plotting = True, show_graph = False, saving = True)
+for data_iteration in range(10):
+	game.timestep(G, n, d, data_iteration, u, time_length, graph_type, update_name= 'BD', plotting = True, show_graph = False, saving = True)
 
 
 

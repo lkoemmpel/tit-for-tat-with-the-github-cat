@@ -16,11 +16,12 @@
 
 ---------------Timestep--------------------------
 	plot relationship between b/c and proportion cooperators 
+	graph many trials in same graph
+	fix errors with saving images
 
 
 
 
 ---------------Interaction--------------------------
-	Debug interaction code
 	make action handle other strategies
 	make payoff matrix an input that varies on parts of the graph
