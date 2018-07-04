@@ -7,6 +7,7 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
+import math
 
 
 '''-------------------
@@ -146,7 +147,31 @@ def death_birth(G, strat_list, u):
     return G
 
 def pairwise_comparison(G):
-    return 
+    #Like above, choose uniformly for replaced
+    replaced=random.choice(nx.nodes(G))
+    #competition with e_ij between neighbors
+    weights=nx.get_edge_attributes(G, 'weight')
+    competition={}
+    for n in G.neighbors(replaced):
+        competition[n]=weights[(n,replaced)]
+    sum_competition=sum(competition.values())
+    cutoff=random.uniform(0,sum_competition)
+    sum_so_far=0
+    for node in G.neighbors(replaced):
+        sum_so_far+=competition[node]
+        if cutoff<sum_so_far:
+            reproduced=node
+    #replacement with probability Theta(F_i-F_j)
+    difference=G.node[reproduced]['fitness']-G.node[replaced]['fitness']
+    if random.random()<=Theta(difference):
+        #place reproduced into replaced,consider mutation
+        mistake_indicator = random.uniform(0, 1)
+        if mistake_indicator<u:
+            #there is a mutation
+            G.node[replaced]['strategy']=random.choice(strat_list)
+        else:
+            G.node[replaced]['strategy']=G.node[reproduced]['strategy']
+    return G
 
 # The following code may be modified to ''
 '''
@@ -212,6 +237,8 @@ def color_and_draw_graph(G):
 
     return G
 
-
+def Theta(val):
+    V=1+math.exp(-val)
+    return 1/V
 
 
