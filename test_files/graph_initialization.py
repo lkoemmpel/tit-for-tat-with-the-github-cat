@@ -7,6 +7,7 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
+import math
 
 '''
 INPUTS: 
@@ -20,11 +21,12 @@ OUTPUTS:
 
 def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_positions = True, create_using = None):
     try:
-        if type == 'triangular':
-            lattice = nx.triangular_lattice_graph(10, 20, periodic=False, create_using=None)
-            #nx.draw(lattice)
-            #plt.show()
-            return lattice
+        if dim == 2:
+          if type == 'triangular':
+              lattice = nx.triangular_lattice_graph(n, m, periodic=False, create_using=None)
+              #nx.draw(lattice)
+              #plt.show()
+              return lattice
     except ValueError:
         print("The specified lattice type was invalid.")
 
@@ -78,6 +80,26 @@ def label_birth_death(G, strat_list):
     G.node[n]['strategy']=random.choice(strat_list)
     G.node[n]['fitness'] = random.uniform(0,1)
     G.node[n]['payoffs'] = []
+
+
+
+def label_BD_according_to_one_dim(G, strat_list, width):
+  '''
+  ---------------TODO--------------
+  Edit to accomodate more strategies
+  '''
+  for n in nx.nodes(G):
+    if n[0] == math.floor(width/2):
+      # this node is along the dimension we want 
+      G.node[n]['strategy']= 'Defect'
+    else:
+      G.node[n]['strategy']= 'Cooperate'
+
+    G.node[n]['fitness'] = random.uniform(0,1)
+    G.node[n]['payoffs'] = []
+
+
+
 
 def label_utkovski(G):
   for n in nx.nodes(G):

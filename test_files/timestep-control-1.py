@@ -345,7 +345,7 @@ strat_list = ['Cooperate', 'Defect']
 u = .2
 
 b = 2
-c = 100
+c = 1000
 delta = 0
 
 n=22
@@ -355,12 +355,15 @@ update_name = 'BD'
 time_length = 40
 number_trials=30
 
+n_lattice = 5
+m_lattice = 5
+
 '''-------
 TYPES OF GRAPHS
 -------'''
 
 #Lattice
-G=init.generate_lattice(30,30)
+G=init.generate_lattice(n_lattice, m_lattice)
 
 #Random regular graph
 #G = init.generate_graph(n, d, type = 'random')
@@ -372,7 +375,8 @@ G=init.generate_lattice(30,30)
 Initialize labels
 -------'''
 
-init.label_birth_death(G, strat_list)
+#init.label_birth_death(G, strat_list)
+init.label_BD_according_to_one_dim(G, strat_list, n_lattice)
 rep.color_and_draw_graph(G)
 
 '''-------
@@ -386,7 +390,7 @@ Timestep
 data_iteration=[]
 
 
-plot_many_trials(G, n, d, data_iteration, u, time_length, 100, 'Cooperate', 'random', 'BD', True, False, False)
+plot_many_trials(G, n, d, data_iteration, u, time_length, 100, 'Cooperate', graph_type, 'BD', True, False, False)
 
 
 

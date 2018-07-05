@@ -1,10 +1,18 @@
 -----------------TODO List---------------------------
 
 
+-------------------------Graph Initialization------------------
+	Initialize graphs with a particular strategy along one dimension 
+		of the lattice
+
+	Have different games be played on different parts of the graph
+
+
 
 
 -------------------General---------------------------
 	Improve/organize class structure
+
 
 
 
@@ -22,6 +30,10 @@
 	Make aggregated data object to handle data averages
 
 	Make plotting functions to plot data and averages of data
+	Add error bars to graphs of averaged data
+	Delete triangular markers 
+		Make error bars lines 
+	Plot different data in different colors
 
 
 
