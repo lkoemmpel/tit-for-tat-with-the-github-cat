@@ -194,6 +194,10 @@ class game():
 
 
 def get_histogram_and_concentration_dict(G, strat_list):
+    '''
+    to make an initial histogram for the strategy frequencies
+    and an initial record for the strategy concentrations
+    '''
     histo_dict = {}
     conc_dict = {}
     # initialize strategy tallies (frequencies) to 0
@@ -210,26 +214,36 @@ def get_histogram_and_concentration_dict(G, strat_list):
 
 #def plot_many_trials(time, strat_dict, strat, saving, graph_type, t, update_name, n, u, d, data_iteration):
 def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, graph_type = 'random', update_name = 'BD', plotting = True, show_graph = False, saving = False):    
+    '''
+    matrix in which entry n,t is the concentration 
+    of the_strat at time t in trial n
+    '''
+    #matrix in which entry n,t is the concentration 
+    #of the_strat at time t in trial n
     result_matrix=[]
+    #run the game for each trial
     for each in range(number_trials):
         this_game=game(G, update_name, t, u, d, plotting, show_graph)
         trial_outcome=this_game.trial(G, n, d, data_iteration, u, t, graph_type, update_name, plotting, show_graph, saving)
+        #append record for this trial of the concentrations of the_strat
         result_matrix.append(trial_outcome[1][the_strat])
     #scatter plot
     X=[tictoc+1 for tictoc in range(t)]
+    #three lines to plot: average, and pm stdev
     Yavg, Yplus, Yminus=[], [], []
     for tictoc in range(t):
         at_time_t=[trial[tictoc] for trial in result_matrix]
+        #average at time t over all the trials
         average=sum(at_time_t)/len(at_time_t)
         stdev=np.std(at_time_t)
         Yavg.append(average)
         Yplus.append(average+stdev)
         Yminus.append(average-stdev)
 
-
-    plt.plot(X, Yavg, color='green', marker='^', linestyle = '-')
-    plt.plot(X, Yplus, color='red', marker='^', linestyle = '-')
-    plt.plot(X, Yminus, color='blue', marker='^', linestyle = '-')
+    #plot the 3 lines
+    plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
+    plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
+    plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
     
     #change axes ranges
     plt.xlim(0,t)
