@@ -357,7 +357,7 @@ number_trials=30
 n_lattice = 50
 m_lattice = 50
 
-start_prop_cooperators = .2
+start_prop_cooperators = .1
 
 
 '''------------

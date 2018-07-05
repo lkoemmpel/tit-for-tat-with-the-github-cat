@@ -115,9 +115,9 @@ def label_birth_death(G, strat_list, start_prop_coop=None):
       if random.uniform(0,1) <= start_prop_coop:
         G.node[n]['strategy']= 'Cooperate'
       else:
-        G.node[n]['strategy'] = 'Defect'
-        #non_cooperative_strategies = strat_list.remove('Cooperate')
-        #G.node[n]['strategy'] = random.choice(non_cooperative_strategies)
+        strat_list.remove('Cooperate')
+        G.node[n]['strategy'] = random.choice(strat_list)
+        strat_list.append('Cooperate')
     else:
         G.node[n]['strategy'] = random.choice(strat_list)
 
