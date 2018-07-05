@@ -114,17 +114,18 @@ def label_BD_according_to_one_dim(G, strat_list, width):
     INPUTS: 
     G               The graph
     strat_list      List containing the strategy labels/strings
-    width           width of the graph
+    width           width of the graph in 1st dimension
 
     OUTPUTS:
     None, but labels graph:
-        assigns Cooperate/Defect with prob 1/2 each
+        assigns 'Defect' only to the nodes with the first coord width//2
         every node has some value from 0 to 1 as fitness
         for every node, a turn payoff list is introduced  
   ---------------TODO--------------
   Edit to accomodate more strategies
   '''
   for n in nx.nodes(G):
+    #if n[0] == width//2:
     if n[0] == math.floor(width/2):
       # this node is along the dimension we want 
       G.node[n]['strategy']= 'Defect'

@@ -104,7 +104,6 @@ class game():
 
             return new_graph, concentrations, plotting
 
-
     def trial_with_plot(G, n, d, data_iteration, u, t, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False, saving = False):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
@@ -191,8 +190,6 @@ class game():
 
             return new_graph
 
-
-
 def get_histogram_and_concentration_dict(G, strat_list):
     '''
     to make an initial histogram for the strategy frequencies
@@ -212,7 +209,6 @@ def get_histogram_and_concentration_dict(G, strat_list):
         conc_dict[strat].append(histo_dict[strat]/nx.number_of_nodes(G))
     return histo_dict, conc_dict
 
-#def plot_many_trials(time, strat_dict, strat, saving, graph_type, t, update_name, n, u, d, data_iteration):
 def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, graph_type = 'random', update_name = 'BD', plotting = True, show_graph = False, saving = False):    
     '''
     matrix in which entry n,t is the concentration 
@@ -264,7 +260,6 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
     #plt.close()
 
     return None
-
 
 def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n, u, d, data_iteration):
     for strat in strat_dict:
