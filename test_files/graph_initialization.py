@@ -125,8 +125,8 @@ def label_BD_according_to_one_dim(G, strat_list, width):
   Edit to accomodate more strategies
   '''
   for n in nx.nodes(G):
-    #if n[0] == width//2:
-    if n[0] == math.floor(width/2):
+    if n[0] == width//2:
+    #if n[0] == math.floor(width/2):
       # this node is along the dimension we want 
       G.node[n]['strategy']= 'Defect'
     else:
@@ -135,10 +135,17 @@ def label_BD_according_to_one_dim(G, strat_list, width):
     G.node[n]['fitness'] = random.uniform(0,1)
     G.node[n]['payoffs'] = []
 
-
-
-
 def label_utkovski(G):
+  '''
+    INPUTS: 
+    G               The graph
+  
+    OUTPUTS:
+    None, but labels graph, so for each node:
+        initiates 'turn-payoff' at 0
+        initiates 'total-payoff' at 0
+        assigns a random number from 0 to 1 as 'fitness'
+  '''
   for n in nx.nodes(G):
     G.node[n]['turn-payoff']=0
     G.node[n]['total-payoff']=0

@@ -332,8 +332,12 @@ def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, 
 	return None
 '''
 
+'''--------------------------------------------
+                        TESTS
+--------------------------------------------'''
+
 '''--------------------------
-        SIMULATION 1
+        IMPORTANT VARS
 --------------------------'''
 #strat_list = ['Cooperate', 'Defect', 'Tit_for_tat']
 strat_list = ['Cooperate', 'Defect']
@@ -353,9 +357,10 @@ number_trials=30
 n_lattice = 5
 m_lattice = 5
 
-'''-------
+
+'''------------
 TYPES OF GRAPHS
--------'''
+------------'''
 
 #Lattice
 G=init.generate_lattice(n_lattice, m_lattice)
@@ -366,26 +371,28 @@ G=init.generate_lattice(n_lattice, m_lattice)
 #Erdos-Reyni
 #G = init.generate_graph(n, d, 40, type = 'random')
 
-'''-------
-Initialize labels
--------'''
+'''--------------
+LABELS
+--------------'''
 
 #init.label_birth_death(G, strat_list)
 init.label_BD_according_to_one_dim(G, strat_list, n_lattice)
 rep.color_and_draw_graph(G)
 
-'''-------
-Timestep
--------'''
+'''-------------
+TIMESTEP
+--------------'''
 
 #for each_trial in range(10):
 #	game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, update_name= 'BD', plotting = True, show_graph = False, saving = True)
 
 #what is data_iteration for???
 data_iteration=[]
-
-
 plot_many_trials(G, n, d, data_iteration, u, time_length, 100, 'Cooperate', graph_type, 'BD', True, False, False)
+
+
+
+
 
 
 
@@ -404,31 +411,5 @@ for t in range(1000):
 # G=generate_lattice(n, m, 'triangular', 4)
 # plt.show()
 
-'''
-INITIALIZE GRAPHS
-'''
 
-# #get the fitness values of the vertices in the graph
-# SF=0
-# S=[0]
-# for v in G:
-
-# F=[random.randrange(1,2) for i in range(n)]
-# for i in range(n):
-#   SF+=F[i]
-#   S.append(F[i])
-# C=[1 for i in range(n)]
-
-
-# for t in range(T):
-#   G=timestep_control(G)
-# nx.draw(hg)
-# plt.show()
-
-
-
-
-
-  #D={'C':color1, 'D':color2, 'T':color3}
-  #for v in the graph:
 
