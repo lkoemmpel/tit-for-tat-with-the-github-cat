@@ -350,11 +350,11 @@ u = .2
 
 b = 2
 c = 1
-delta = 5
+delta = 20
 
-n=16
+n=40
 d=3
-graph_type = 'complete'
+graph_type = 'dumbbell'
 update_name = 'BD'
 time_length = 40
 number_trials=10
@@ -362,7 +362,7 @@ number_trials=10
 n_lattice = 50
 m_lattice = 50
 
-start_prop_cooperators = .4
+start_prop_cooperators = .2
 
 
 
@@ -374,7 +374,7 @@ TYPES OF GRAPHS
 #G=init.generate_lattice(n_lattice, m_lattice)
 
 #Complete graph
-G = init.generate_graph(n, 'complete')
+G = init.generate_graph(n, graph_type)
 
 #Random regular graph
 #G = init.generate_graph(n, type = 'random', d)
@@ -386,7 +386,8 @@ G = init.generate_graph(n, 'complete')
 LABELS
 --------------'''
 
-init.label_birth_death(G, strat_list, start_prop_cooperators)
+init.label_dumbbell_birth_death(G, strat_list)
+#init.label_birth_death(G, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, n_lattice)
 rep.color_and_draw_graph(G)
 

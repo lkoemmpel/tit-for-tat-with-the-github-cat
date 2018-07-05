@@ -128,6 +128,60 @@ def label_birth_death(G, strat_list, start_prop_coop=None):
     G.node[n]['fitness'] = 1
     G.node[n]['payoffs'] = []
 
+def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=0):
+  '''
+    INPUTS: 
+    G               The graph
+    strat_list      List containing the strategy labels/strings
+
+    OUTPUTS:
+    None, but modifies graph: 
+        assigns Cooperate/Defect with prob 1/2 each
+        every node has some value from 0 to 1 as fitness
+        for every node, a turn payoff list is introduced
+  '''
+  first_node = True
+  connecting_nodes = []
+  for n in nx.nodes(G):
+    if G.degree[n] > 2:
+      #this is a node in one of the cliques
+      if first_node:
+        G.node[n]['strategy'] = 'Cooperate'
+        first_node = False
+      else:
+        labeled = False
+        for neighbor in G.neighbors(n):
+          try:
+            if G.node[neighbor]['strategy'] == 'Cooperate':
+              #We're on the cooperate end of the dumbbell
+              G.node[n]['strategy'] = 'Cooperate'
+              labeled = True
+            if G.node[neighbor]['strategy'] == 'Defect':
+              #We're on the defect end of the dumbbell
+              G.node[n]['strategy'] = 'Defect'
+              labeled = True
+          except KeyError:
+              #no conclusive evidence from neighbors
+              pass
+        if not labeled:
+          #The node was not determined to be a cooperator or defector because of it's neighbors
+          # The defector end may have no labels yet, but the cooperator end has at least one
+          # so the node can't be on the cooperator end.
+          G.node[n]['strategy'] = 'Defect'
+
+    else:
+      # We're at one of the connecting nodes
+      connecting_nodes.append(n)
+
+    G.node[n]['fitness'] = 1
+    G.node[n]['payoffs'] = []
+
+
+    #Now we go back and label the connecting nodes
+    for n in connecting_nodes:
+      G.node[n]['strategy'] = random.choice(strat_list)
+
+
 def label_BD_according_to_one_dim(G, strat_list, width):
   '''
     INPUTS: 
