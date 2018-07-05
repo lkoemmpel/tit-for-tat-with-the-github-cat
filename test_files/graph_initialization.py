@@ -144,26 +144,38 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
   connecting_nodes = []
   for n in nx.nodes(G):
     if G.degree[n] > 2:
+      print("\n")
+      print("We have found a node in a clique labeled ", n)
       #this is a node in one of the cliques
       if first_node:
+        print("This node is the first clique node; we assign strategy cooperate.")
         G.node[n]['strategy'] = 'Cooperate'
         first_node = False
       else:
+        print("This node is not the first clique node")
         labeled = False
         for neighbor in G.neighbors(n):
           try:
             if G.node[neighbor]['strategy'] == 'Cooperate':
               #We're on the cooperate end of the dumbbell
+              print("------We found a neighbor ", neighbor, " with a cooperative strategy")
+              print("Assigning strategy cooperate to node ", n)
               G.node[n]['strategy'] = 'Cooperate'
               labeled = True
+              break
             if G.node[neighbor]['strategy'] == 'Defect':
               #We're on the defect end of the dumbbell
+              print("------We found a neighbor ", neighbor, " with a defect strategy")
+              print("Assigning strategy defect to node ", n)
               G.node[n]['strategy'] = 'Defect'
               labeled = True
+              break
           except KeyError:
-              #no conclusive evidence from neighbors
-              pass
+            print("---------this neighbor, neighbor ", neighbor, " had no strategy label")
+            #no conclusive evidence from neighbors
+            pass
         if not labeled:
+          print("No labeled neighbors, so we label node ", n, " as defect")
           #The node was not determined to be a cooperator or defector because of it's neighbors
           # The defector end may have no labels yet, but the cooperator end has at least one
           # so the node can't be on the cooperator end.
@@ -171,15 +183,18 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
 
     else:
       # We're at one of the connecting nodes
+      print("We found a connecting node labeled ", n)
       connecting_nodes.append(n)
 
+    print("Assigning fitness and payoffs")
     G.node[n]['fitness'] = 1
     G.node[n]['payoffs'] = []
 
 
-    #Now we go back and label the connecting nodes
-    for n in connecting_nodes:
-      G.node[n]['strategy'] = random.choice(strat_list)
+  #Now we go back and label the connecting nodes
+  for c in connecting_nodes:
+    print("Labeling connecting node ", c)
+    G.node[c]['strategy'] = random.choice(strat_list)
 
 
 def label_BD_according_to_one_dim(G, strat_list, width):
