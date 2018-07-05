@@ -81,10 +81,10 @@ class game():
 
 
                 if plotting:
-                	if new_strategy != None:
-	                    # update tallies for each strategy
-	                    strat_data_dict[new_strategy] += 1
-	                    strat_data_dict[old_strategy] -= 1
+                    if new_strategy != None:
+                        # update tallies for each strategy
+                        strat_data_dict[new_strategy] += 1
+                        strat_data_dict[old_strategy] -= 1
 
                     # update strategy proportions for each strategy
                     for strat in strat_data_dict:
@@ -211,7 +211,7 @@ def get_histogram_and_concentration_dict(G, strat_list):
     return histo_dict, conc_dict
 
 def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, graph_type = 'random', \
-	update_name = 'BD', plotting = True, show_graph = False, saving = False):    
+    update_name = 'BD', plotting = True, show_graph = False, saving = False):    
     '''
     matrix in which entry n,t is the concentration 
     of the_strat at time t in trial n
@@ -259,7 +259,7 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
     #if saving:
     #    print("Attempting to save plot ", data_iteration)
     #    plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + \
-    #		str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
+    #       str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
     #plt.close()
 
     return None
@@ -290,9 +290,9 @@ def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n
             #plt.close()     
 
             if saving:
-            	print("Attempting to save plot ", data_iteration)
-            	plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' \
-            		+ str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
+                print("Attempting to save plot ", data_iteration)
+                plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' \
+                    + str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
             #plt.close()
 
     return None
@@ -300,41 +300,41 @@ def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n
 
 '''
 def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, d, i):
-	
-	Like plot proportional data, but handles many dictionaries
-	from the data of many graphs
+    
+    Like plot proportional data, but handles many dictionaries
+    from the data of many graphs
 
-	Plots each data a different color/style on the same plot
-	
-	for strat in strat_dict:
-		# IMPORTANT -- UNDO THIS IF STATEMENT WHEN EXAMINING MORE STRATEGIES
-	    if strat == 'Cooperate':
-	        #scatter plot
-	        X = time
-	        Y = strat_dict[strat]
-	        plt.plot(X, Y, color='blue', marker='^', linestyle = '-')
+    Plots each data a different color/style on the same plot
+    
+    for strat in strat_dict:
+        # IMPORTANT -- UNDO THIS IF STATEMENT WHEN EXAMINING MORE STRATEGIES
+        if strat == 'Cooperate':
+            #scatter plot
+            X = time
+            Y = strat_dict[strat]
+            plt.plot(X, Y, color='blue', marker='^', linestyle = '-')
 
-	        #change axes ranges
-	        plt.xlim(0,max(time))
-	        plt.ylim(0,1)
+            #change axes ranges
+            plt.xlim(0,max(time))
+            plt.ylim(0,1)
 
-	        #add title
-	        plt.title('Relationship between time and proportion of nodes with strategy ' + strat)
+            #add title
+            plt.title('Relationship between time and proportion of nodes with strategy ' + strat)
 
-	        #add x and y labels
-	        plt.ylabel('Proportion of nodes with strategy ' + strat)
-	        plt.xlabel('Time')
+            #add x and y labels
+            plt.ylabel('Proportion of nodes with strategy ' + strat)
+            plt.xlabel('Time')
 
-	        #show plot
-	        plt.ion()        
+            #show plot
+            plt.ion()        
 
-	        if saving:
-	        	print("Attempting to save plot ", i)
-	        	plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + \
-	        	'_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
-	        plt.close()
+            if saving:
+                print("Attempting to save plot ", i)
+                plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + \
+                '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
+            plt.close()
 
-	return None
+    return None
 '''
 
 '''--------------------------------------------
@@ -362,7 +362,7 @@ number_trials=10
 n_lattice = 50
 m_lattice = 50
 
-start_prop_cooperators = .1
+start_prop_cooperators = .4
 
 
 
@@ -395,8 +395,8 @@ TIMESTEP
 --------------'''
 '''
 for data_iteration in range(1):
-	game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, \
-		update_name= 'BD', plotting = True, show_graph = True, saving = False)
+    game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, \
+        update_name= 'BD', plotting = True, show_graph = True, saving = False)
 '''
 
 data_iteration=[]
