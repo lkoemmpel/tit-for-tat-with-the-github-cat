@@ -352,11 +352,11 @@ b = 8
 c = 1
 delta = 20
 
-n=10
+n=40
 d=3
 graph_type = 'dumbbell'
 update_name = 'BD'
-time_length = 3
+time_length = 10
 number_trials=10
 
 n_lattice = 50
