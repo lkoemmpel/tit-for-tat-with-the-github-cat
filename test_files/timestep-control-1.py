@@ -348,35 +348,40 @@ b = 2
 c = 1000
 delta = 0
 
-n=22
+n=16
 d=3
-graph_type = 'triangular_lattice'
+graph_type = 'complete'
 update_name = 'BD'
 time_length = 40
 number_trials=30
 
-n_lattice = 5
-m_lattice = 5
+n_lattice = 50
+m_lattice = 50
+
+start_prop_cooperators = .2
 
 '''-------
 TYPES OF GRAPHS
 -------'''
 
 #Lattice
-G=init.generate_lattice(n_lattice, m_lattice)
+#G=init.generate_lattice(n_lattice, m_lattice)
+
+#Complete graph
+G = init.generate_graph(n, 'complete')
 
 #Random regular graph
-#G = init.generate_graph(n, d, type = 'random')
+#G = init.generate_graph(n, type = 'random', d)
 
 #Erdos-Reyni
-#G = init.generate_graph(n, d, 40, type = 'random')
+#G = init.generate_graph(n, type = 'random', d, 40)
 
 '''-------
 Initialize labels
 -------'''
 
-#init.label_birth_death(G, strat_list)
-init.label_BD_according_to_one_dim(G, strat_list, n_lattice)
+init.label_birth_death(G, strat_list, start_prop_cooperators)
+#init.label_BD_according_to_one_dim(G, strat_list, n_lattice)
 rep.color_and_draw_graph(G)
 
 '''-------

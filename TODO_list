@@ -13,6 +13,10 @@
 -------------------General---------------------------
 	Improve/organize class structure
 
+	check if fitness should be normalized
+	test various values of delta
+	print graph outputs to test code
+	finish adding code for prop cooperators in graph init
 
 
 

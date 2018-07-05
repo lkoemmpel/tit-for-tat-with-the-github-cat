@@ -70,11 +70,13 @@ def birth_death(G, strat_list, u):
     # Note, i is a coordinate whose dimension depends on the dimension of the graph
     current_place_in_sum = 0
     prev_place_in_sum = 0
+    node_reproduced = False 
     for i in nx.nodes(G):
         current_place_in_sum += G.node[i]['fitness']
         #print("Currently examining node ", i, " which has fitness ", G.node[i]['fitness'])
         #print("Current place in the fitness sum is ", current_place_in_sum)
         if prev_place_in_sum < cutoff < current_place_in_sum:
+            node_reproduced = True
             #print("We have found a node to reproduce")
             #print("        It is node ", i, " has fitness ", G.node[i]['fitness'], " and strategy ", G.node[i]['strategy'])
             #This is the node that will reproduce
@@ -120,7 +122,10 @@ def birth_death(G, strat_list, u):
     # Creates picture of graph 
     #nx.draw(G,with_labels=True)
     #plt.show()
-    return [G, G.node[j]['strategy'], old_strategy]
+    if node_reproduced:
+        return [G, G.node[j]['strategy'], old_strategy]
+    else:
+        return None
 
 def death_birth(G, strat_list, u):
     replaced=random.choice(nx.nodes(G))

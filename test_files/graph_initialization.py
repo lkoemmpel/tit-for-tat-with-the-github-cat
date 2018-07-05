@@ -32,7 +32,7 @@ def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_
 
 
 
-def generate_graph(n, d, m=0, type = 'random', periodic=False, with_positions=True, create_using=None):
+def generate_graph(n, type = 'random', d=0, m=0, periodic=False, with_positions=True, create_using=None):
   '''
   n = number of nodes
   d = average degree of the graph
@@ -46,6 +46,9 @@ def generate_graph(n, d, m=0, type = 'random', periodic=False, with_positions=Tr
         return graph
     elif type == 'erdos_renyi':
         graph=nx.erdos_renyi_graph(n, m)
+    elif type == 'complete':
+      graph = nx.complete_graph(n)
+      return graph 
 
 
   except ValueError:
@@ -75,9 +78,18 @@ def generate_weighted(n, d, m=0, type = 'random', periodic=False, with_positions
     print("The specified graph type was invalid.")
 
 
-def label_birth_death(G, strat_list):
+def label_birth_death(G, strat_list, start_prop_coop=None):
   for n in nx.nodes(G):
-    G.node[n]['strategy']=random.choice(strat_list)
+    if start_prop_coop != None:
+      if random.uniform(0,1) <= start_prop_coop:
+        G.node[n]['strategy']= 'Cooperate'
+      else:
+        G.node[n]['strategy'] = 'Defect'
+        #non_cooperative_strategies = strat_list.remove('Cooperate')
+        #G.node[n]['strategy'] = random.choice(non_cooperative_strategies)
+    else:
+        G.node[n]['strategy'] = random.choice(strat_list)
+
     G.node[n]['fitness'] = random.uniform(0,1)
     G.node[n]['payoffs'] = []
 
