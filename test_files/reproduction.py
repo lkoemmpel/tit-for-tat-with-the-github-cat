@@ -124,6 +124,7 @@ def birth_death(G, strat_list, u):
 
 def death_birth(G, strat_list, u):
     replaced=random.choice(nx.nodes(G))
+    old_strategy=G.node[replaced]['strategy']
     #competition dictionary through which neighbors will compete
     weights=nx.get_edge_attributes(G, 'weight')
     competition={}
@@ -144,11 +145,12 @@ def death_birth(G, strat_list, u):
         G.node[replaced]['strategy']=random.choice(strat_list)
     else:
         G.node[replaced]['strategy']=G.node[reproduced]['strategy']
-    return G
+    return [G, G.node[replaced]['strategy'], old_strategy]
 
 def pairwise_comparison(G, strat_list, u):
     #Like above, choose uniformly for replaced
     replaced=random.choice(nx.nodes(G))
+    old_strategy=G.node[replaced]['strategy']
     #competition with e_ij between neighbors
     weights=nx.get_edge_attributes(G, 'weight')
     competition={}
@@ -171,11 +173,12 @@ def pairwise_comparison(G, strat_list, u):
             G.node[replaced]['strategy']=random.choice(strat_list)
         else:
             G.node[replaced]['strategy']=G.node[reproduced]['strategy']
-    return G
+    return [G, G.node[replaced]['strategy'], old_strategy]
 
 def imitation(G, strat_list, u):
     #Choose node uniformly to be replaced
     replaced=random.choice(nx.nodes(G))
+    old_strategy=G.node[replaced]['strategy']
     #competition with e_ij between neighbors
     weights=nx.get_edge_attributes(G, 'weight')
     competition={}
@@ -195,7 +198,7 @@ def imitation(G, strat_list, u):
         G.node[replaced]['strategy']=random.choice(strat_list)
     else:
         G.node[replaced]['strategy']=G.node[reproduced]['strategy']
-    return G
+    return [G, G.node[replaced]['strategy'], old_strategy]
 
 
 
