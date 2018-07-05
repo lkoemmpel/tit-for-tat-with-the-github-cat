@@ -22,7 +22,7 @@ class game():
         #name of the game
         self.name=name
 
-        #What does this do????????
+        #What does this do?
         #self.strategy_update=strategy_update(graph, u, strat_list)
         #self.fitness_update=interaction_process(graph, 2, 1)
 
@@ -81,9 +81,10 @@ class game():
 
 
                 if plotting:
-                    # update tallies for each strategy
-                    strat_data_dict[new_strategy] += 1
-                    strat_data_dict[old_strategy] -= 1
+                	if new_strategy != None:
+	                    # update tallies for each strategy
+	                    strat_data_dict[new_strategy] += 1
+	                    strat_data_dict[old_strategy] -= 1
 
                     # update strategy proportions for each strategy
                     for strat in strat_data_dict:
@@ -209,7 +210,8 @@ def get_histogram_and_concentration_dict(G, strat_list):
         conc_dict[strat].append(histo_dict[strat]/nx.number_of_nodes(G))
     return histo_dict, conc_dict
 
-def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, graph_type = 'random', update_name = 'BD', plotting = True, show_graph = False, saving = False):    
+def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, graph_type = 'random', \
+	update_name = 'BD', plotting = True, show_graph = False, saving = False):    
     '''
     matrix in which entry n,t is the concentration 
     of the_strat at time t in trial n
@@ -256,7 +258,8 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
 
     #if saving:
     #    print("Attempting to save plot ", data_iteration)
-    #    plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
+    #    plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + \
+    #		str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
     #plt.close()
 
     return None
@@ -283,12 +286,13 @@ def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n
             plt.xlabel('Time')
 
             #show plot
-            #plt.show()   
+            plt.show()   
             #plt.close()     
 
             if saving:
             	print("Attempting to save plot ", data_iteration)
-            	plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
+            	plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' \
+            		+ str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
             #plt.close()
 
     return None
@@ -326,7 +330,8 @@ def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, 
 
 	        if saving:
 	        	print("Attempting to save plot ", i)
-	        	plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
+	        	plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + \
+	        	'_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
 	        plt.close()
 
 	return None
@@ -345,19 +350,20 @@ u = .2
 
 b = 2
 c = 1000
-delta = 0
+delta = .5
 
 n=16
 d=3
 graph_type = 'complete'
 update_name = 'BD'
 time_length = 40
-number_trials=30
+number_trials=10
 
 n_lattice = 50
 m_lattice = 50
 
 start_prop_cooperators = .1
+
 
 
 '''------------
@@ -387,13 +393,14 @@ rep.color_and_draw_graph(G)
 '''-------------
 TIMESTEP
 --------------'''
+'''
+for data_iteration in range(1):
+	game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, \
+		update_name= 'BD', plotting = True, show_graph = True, saving = False)
+'''
 
-#for each_trial in range(10):
-#	game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, update_name= 'BD', plotting = True, show_graph = False, saving = True)
-
-#what is data_iteration for???
 data_iteration=[]
-plot_many_trials(G, n, d, data_iteration, u, time_length, 100, 'Cooperate', graph_type, 'BD', True, False, False)
+plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=False, saving=False)
 
 
 

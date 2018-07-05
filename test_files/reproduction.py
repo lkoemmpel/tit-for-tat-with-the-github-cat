@@ -125,7 +125,7 @@ def birth_death(G, strat_list, u):
     if node_reproduced:
         return [G, G.node[j]['strategy'], old_strategy]
     else:
-        return None
+        return [G, None, None]
 
 def death_birth(G, strat_list, u):
     replaced=random.choice(nx.nodes(G))
