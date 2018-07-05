@@ -47,6 +47,10 @@ def action(G, v, noise):
       strat='Cooperate'
   return coop_index[strat]
 
+def Theta(val):
+    V=1+math.exp(-val)
+    return 1/V
+
 '''-------------------
 KINDS OF INTERACTION PROCESSES
 -------------------'''

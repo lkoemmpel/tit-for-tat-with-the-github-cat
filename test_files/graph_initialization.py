@@ -152,7 +152,7 @@ def label_BD_according_to_one_dim(G, strat_list, width):
       G.node[n]['strategy']= 'Cooperate'
 
     #G.node[n]['fitness'] = random.uniform(0,1)
-    G.node[n]['fitness'] = 1
+    G.node[n]['fitness'] = 0.5
     G.node[n]['payoffs'] = []
 
 def label_utkovski(G):

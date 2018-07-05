@@ -112,7 +112,7 @@ def birth_death(G, strat_list, u):
                 G.node[j]['strategy'] = reproduced_strategy
 
             # Node j has now just been born, so we set its fitness to 0
-            G.node[j]['fitness'] = 1
+            G.node[j]['fitness'] = 0.5
             #print("------------------------------------------------------------------------")
             #print("reproduction has finished for this round")
             # no need to examine any more nodes for reproducibility, so we break our for loop
