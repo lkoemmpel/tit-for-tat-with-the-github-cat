@@ -356,6 +356,7 @@ n=40
 d=3
 graph_type = 'dumbbell'
 update_name = 'BD'
+
 time_length = 40
 number_trials=10
 
