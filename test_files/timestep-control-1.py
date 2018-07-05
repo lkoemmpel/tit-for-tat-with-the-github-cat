@@ -71,7 +71,7 @@ class game():
                 payoff_mtx = [ [(b-c, b-c), (-c, b)] , [(b, -c), (0,0)] ]
                 coop_index={'Cooperate':0, 'Defect':1}
                 new_graph = inter.interaction_BD(new_graph, payoff_mtx, delta, noise=0)
-                print(nx.get_node_attributes(G, 'fitness'))
+                #print(nx.get_node_attributes(G, 'fitness'))
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print('\n')
 
@@ -373,8 +373,11 @@ TYPES OF GRAPHS
 #Lattice
 #G=init.generate_lattice(n_lattice, m_lattice)
 
-#Complete graph
-G = init.generate_graph(n, graph_type)
+#Complete/Dumbbell graph
+#G = init.generate_graph(n, graph_type)
+
+#Multiple dumbell
+G=init.generate_dumbell_multiple_cliques(10,5,1)
 
 #Random regular graph
 #G = init.generate_graph(n, type = 'random', d)
@@ -386,8 +389,8 @@ G = init.generate_graph(n, graph_type)
 LABELS
 --------------'''
 
-init.label_dumbbell_birth_death(G, strat_list)
-#init.label_birth_death(G, strat_list, start_prop_cooperators)
+#init.label_dumbbell_birth_death(G, strat_list)
+init.label_birth_death(G, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, n_lattice)
 rep.color_and_draw_graph(G)
 
@@ -423,5 +426,6 @@ for t in range(1000):
 # T=100000
 # G=generate_lattice(n, m, 'triangular', 4)
 # plt.show()
+
 
 
