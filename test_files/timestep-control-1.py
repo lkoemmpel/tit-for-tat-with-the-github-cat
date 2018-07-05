@@ -348,15 +348,15 @@ def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, 
 strat_list = ['Cooperate', 'Defect']
 u = .2
 
-b = 8
+b = 2
 c = 1
 delta = 20
 
-n=10
+n=40
 d=3
 graph_type = 'dumbbell'
 update_name = 'BD'
-time_length = 3
+time_length = 40
 number_trials=10
 
 n_lattice = 50
@@ -423,6 +423,5 @@ for t in range(1000):
 # T=100000
 # G=generate_lattice(n, m, 'triangular', 4)
 # plt.show()
-
 
 
