@@ -59,7 +59,10 @@ def generate_graph(n, type = 'random', d=0, m=0, periodic=False, with_positions=
         graph=nx.erdos_renyi_graph(n, m)
     elif type == 'complete':
       graph = nx.complete_graph(n)
-      return graph 
+    elif type == 'dumbbell':
+      graph=nx.barbell_graph(n//2-1, n-2*(n//2-1))
+    return graph 
+
 
 
   except ValueError:
@@ -121,7 +124,8 @@ def label_birth_death(G, strat_list, start_prop_coop=None):
     else:
         G.node[n]['strategy'] = random.choice(strat_list)
 
-    G.node[n]['fitness'] = random.uniform(0,1)
+    #G.node[n]['fitness'] = random.uniform(0,1)
+    G.node[n]['fitness'] = 1
     G.node[n]['payoffs'] = []
 
 def label_BD_according_to_one_dim(G, strat_list, width):
@@ -147,7 +151,8 @@ def label_BD_according_to_one_dim(G, strat_list, width):
     else:
       G.node[n]['strategy']= 'Cooperate'
 
-    G.node[n]['fitness'] = random.uniform(0,1)
+    #G.node[n]['fitness'] = random.uniform(0,1)
+    G.node[n]['fitness'] = 1
     G.node[n]['payoffs'] = []
 
 def label_utkovski(G):
