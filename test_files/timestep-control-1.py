@@ -104,7 +104,6 @@ class game():
 
             return new_graph, concentrations, plotting
 
-
     def trial_with_plot(G, n, d, data_iteration, u, t, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False, saving = False):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
@@ -191,8 +190,6 @@ class game():
 
             return new_graph
 
-
-
 def get_histogram_and_concentration_dict(G, strat_list):
     '''
     to make an initial histogram for the strategy frequencies
@@ -212,7 +209,6 @@ def get_histogram_and_concentration_dict(G, strat_list):
         conc_dict[strat].append(histo_dict[strat]/nx.number_of_nodes(G))
     return histo_dict, conc_dict
 
-#def plot_many_trials(time, strat_dict, strat, saving, graph_type, t, update_name, n, u, d, data_iteration):
 def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, graph_type = 'random', update_name = 'BD', plotting = True, show_graph = False, saving = False):    
     '''
     matrix in which entry n,t is the concentration 
@@ -264,7 +260,6 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
     #plt.close()
 
     return None
-
 
 def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n, u, d, data_iteration):
     for strat in strat_dict:
@@ -337,8 +332,12 @@ def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, 
 	return None
 '''
 
+'''--------------------------------------------
+                        TESTS
+--------------------------------------------'''
+
 '''--------------------------
-        SIMULATION 1
+        IMPORTANT VARS
 --------------------------'''
 #strat_list = ['Cooperate', 'Defect', 'Tit_for_tat']
 strat_list = ['Cooperate', 'Defect']
@@ -360,9 +359,10 @@ m_lattice = 50
 
 start_prop_cooperators = .2
 
-'''-------
+
+'''------------
 TYPES OF GRAPHS
--------'''
+------------'''
 
 #Lattice
 #G=init.generate_lattice(n_lattice, m_lattice)
@@ -376,26 +376,28 @@ G = init.generate_graph(n, 'complete')
 #Erdos-Reyni
 #G = init.generate_graph(n, type = 'random', d, 40)
 
-'''-------
-Initialize labels
--------'''
+'''--------------
+LABELS
+--------------'''
 
 init.label_birth_death(G, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, n_lattice)
 rep.color_and_draw_graph(G)
 
-'''-------
-Timestep
--------'''
+'''-------------
+TIMESTEP
+--------------'''
 
 #for each_trial in range(10):
 #	game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, update_name= 'BD', plotting = True, show_graph = False, saving = True)
 
 #what is data_iteration for???
 data_iteration=[]
-
-
 plot_many_trials(G, n, d, data_iteration, u, time_length, 100, 'Cooperate', graph_type, 'BD', True, False, False)
+
+
+
+
 
 
 
@@ -414,31 +416,5 @@ for t in range(1000):
 # G=generate_lattice(n, m, 'triangular', 4)
 # plt.show()
 
-'''
-INITIALIZE GRAPHS
-'''
 
-# #get the fitness values of the vertices in the graph
-# SF=0
-# S=[0]
-# for v in G:
-
-# F=[random.randrange(1,2) for i in range(n)]
-# for i in range(n):
-#   SF+=F[i]
-#   S.append(F[i])
-# C=[1 for i in range(n)]
-
-
-# for t in range(T):
-#   G=timestep_control(G)
-# nx.draw(hg)
-# plt.show()
-
-
-
-
-
-  #D={'C':color1, 'D':color2, 'T':color3}
-  #for v in the graph:
 

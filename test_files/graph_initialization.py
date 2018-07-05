@@ -9,17 +9,20 @@ import numpy as np
 import sys
 import math
 
-'''
-INPUTS: 
-  Number of nodes
-  Number of cliques
-  Type of graph
-
-OUTPUTS:
-  Some form of a graph
-'''
-
 def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_positions = True, create_using = None):
+    '''
+    INPUTS: 
+    n               Number of nodes horizontally
+    m               Number of nodes vertically
+    type            Type of graph
+    dim             Dimension
+    periodic        Bool: is the graph periodic?
+    with_positions
+    create_using
+
+    OUTPUTS:
+    Lattice triangular graph with the specified parameters
+    '''
     try:
         if dim == 2:
           if type == 'triangular':
@@ -34,8 +37,16 @@ def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_
 
 def generate_graph(n, type = 'random', d=0, m=0, periodic=False, with_positions=True, create_using=None):
   '''
-  n = number of nodes
-  d = average degree of the graph
+    INPUTS: 
+    n               Number of nodes 
+    d               Average degree of the graph
+    type            Type of graph
+    periodic        Bool: is the graph periodic?
+    with_positions
+    create_using
+
+    OUTPUTS:
+    Graph with the specified parameters and of the specified type
   '''
   try:
     if type == 'hypercube':
@@ -56,8 +67,18 @@ def generate_graph(n, type = 'random', d=0, m=0, periodic=False, with_positions=
 
 def generate_weighted(n, d, m=0, type = 'random', periodic=False, with_positions=True, create_using=None):
   '''
-  n = number of nodes
-  d = average degree of the graph
+    INPUTS: 
+    n               Number of nodes 
+    d               Average degree of the graph
+    m               Number of total edges in the graph
+    type            Type of graph
+    periodic        Bool: is the graph periodic?
+    with_positions
+    create_using
+
+    OUTPUTS:
+    Graph with the specified parameters and of the specified type, 
+    and with randomly (0 to 1) assigned edge weights
   '''
   try:
     if type == 'hypercube':
@@ -73,12 +94,22 @@ def generate_weighted(n, d, m=0, type = 'random', periodic=False, with_positions
       weights[edge]=random.random()
     nx.set_edge_attributes(graph, 'weight', weights)
 
-
   except ValueError:
     print("The specified graph type was invalid.")
 
 
 def label_birth_death(G, strat_list, start_prop_coop=None):
+  '''
+    INPUTS: 
+    G               The graph
+    strat_list      List containing the strategy labels/strings
+
+    OUTPUTS:
+    None, but modifies graph: 
+        assigns Cooperate/Defect with prob 1/2 each
+        every node has some value from 0 to 1 as fitness
+        for every node, a turn payoff list is introduced
+  '''
   for n in nx.nodes(G):
     if start_prop_coop != None:
       if random.uniform(0,1) <= start_prop_coop:
@@ -93,15 +124,24 @@ def label_birth_death(G, strat_list, start_prop_coop=None):
     G.node[n]['fitness'] = random.uniform(0,1)
     G.node[n]['payoffs'] = []
 
-
-
 def label_BD_according_to_one_dim(G, strat_list, width):
   '''
+    INPUTS: 
+    G               The graph
+    strat_list      List containing the strategy labels/strings
+    width           width of the graph in 1st dimension
+
+    OUTPUTS:
+    None, but labels graph:
+        assigns 'Defect' only to the nodes with the first coord width//2
+        every node has some value from 0 to 1 as fitness
+        for every node, a turn payoff list is introduced  
   ---------------TODO--------------
   Edit to accomodate more strategies
   '''
   for n in nx.nodes(G):
-    if n[0] == math.floor(width/2):
+    if n[0] == width//2:
+    #if n[0] == math.floor(width/2):
       # this node is along the dimension we want 
       G.node[n]['strategy']= 'Defect'
     else:
@@ -110,10 +150,17 @@ def label_BD_according_to_one_dim(G, strat_list, width):
     G.node[n]['fitness'] = random.uniform(0,1)
     G.node[n]['payoffs'] = []
 
-
-
-
 def label_utkovski(G):
+  '''
+    INPUTS: 
+    G               The graph
+  
+    OUTPUTS:
+    None, but labels graph, so for each node:
+        initiates 'turn-payoff' at 0
+        initiates 'total-payoff' at 0
+        assigns a random number from 0 to 1 as 'fitness'
+  '''
   for n in nx.nodes(G):
     G.node[n]['turn-payoff']=0
     G.node[n]['total-payoff']=0
