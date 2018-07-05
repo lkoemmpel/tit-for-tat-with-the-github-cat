@@ -71,7 +71,7 @@ class game():
                 payoff_mtx = [ [(b-c, b-c), (-c, b)] , [(b, -c), (0,0)] ]
                 coop_index={'Cooperate':0, 'Defect':1}
                 new_graph = inter.interaction_BD(new_graph, payoff_mtx, delta, noise=0)
-
+                print(nx.get_node_attributes(G, 'fitness'))
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print('\n')
 
@@ -349,8 +349,8 @@ strat_list = ['Cooperate', 'Defect']
 u = .2
 
 b = 2
-c = 1000
-delta = .5
+c = 1
+delta = 5
 
 n=16
 d=3
