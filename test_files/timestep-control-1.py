@@ -184,7 +184,7 @@ class game():
                 if show_graph:
                     if i%20 ==0:
                         # Creates picture of graph 
-                        rep.color_and_draw_graph(new_graph)
+                        rep.color_fitness_and_draw_graph(new_graph)
 
 
                 if plotting:
@@ -423,7 +423,7 @@ LABELS
 #init.label_birth_death(G, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, d)
 
-#init.label_birth_death(G, strat_list, start_prop_cooperators)
+init.label_birth_death(G, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, n_lattice)
 
 #rep.color_and_draw_graph(G)
@@ -431,7 +431,7 @@ LABELS
 '''-------------
 TIMESTEP
 --------------'''
-
+'''
 for data_iteration in range(5):
     #init.label_birth_death(G, strat_list, start_prop_cooperators)
     G=init.generate_dumbell_multiple_cliques(10,5,1)
@@ -441,10 +441,10 @@ for data_iteration in range(5):
 
     game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, \
         update_name= 'BD', plotting = True, show_graph = False, saving = False)
-
+'''
 
 data_iteration=[]
-#plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=False, saving=False)
+plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=False)
 
 
 
