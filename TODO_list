@@ -9,7 +9,8 @@ Abstract some real world phenomenon that brings some moral
 what impact does the distance have on all of this
 
 
--------------------------Graph Initialization------------------
+-----------------Graph Initialization------------------
+
 	Initialize graphs with a particular strategy along one dimension 
 		of the lattice
 

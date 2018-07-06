@@ -72,7 +72,8 @@ def birth_death(G, strat_list, u):
     prev_place_in_sum = 0
     node_reproduced = False 
     for i in nx.nodes(G):
-        current_place_in_sum += G.node[i]['fitness']
+        current_place_in_sum += nx.get_node_attributes(G, 'fitness')[i]
+        #G.node[i]['fitness']
         #print("Currently examining node ", i, " which has fitness ", G.node[i]['fitness'])
         #print("Current place in the fitness sum is ", current_place_in_sum)
         if prev_place_in_sum < cutoff < current_place_in_sum:
@@ -128,13 +129,25 @@ def birth_death(G, strat_list, u):
         return [G, None, None]
 
 def death_birth(G, strat_list, u):
-    replaced=random.choice(nx.nodes(G))
-    old_strategy=G.node[replaced]['strategy']
+    replaced=random.choice(list(G.nodes()))
+    old_strategy=nx.get_node_attributes(G, 'strategy')[replaced]    #G.node[replaced]['strategy']
     #competition dictionary through which neighbors will compete
     weights=nx.get_edge_attributes(G, 'weight')
+    fits=nx.get_node_attributes(G, 'fitness')
     competition={}
-    for n in G.neighbors(replaced):
-        competition[n]=G.node[n]['fitness']* weights[(n,replaced)]
+
+    for n in list(G.neighbors(replaced)):
+        possible_orders=[(n,replaced), (replaced,n)]
+        for order in possible_orders:
+            try:
+                competition[n]=fits[n]* weights[order]
+            except:
+                pass
+
+        #m=min([n,replaced])
+        #M=max([n,replaced])
+        #competition[n]=fits[n]* weights[(m,M)]
+        #G.node(n)['fitness']* weights[(n,replaced)]
     sum_competition=sum(competition.values())
     cutoff=random.uniform(0,sum_competition)
     sum_so_far=0
@@ -249,7 +262,6 @@ def color_graph(G):
     nx.draw(g, with_labels=False, node_size=25, node_color=node_color)
     return G
 '''
-
 
 
 def Theta(val):
