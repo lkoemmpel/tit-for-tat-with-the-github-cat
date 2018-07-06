@@ -68,7 +68,7 @@ class game():
         if update_name=='BD':
 
             if show_graph:
-                dis.color_and_draw_graph(G)
+                dis.color_fitness_and_draw_graph(G)
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print("-----------------------------------------------")
 
@@ -386,8 +386,8 @@ delta = 10
 
 n=10
 m = 10
-d=10
-graph_type = 'grid'
+d=3
+graph_type = 'random'
 update_name = 'BD'
 
 time_length = 250
@@ -414,10 +414,10 @@ TYPES OF GRAPHS
 #G = init.generate_graph(n, graph_type)
 
 #Multiple dumbell
-G=init.generate_dumbell_multiple_cliques(10,5,1)
+#G=init.generate_dumbell_multiple_cliques(10,5,1)
 
 #Random regular graph
-#G = init.generate_graph(n, type = 'random', d)
+G = init.generate_graph(n, graph_type, d)
 
 #Erdos-Reyni
 #G = init.generate_graph(n, type = 'random', d, 40)
@@ -431,7 +431,7 @@ LABELS
 init.label_birth_death(G, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, d)
 
-init.label_birth_death(G, strat_list, start_prop_cooperators)
+#init.label_birth_death(G, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, n_lattice)
 
 #dis.color_and_draw_graph(G)

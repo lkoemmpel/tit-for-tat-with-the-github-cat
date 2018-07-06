@@ -105,11 +105,30 @@ def color_fitness_and_draw_graph(G):
     # initializes color map
     node_labels = nx.get_node_attributes(G,'fitness')
 
+    coop_labels = {}
+    defect_labels = {}
+
     for i in node_labels:
-      node_labels[i] = round(node_labels[i], 4)
+        node_labels[i] = round(node_labels[i], 4)
+        if G.node[i]['strategy'] == 'Cooperate':
+            coop_labels[i] = node_labels[i]
+        else:
+            defect_labels[i] = node_labels[i]
 
     pos = nx.spring_layout(G, iterations=200)
-    nx.draw(G, pos, node_color= [fitness for fitness in node_labels.values()], cmap=plt.cm.Blues, labels=node_labels)
+
+    #Display cooperator nodes
+    nx.draw_networkx_nodes(G, pos, nodelist=coop_labels.keys(), node_color=[fitness for fitness in coop_labels.values()], node_shape='o', cmap=plt.cm.YlOrRd)
+
+    #Display defector nodes
+    nx.draw_networkx_nodes(G, pos, nodelist=defect_labels.keys(), node_color=[fitness for fitness in defect_labels.values()], node_shape='^', cmap=plt.cm.YlOrRd)
+
+    #Display edges
+    nx.draw_networkx_edges(G, pos)
+
+    #Display node labels
+    nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_color='k', font_family='sans-serif', font_weight='normal', alpha=1.0, ax=None)
+
     plt.show()
 
 
