@@ -36,7 +36,7 @@ def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_
 
 
 
-def generate_graph(n, type = 'random', d=0, m=0, k=2, p=.5, periodic=False, with_positions=True, create_using=None):
+def generate_graph(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None):
   '''
     INPUTS: 
     n               Number of nodes 

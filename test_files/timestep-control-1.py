@@ -97,8 +97,9 @@ class game():
                 #print('\n')
 
                 if show_graph:
-                    # Creates picture of graph 
-                    rep.color_and_draw_graph(new_graph)
+                    if i%20 == 0:
+                        # Creates picture of graph 
+                        rep.color_and_draw_graph(new_graph)
 
 
                 if plotting:
@@ -181,8 +182,9 @@ class game():
                 #print('\n')
 
                 if show_graph:
-                    # Creates picture of graph 
-                    rep.color_and_draw_graph(new_graph)
+                    if i%20 ==0:
+                        # Creates picture of graph 
+                        rep.color_and_draw_graph(new_graph)
 
 
                 if plotting:
@@ -248,7 +250,7 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
         #append record for this trial of the concentrations of the_strat
         result_matrix.append(trial_outcome[1][the_strat])
     #scatter plot
-    X=[tictoc+1 for tictoc in range(t)]
+    X=[tictoc for tictoc in range(t)]
     #three lines to plot: average, and pm stdev
     Yavg, Yplus, Yminus=[], [], []
     for tictoc in range(t):
@@ -266,7 +268,7 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
     plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
     
     #change axes ranges
-    plt.xlim(0,t)
+    plt.xlim(0,t-1)
     plt.ylim(0,1)
     #add title
     plt.title('Relationship between time and proportion of nodes with strategy ' + the_strat + ' in '+str(number_trials)+ ' trials')
@@ -275,11 +277,11 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
     plt.xlabel('Time')
 
     #show plot
-    #plt.show()   
+    plt.show()   
     #plt.close()     
 
     if saving:
-    #    print("Attempting to save plot ", data_iteration)
+    #    print("Attempting to save plot ", data_iteration)+1
         plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + \
             str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
     #plt.close()
@@ -294,7 +296,7 @@ def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n
             #scatter plot
             X = time
             Y = strat_dict[strat]
-            plt.plot(X, Y, color='blue', marker='^', linestyle = '-')
+            plt.plot(X, Y, color='blue', marker='', linestyle = '-')
 
             #change axes ranges
             plt.xlim(0,max(time))
@@ -374,19 +376,19 @@ b = 2
 c = 20
 delta = 10
 
-n=20
-m = 4
-d=3
-graph_type = 'watts_strogatz'
+n=10
+m = 10
+d=10
+graph_type = 'grid'
 update_name = 'BD'
 
-time_length = 450
-number_trials=20
+time_length = 250
+number_trials=1
 
 n_lattice = 50
 m_lattice = 50
 
-start_prop_cooperators = .6
+start_prop_cooperators = .4
 
 
 
@@ -398,13 +400,13 @@ TYPES OF GRAPHS
 #G=init.generate_lattice(n_lattice, m_lattice)
 
 #Complete graph
-G = init.generate_graph(n, graph_type, d, m)
+#G = init.generate_graph(n, graph_type, d, m)
 
 #Complete/Dumbbell graph
 #G = init.generate_graph(n, graph_type)
 
 #Multiple dumbell
-#G=init.generate_dumbell_multiple_cliques(10,5,1)
+G=init.generate_dumbell_multiple_cliques(10,5,1)
 
 #Random regular graph
 #G = init.generate_graph(n, type = 'random', d)
@@ -421,22 +423,28 @@ LABELS
 #init.label_birth_death(G, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, d)
 
-init.label_birth_death(G, strat_list, start_prop_cooperators)
+#init.label_birth_death(G, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, n_lattice)
 
-rep.color_and_draw_graph(G)
+#rep.color_and_draw_graph(G)
 
 '''-------------
 TIMESTEP
 --------------'''
-'''
-for data_iteration in range(1):
+
+for data_iteration in range(5):
+    #init.label_birth_death(G, strat_list, start_prop_cooperators)
+    G=init.generate_dumbell_multiple_cliques(10,5,1)
+    init.label_birth_death(G, strat_list, start_prop_cooperators)
+
+    #rep.color_and_draw_graph(G)
+
     game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, \
-        update_name= 'BD', plotting = True, show_graph = True, saving = False)
-'''
+        update_name= 'BD', plotting = True, show_graph = False, saving = False)
+
 
 data_iteration=[]
-plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=False, saving=True)
+#plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=False, saving=False)
 
 
 
