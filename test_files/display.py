@@ -118,18 +118,21 @@ def color_fitness_and_draw_graph(G):
     pos = nx.spring_layout(G, iterations=200)
 
     #Display cooperator nodes
-    nx.draw_networkx_nodes(G, pos, nodelist=coop_labels.keys(), node_color=[fitness for fitness in coop_labels.values()], node_shape='o', cmap=plt.cm.YlOrRd)
+    nx.draw_networkx_nodes(G, pos, nodelist=coop_labels.keys(), node_color=[fitness for fitness in coop_labels.values()], node_shape='o', cmap=plt.cm.YlGnBu)
 
     #Display defector nodes
-    nx.draw_networkx_nodes(G, pos, nodelist=defect_labels.keys(), node_color=[fitness for fitness in defect_labels.values()], node_shape='^', cmap=plt.cm.YlOrRd)
+    nx.draw_networkx_nodes(G, pos, nodelist=defect_labels.keys(), node_color=[fitness for fitness in defect_labels.values()], node_shape='^', cmap=plt.cm.RdPu)
 
     #Display edges
     nx.draw_networkx_edges(G, pos)
 
     #Display node labels
-    nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_color='k', font_family='sans-serif', font_weight='normal', alpha=1.0, ax=None)
+    nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_color='y', font_family='sans-serif', font_weight='normal')
 
+    plt.axis('off')
     plt.show()
+    plt.close('all')
+
 
 
 

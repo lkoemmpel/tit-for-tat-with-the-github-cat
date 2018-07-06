@@ -102,7 +102,7 @@ class game():
                 #print('\n')
 
                 if show_graph:
-                    if i%20 == 0:
+                    if i%1 == 0:
                         if color_fitness:
                             dis.color_fitness_and_draw_graph(new_graph)
                         else:
@@ -386,7 +386,7 @@ u = .4
 
 b = 2
 c = 1
-delta = 10
+delta = 1
 
 n=20
 m = 10
