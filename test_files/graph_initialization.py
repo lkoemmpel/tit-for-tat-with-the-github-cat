@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 import math
+import itertools
 
 def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_positions = True, create_using = None):
     '''
@@ -70,6 +71,53 @@ def generate_graph(n, type = 'random', d=0, m=0, periodic=False, with_positions=
   except ValueError:
     print("The specified graph type was invalid.")
 
+def generate_dumbell_multiple_cliques(m, N, L):
+  '''
+  INPUTS:
+  m       number of nodes in each clique
+  N       number of cliques
+  L       number of nodes in a connecting path
+  prop_coop the proportion of cooperators wanted, used in
+        stochastic labeling as a probability
+
+  OUTPUTS:
+  a graph satisfying all of the above parameters, with mN+L*\choose{m}{2}
+  '''
+  if m<2:
+      raise nx.NetworkXError(\
+            "Invalid graph description, n should be >=2")
+  if L<0:
+      raise nx.NetworkXError(\
+            "Invalid graph description, L should be >=0")
+  edges = []
+  G = nx.Graph()
+
+  #N times
+  for k in range(N):
+    #add a clique that contains the nodes:
+    #     km+1, km+2, ... , (k+1)m+1  
+    range_clique=range(k*m+1,(k+1)*m+1)
+    edges+= [pair for pair in itertools.combinations(range_clique,2)]
+
+  for pair in itertools.combinations(range(N),2):
+    #here we are focusing on connecting the nodes 
+    #     an+1  and   bn+1
+    #where the unordered pair that we are focusing on is (a,b)
+    a=pair[0]
+    b=pair[1]
+    if L>1:
+      edges.append( (a*m+1,(pair,1)) )
+      edges.append( ((pair,L), b*m+1) )
+      for k in range(1,L):
+        edges.append( ((pair,k),(pair,k+1)) )
+    elif L==1:
+      edges.append( (a*m+1,(pair,1)) )
+      edges.append( ((pair,1),b*m+1) )
+    else:
+      edges.append( (a*m+1,b*m+1) )
+  G.add_edges_from(edges)
+  return G
+
 def generate_weighted(n, d, m=0, type = 'random', periodic=False, with_positions=True, create_using=None):
   '''
     INPUTS: 
@@ -101,6 +149,8 @@ def generate_weighted(n, d, m=0, type = 'random', periodic=False, with_positions
 
   except ValueError:
     print("The specified graph type was invalid.")
+
+
 
 
 def label_birth_death(G, strat_list, start_prop_coop=None):
@@ -197,7 +247,6 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
   for c in connecting_nodes:
     print("Labeling connecting node ", c)
     G.node[c]['strategy'] = random.choice(strat_list)
-
 
 def label_BD_according_to_one_dim(G, strat_list, width):
   '''

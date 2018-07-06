@@ -400,6 +400,12 @@ TYPES OF GRAPHS
 #Complete graph
 G = init.generate_graph(n, graph_type, d, m)
 
+#Complete/Dumbbell graph
+#G = init.generate_graph(n, graph_type)
+
+#Multiple dumbell
+#G=init.generate_dumbell_multiple_cliques(10,5,1)
+
 #Random regular graph
 #G = init.generate_graph(n, type = 'random', d)
 
@@ -411,8 +417,13 @@ LABELS
 --------------'''
 
 #init.label_dumbbell_birth_death(G, strat_list)
+
 #init.label_birth_death(G, strat_list, start_prop_cooperators)
 init.label_BD_according_to_one_dim(G, strat_list, d)
+
+#init.label_birth_death(G, strat_list, start_prop_cooperators)
+#init.label_BD_according_to_one_dim(G, strat_list, n_lattice)
+
 rep.color_and_draw_graph(G)
 
 '''-------------
@@ -447,5 +458,6 @@ for t in range(1000):
 # T=100000
 # G=generate_lattice(n, m, 'triangular', 4)
 # plt.show()
+
 
 
