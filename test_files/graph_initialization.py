@@ -36,7 +36,7 @@ def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_
 
 
 
-def generate_graph(n, type = 'random', d=0, m=0, periodic=False, with_positions=True, create_using=None):
+def generate_graph(n, type = 'random', d=0, m=0, k=2, p=.5, periodic=False, with_positions=True, create_using=None):
   '''
     INPUTS: 
     n               Number of nodes 
@@ -64,6 +64,9 @@ def generate_graph(n, type = 'random', d=0, m=0, periodic=False, with_positions=
       graph=nx.barbell_graph(n//2-1, n-2*(n//2-1))
     elif type == 'grid':
       graph = nx.grid_graph([n, m, d])
+    elif type == 'watts_strogatz':
+      graph = nx.watts_strogatz_graph(n, k, p)
+  
     return graph 
 
 

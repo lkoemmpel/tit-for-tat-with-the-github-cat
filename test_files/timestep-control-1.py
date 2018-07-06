@@ -371,16 +371,16 @@ strat_list = ['Cooperate', 'Defect']
 u = .4
 
 b = 2
-c = 1
+c = 20
 delta = 10
 
-n=4
+n=20
 m = 4
 d=3
-graph_type = 'grid'
+graph_type = 'watts_strogatz'
 update_name = 'BD'
 
-time_length = 400
+time_length = 450
 number_trials=20
 
 n_lattice = 50
@@ -419,9 +419,9 @@ LABELS
 #init.label_dumbbell_birth_death(G, strat_list)
 
 #init.label_birth_death(G, strat_list, start_prop_cooperators)
-init.label_BD_according_to_one_dim(G, strat_list, d)
+#init.label_BD_according_to_one_dim(G, strat_list, d)
 
-#init.label_birth_death(G, strat_list, start_prop_cooperators)
+init.label_birth_death(G, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, n_lattice)
 
 rep.color_and_draw_graph(G)
