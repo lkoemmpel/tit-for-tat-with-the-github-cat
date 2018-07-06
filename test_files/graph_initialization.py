@@ -200,8 +200,8 @@ def label_birth_death(G, strat_list, start_prop_coop=None):
     else:
         G.node[n]['strategy'] = random.choice(strat_list)
 
-    #G.node[n]['fitness'] = random.uniform(0,1)
-    G.node[n]['fitness'] = 1
+    G.node[n]['fitness'] = random.uniform(0,1)
+    #G.node[n]['fitness'] = 1
     G.node[n]['payoffs'] = []
 
 def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=0):

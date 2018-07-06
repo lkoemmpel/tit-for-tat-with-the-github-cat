@@ -8,7 +8,9 @@ Abstract some real world phenomenon that brings some moral
 
 what impact does the distance have on all of this
 
+
 -----------------Graph Initialization------------------
+
 	Initialize graphs with a particular strategy along one dimension 
 		of the lattice
 
@@ -21,9 +23,6 @@ what impact does the distance have on all of this
 	Improve/organize class structure
 
 	test various values of delta
-	print graph outputs to test code
-	finish adding code for prop cooperators in graph init
-
 
 
 ---------------Reproduction--------------------------
