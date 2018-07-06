@@ -272,6 +272,28 @@ def color_and_draw_graph(G):
 
     return G
 
+def color_fitness_and_draw_graph(G):
+    '''
+    INPUTS:     Graph with strategy node attributes
+    OUTPUTS:    Graph where color maps has colors according to 
+                node strategy attributes
+    '''
+    # initializes color map
+    val_map = {}
+    for n in nx.nodes(G):
+        val_map[n] = G.node[n]['fitness']
+
+    values = [val_map.get(node, 0.25) for node in G.nodes()]
+
+    # draws colored graph
+    #plt.ion()
+    nx.draw(G, cmap=plt.get_cmap('jet'), node_color = values, with_labels = True)
+    plt.show()
+    #plt.pause(2.0)
+
+    return G
+
+
 def Theta(val):
     V=1+math.exp(-val)
     return 1/V
