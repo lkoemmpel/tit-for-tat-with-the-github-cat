@@ -62,6 +62,11 @@ def generate_graph(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with
       graph = nx.complete_graph(n)
     elif type == 'dumbbell':
       graph=nx.barbell_graph(n//2-1, n-2*(n//2-1))
+    elif type == 'dumbell_multiple':
+      m=10
+      N=5
+      L=2
+      graph=generate_dumbell_multiple_cliques(m, N, L)
     return graph 
 
 

@@ -88,7 +88,7 @@ class game():
                 new_strategy = birth_death_results[1]
                 old_strategy = birth_death_results[2]
 
-                #play the game
+                #play the interaction game
                 payoff_mtx = [ [(b-c, b-c), (-c, b)] , [(b, -c), (0,0)] ]
                 coop_index={'Cooperate':0, 'Defect':1}
                 new_graph = inter.interaction_BD(new_graph, payoff_mtx, delta, noise=0)
@@ -227,7 +227,8 @@ def get_histogram_and_concentration_dict(G, strat_list):
         conc_dict[strat] = []
     # if a strategy is found in the graph, adjust its tally
     for n in nx.nodes(G):
-        histo_dict[G.node[n]['strategy']] += 1
+        histo_dict[nx.get_node_attributes(G, 'strategy')[n]]+=1
+        #G.node(n)['strategy']] += 1
     # final_data maps       strategy ---> freq(strat)/number(nodes)
     for strat in histo_dict.keys():
         conc_dict[strat].append(histo_dict[strat]/nx.number_of_nodes(G))
@@ -245,8 +246,11 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
     #run the game for each trial
     for each in range(number_trials):
         print("Evaluating trial ", number_trials)
-        this_game=game(G, update_name, t, u, d, plotting, show_graph)
-        trial_outcome=this_game.trial(G, n, d, data_iteration, u, t, graph_type, update_name, plotting, show_graph, saving)
+        #graph=G.copy()
+        graph=init.generate_dumbell_multiple_cliques(10,5,1)
+        init.label_birth_death(graph, strat_list, start_prop_cooperators)
+        this_game=game(graph, update_name, t, u, d, plotting, show_graph)
+        trial_outcome=this_game.trial(graph, n, d, data_iteration, u, t, graph_type, update_name, plotting, show_graph, saving)
         #append record for this trial of the concentrations of the_strat
         result_matrix.append(trial_outcome[1][the_strat])
     #scatter plot
@@ -280,10 +284,10 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
     plt.show()   
     #plt.close()     
 
-    if saving:
+    #if saving:
     #    print("Attempting to save plot ", data_iteration)+1
-        plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + \
-            str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
+    #    plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + \
+    #        str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
     #plt.close()
 
     return None
@@ -373,7 +377,7 @@ strat_list = ['Cooperate', 'Defect']
 u = .4
 
 b = 2
-c = 20
+c = 1
 delta = 10
 
 n=10
@@ -383,12 +387,12 @@ graph_type = 'grid'
 update_name = 'BD'
 
 time_length = 250
-number_trials=1
+number_trials=10
 
 n_lattice = 50
 m_lattice = 50
 
-start_prop_cooperators = .4
+start_prop_cooperators = .1
 
 
 
@@ -420,7 +424,7 @@ LABELS
 
 #init.label_dumbbell_birth_death(G, strat_list)
 
-#init.label_birth_death(G, strat_list, start_prop_cooperators)
+init.label_birth_death(G, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, d)
 
 #init.label_birth_death(G, strat_list, start_prop_cooperators)
@@ -432,19 +436,19 @@ LABELS
 TIMESTEP
 --------------'''
 
-for data_iteration in range(5):
-    #init.label_birth_death(G, strat_list, start_prop_cooperators)
-    G=init.generate_dumbell_multiple_cliques(10,5,1)
-    init.label_birth_death(G, strat_list, start_prop_cooperators)
+#for data_iteration in range(5):
+#    #init.label_birth_death(G, strat_list, start_prop_cooperators)
+#    G=init.generate_dumbell_multiple_cliques(10,5,1)
+#    init.label_birth_death(G, strat_list, start_prop_cooperators)
 
-    #rep.color_and_draw_graph(G)
+#    #rep.color_and_draw_graph(G)
 
-    game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, \
-        update_name= 'BD', plotting = True, show_graph = False, saving = False)
+#    game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, \
+#        update_name= 'BD', plotting = True, show_graph = False, saving = False)
 
 
 data_iteration=[]
-#plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=False, saving=False)
+plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=False, saving=False)
 
 
 
