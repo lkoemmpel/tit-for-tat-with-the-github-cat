@@ -95,7 +95,10 @@ def generate_dumbell_multiple_cliques(m, N, L):
     #add a clique that contains the nodes:
     #     km+1, km+2, ... , (k+1)m+1  
     range_clique=range(k*m+1,(k+1)*m+1)
-    edges+= [pair for pair in itertools.combinations(range_clique,2)]
+    for pair in itertools.combinations(range_clique,2):
+      a,b = pair[0], pair[1]
+      edges.append( ((k,a),(k,b)) )
+    #edges+= [pair for pair in itertools.combinations(range_clique,2)]
 
   for pair in itertools.combinations(range(N),2):
     #here we are focusing on connecting the nodes 
@@ -104,13 +107,13 @@ def generate_dumbell_multiple_cliques(m, N, L):
     a=pair[0]
     b=pair[1]
     if L>1:
-      edges.append( (a*m+1,(pair,1)) )
-      edges.append( ((pair,L), b*m+1) )
+      edges.append( ((a,a*m+1),(pair,1)) )
+      edges.append( ((pair,L), (b,b*m+1)) )
       for k in range(1,L):
         edges.append( ((pair,k),(pair,k+1)) )
     elif L==1:
-      edges.append( (a*m+1,(pair,1)) )
-      edges.append( ((pair,1),b*m+1) )
+      edges.append( ((a,a*m+1),(pair,1)) )
+      edges.append( ((pair,1),(b,b*m+1)) )
     else:
       edges.append( (a*m+1,b*m+1) )
   G.add_edges_from(edges)
