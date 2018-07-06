@@ -37,6 +37,8 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
         print()
 
 
+names_to_functions={'BD': rep.birth_death, 'DB': rep.death_birth}
+
 class game():
     def __init__(self, graph, name, t, u=0, delta=0, plotting = False, show_graph = False ):
         self.graph=G
@@ -53,6 +55,7 @@ class game():
         self.plotting = plotting
         self.show_graph = show_graph
 
+
     def trial(self, G, n, d, data_iteration, u, t, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False, saving = False):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
@@ -64,6 +67,7 @@ class game():
         Prints graph at every stage of strategy updating
         Plots how proportions of each strategy change over time
         '''
+        
         if update_name=='BD':
 
             if show_graph:
@@ -83,7 +87,7 @@ class game():
             for i in range(t):
 
                 #adjust node strategies 
-                birth_death_results = rep.birth_death(G, strat_list, u)
+                birth_death_results = rep.death_birth(G, strat_list, u)
                 new_graph = birth_death_results[0]
                 new_strategy = birth_death_results[1]
                 old_strategy = birth_death_results[2]
@@ -182,7 +186,7 @@ class game():
                 #print('\n')
 
                 if show_graph:
-                    if i%20 ==0:
+                    if i%100 ==0:
                         # Creates picture of graph 
                         rep.color_and_draw_graph(new_graph)
 
@@ -246,8 +250,8 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
     #run the game for each trial
     for each in range(number_trials):
         print("Evaluating trial ", number_trials)
-        #graph=G.copy()
-        graph=init.generate_dumbell_multiple_cliques(10,5,1)
+        #graph=init.generate_dumbell_multiple_cliques(10,5,1)
+        graph=init.generate_weighted(n, graph_type, d, m)
         init.label_birth_death(graph, strat_list, start_prop_cooperators)
         this_game=game(graph, update_name, t, u, d, plotting, show_graph)
         trial_outcome=this_game.trial(graph, n, d, data_iteration, u, t, graph_type, update_name, plotting, show_graph, saving)
@@ -284,10 +288,10 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
     plt.show()   
     #plt.close()     
 
-    #if saving:
+    if saving:
     #    print("Attempting to save plot ", data_iteration)+1
-    #    plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + \
-    #        str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
+        plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + \
+            str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
     #plt.close()
 
     return None
@@ -380,19 +384,19 @@ b = 2
 c = 1
 delta = 10
 
-n=10
+n=20
 m = 10
 d=10
-graph_type = 'grid'
+graph_type = 'dumbell_multiple'
 update_name = 'BD'
 
-time_length = 250
+time_length = 150
 number_trials=10
 
 n_lattice = 50
 m_lattice = 50
 
-start_prop_cooperators = .1
+start_prop_cooperators = .9
 
 
 

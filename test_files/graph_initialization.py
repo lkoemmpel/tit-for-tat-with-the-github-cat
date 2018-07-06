@@ -10,6 +10,10 @@ import sys
 import math
 import itertools
 
+'''---------------------
+    GRAPH GENERATORS
+---------------------'''
+
 def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_positions = True, create_using = None):
     '''
     INPUTS: 
@@ -33,8 +37,6 @@ def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_
               return lattice
     except ValueError:
         print("The specified lattice type was invalid.")
-
-
 
 def generate_graph(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None):
   '''
@@ -60,8 +62,11 @@ def generate_graph(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with
         graph=nx.erdos_renyi_graph(n, m)
     elif type == 'complete':
       graph = nx.complete_graph(n)
-    elif type == 'dumbbell':
+    elif type == 'dumbell':
       graph=nx.barbell_graph(n//2-1, n-2*(n//2-1))
+      print('*')
+      print('wuuuu')
+      print('*')
     elif type == 'dumbell_multiple':
       m=10
       N=5
@@ -124,7 +129,7 @@ def generate_dumbell_multiple_cliques(m, N, L):
   G.add_edges_from(edges)
   return G
 
-def generate_weighted(n, d, m=0, type = 'random', periodic=False, with_positions=True, create_using=None):
+def generate_weighted(n, type= 'random', d=0, m=0, periodic=False, with_positions=True, create_using=None):
   '''
     INPUTS: 
     n               Number of nodes 
@@ -140,24 +145,37 @@ def generate_weighted(n, d, m=0, type = 'random', periodic=False, with_positions
     and with randomly (0 to 1) assigned edge weights
   '''
   try:
+    graph=None
     if type == 'hypercube':
       graph = nx.hypercube_graph(n)
       return graph
     elif type == 'random':
-        graph = nx.random_regular_graph(d, n)
-        return graph
+      graph = nx.random_regular_graph(d, n)
     elif type == 'erdos_renyi':
-        graph=nx.erdos_renyi_graph(n, m)
-    weights={}
-    for edge in graph.edges:
-      weights[edge]=random.random()
-    nx.set_edge_attributes(graph, 'weight', weights)
+      graph=nx.erdos_renyi_graph(n, m)
+    elif type == 'complete':
+      graph = nx.complete_graph(n)
+    elif type == 'dumbell':
+      graph=nx.barbell_graph(n//2-1, n-2*(n//2-1))
+    elif type == 'dumbell_multiple':
+      m=10
+      N=5
+      L=2
+      graph=generate_dumbell_multiple_cliques(m, N, L)
+    if graph:
+      weights={}
+      for edge in graph.edges():
+        weights[edge]=random.random()
+      nx.set_edge_attributes(graph, weights, 'weight')
+      return graph
 
   except ValueError:
     print("The specified graph type was invalid.")
 
 
-
+'''---------------------
+    GRAPH LABELING
+---------------------'''
 
 def label_birth_death(G, strat_list, start_prop_coop=None):
   '''
