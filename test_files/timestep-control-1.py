@@ -15,6 +15,27 @@ import graph_initialization as init
 import reproduction as rep
 import interaction as inter
 
+# Print iterations progress
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
+    # Print New Line on Complete
+    if iteration == total: 
+        print()
+
 
 class game():
     def __init__(self, graph, name, t, u=0, delta=0, plotting = False, show_graph = False ):
@@ -71,7 +92,7 @@ class game():
                 payoff_mtx = [ [(b-c, b-c), (-c, b)] , [(b, -c), (0,0)] ]
                 coop_index={'Cooperate':0, 'Defect':1}
                 new_graph = inter.interaction_BD(new_graph, payoff_mtx, delta, noise=0)
-                print(nx.get_node_attributes(G, 'fitness'))
+                #print(nx.get_node_attributes(G, 'fitness'))
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print('\n')
 
@@ -221,6 +242,7 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
     result_matrix=[]
     #run the game for each trial
     for each in range(number_trials):
+        print("Evaluating trial ", number_trials)
         this_game=game(G, update_name, t, u, d, plotting, show_graph)
         trial_outcome=this_game.trial(G, n, d, data_iteration, u, t, graph_type, update_name, plotting, show_graph, saving)
         #append record for this trial of the concentrations of the_strat
@@ -253,13 +275,13 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
     plt.xlabel('Time')
 
     #show plot
-    plt.show()   
-    plt.close()     
+    #plt.show()   
+    #plt.close()     
 
-    #if saving:
+    if saving:
     #    print("Attempting to save plot ", data_iteration)
-    #    plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + \
-    #       str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
+        plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + \
+            str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
     #plt.close()
 
     return None
@@ -346,24 +368,25 @@ def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, 
 --------------------------'''
 #strat_list = ['Cooperate', 'Defect', 'Tit_for_tat']
 strat_list = ['Cooperate', 'Defect']
-u = .2
+u = .4
 
 b = 2
 c = 1
-delta = 20
+delta = 10
 
-n=40
+n=4
+m = 4
 d=3
-graph_type = 'dumbbell'
+graph_type = 'grid'
 update_name = 'BD'
 
-time_length = 40
-number_trials=10
+time_length = 400
+number_trials=20
 
 n_lattice = 50
 m_lattice = 50
 
-start_prop_cooperators = .2
+start_prop_cooperators = .6
 
 
 
@@ -375,7 +398,7 @@ TYPES OF GRAPHS
 #G=init.generate_lattice(n_lattice, m_lattice)
 
 #Complete graph
-G = init.generate_graph(n, graph_type)
+G = init.generate_graph(n, graph_type, d, m)
 
 #Random regular graph
 #G = init.generate_graph(n, type = 'random', d)
@@ -387,9 +410,9 @@ G = init.generate_graph(n, graph_type)
 LABELS
 --------------'''
 
-init.label_dumbbell_birth_death(G, strat_list)
+#init.label_dumbbell_birth_death(G, strat_list)
 #init.label_birth_death(G, strat_list, start_prop_cooperators)
-#init.label_BD_according_to_one_dim(G, strat_list, n_lattice)
+init.label_BD_according_to_one_dim(G, strat_list, d)
 rep.color_and_draw_graph(G)
 
 '''-------------
@@ -402,7 +425,7 @@ for data_iteration in range(1):
 '''
 
 data_iteration=[]
-plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=False, saving=False)
+plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=False, saving=True)
 
 
 

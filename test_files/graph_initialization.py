@@ -61,6 +61,8 @@ def generate_graph(n, type = 'random', d=0, m=0, periodic=False, with_positions=
       graph = nx.complete_graph(n)
     elif type == 'dumbbell':
       graph=nx.barbell_graph(n//2-1, n-2*(n//2-1))
+    elif type == 'grid':
+      graph = nx.grid_graph([n, m, d])
     return graph 
 
 
