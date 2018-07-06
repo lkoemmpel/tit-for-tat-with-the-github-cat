@@ -62,6 +62,11 @@ def generate_graph(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with
       graph = nx.complete_graph(n)
     elif type == 'dumbbell':
       graph=nx.barbell_graph(n//2-1, n-2*(n//2-1))
+    elif type == 'dumbell_multiple':
+      m=10
+      N=5
+      L=2
+      graph=generate_dumbell_multiple_cliques(m, N, L)
     return graph 
 
 
@@ -177,8 +182,8 @@ def label_birth_death(G, strat_list, start_prop_coop=None):
     else:
         G.node[n]['strategy'] = random.choice(strat_list)
 
-    #G.node[n]['fitness'] = random.uniform(0,1)
-    G.node[n]['fitness'] = 1
+    G.node[n]['fitness'] = random.uniform(0,1)
+    #G.node[n]['fitness'] = 1
     G.node[n]['payoffs'] = []
 
 def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=0):
