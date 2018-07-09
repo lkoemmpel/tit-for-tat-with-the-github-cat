@@ -37,11 +37,11 @@ def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_
               return lattice
     except ValueError:
         print("The specified lattice type was invalid.")
-
+'''
 def generate_graph_new(type = 'random', parameters):
 
 #n, type='random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None
-  '''
+
     INPUTS: 
     
     type              Type of graph
@@ -52,7 +52,7 @@ def generate_graph_new(type = 'random', parameters):
 
     OUTPUTS:
     Graph satisfying the specified parameters and of the specified type
-  '''
+  
   try:
     if type == 'hypercube':
       num_nodes=parameters[0]
@@ -96,7 +96,7 @@ def generate_graph_new(type = 'random', parameters):
 
   except ValueError:
     print("The specified graph type was invalid.")
-
+'''
 def generate_graph(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None):
   '''
     INPUTS: 
