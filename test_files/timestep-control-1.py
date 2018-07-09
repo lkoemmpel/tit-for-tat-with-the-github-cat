@@ -434,7 +434,7 @@ TYPES OF GRAPHS
 #Multiple dumbell
 G1=init.generate_graph([20,4,3], graph_type)
 
-G2=init.generate_graph([20],'dumbell')
+#G2=init.generate_graph([20],'dumbell')
 
 
 #Random regular graph
@@ -448,7 +448,7 @@ LABELS
 --------------'''
 
 
-init.label_birth_death(G2, strat_list, start_prop_cooperators)
+#init.label_birth_death(G2, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, d)
 #init.label_dumbbell_birth_death(G, strat_list)
 init.label_dumbell_multiple_cliques(G1, {0,1,3})
@@ -456,7 +456,10 @@ init.label_dumbell_multiple_cliques(G1, {0,1,3})
 
 
 #dis.color_fitness_and_draw_graph(G2, nx.spring_layout(G2))
-#dis.color_and_draw_graph(G1)
+
+dis.color_fitness_and_draw_graph(G1, nx.spring_layout(G1))
+#dis.color_fitness_and_draw_graph(G2, nx.spring_layout(G2))
+
 
 '''-------------
 TIMESTEP
