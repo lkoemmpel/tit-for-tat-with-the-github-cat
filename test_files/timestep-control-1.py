@@ -395,13 +395,13 @@ d=10
 graph_type = 'dumbell_multiple'
 update_name = 'BD'
 
-time_length = 150
-number_trials=10
+time_length = 20
+number_trials=1
 
 n_lattice = 50
 m_lattice = 50
 
-start_prop_cooperators = .9
+start_prop_cooperators = .5
 
 
 
