@@ -332,13 +332,16 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
 
 def label_dumbel_multiple_cliques(G, set_cooperators):
   for n in G.nodes():
-    if type(n[0])==tuple:
-      G.node[n]['strategy']='Cooperate'
-    elif type(n[0])==int:
-      if n[0] in set_cooperators:
+    #elif type(n[0])==tuple:
+    #  G.node[n]['strategy']='Cooperate'
+    if n[0][0]==n[0][1]:
+      if n[0][0] in set_cooperators:
         G.node[n]['strategy']='Cooperate'
       else:
         G.node[n]['strategy']='Defect'
+    else:
+      G.node[n]['strategy']='Cooperate'
+
 
 def label_BD_according_to_one_dim(G, strat_list, width):
   '''

@@ -417,11 +417,11 @@ TYPES OF GRAPHS
 #Lattice
 #G=init.generate_lattice(n_lattice, m_lattice)
 
-#Complete graph
+#Erdos-Renyi graph
 #G=init.generate_graph([d,m], graph_type)
 
-#Complete/Dumbbell graph
-#G = init.generate_graph(graph_type, [n])
+#Complete graph
+G = init.generate_graph([n], graph_type)
 
 #Multiple dumbell
 #G=init.generate_dumbell_multiple_cliques([20,4,3], graph_type)
@@ -437,12 +437,14 @@ LABELS
 --------------'''
 
 
-#init.label_birth_death(G, strat_list, start_prop_cooperators)
+init.label_birth_death(G, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, d)
 #init.label_dumbbell_birth_death(G, strat_list)
-init.label_dumbell_multiple_cliques(G, {0,1,3})
+#init.label_dumbell_multiple_cliques(G, {0,1,3})
 
-#dis.color_and_draw_graph(G)
+
+
+dis.color_and_draw_graph(G)
 
 '''-------------
 TIMESTEP
