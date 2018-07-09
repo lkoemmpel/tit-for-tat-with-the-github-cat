@@ -432,12 +432,12 @@ graph[6]=generate_graph([5,4,2], 'dumbell_multiple')
 graph[7]=generate_graph([5,20],'rich_club')
 
 label_birth_death(graph[5], ['Cooperate','Defect'], 0.5)
-color_and_draw_graph(graph[5])
+#color_and_draw_graph(graph[5])
 
 label_birth_death(graph[3], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[3])
 
-label_dumbel_multiple_cliques(graph[6], {0,3})
+#label_dumbel_multiple_cliques(graph[6], {0,3})
 #color_and_draw_graph(graph[6])
 
 label_birth_death(graph[7], ['Cooperate','Defect'], 0.5)

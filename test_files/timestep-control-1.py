@@ -42,7 +42,7 @@ names_to_functions={'BD': rep.birth_death, 'DB': rep.death_birth}
 
 class game():
     def __init__(self, graph, name, t, u=0, delta=0, plotting = False, show_graph = False ):
-        self.graph=G
+        self.graph=graph
         #name of the game
         self.name=name
 
@@ -394,7 +394,7 @@ n=30
 m = 10
 
 d=10
-graph_type = 'dumbell'
+graph_type = 'dumbell_multiple'
 update_name = 'BD'
 
 time_length = 300
@@ -429,7 +429,10 @@ TYPES OF GRAPHS
 
 
 #Multiple dumbell
-G=init.generate_dumbell_multiple_cliques([20,4,3], graph_type)
+#G1=init.generate_graph([20,4,3], graph_type)
+
+G2=init.generate_graph([20],'dumbell')
+
 
 #Random regular graph
 #G = init.generate_graph([n,d], graph_type)
@@ -442,14 +445,15 @@ LABELS
 --------------'''
 
 
-init.label_birth_death(G, strat_list, start_prop_cooperators)
+init.label_birth_death(G2, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, d)
 #init.label_dumbbell_birth_death(G, strat_list)
-#init.label_dumbell_multiple_cliques(G, {0,1,3})
+#init.label_dumbell_multiple_cliques(G1, {0,1,3})
 
 
 
-dis.color_and_draw_graph(G)
+dis.color_fitness_and_draw_graph(G2, nx.spring_layout(G2))
+#dis.color_and_draw_graph(G2)
 
 '''-------------
 TIMESTEP
@@ -469,8 +473,8 @@ TIMESTEP
 
 #2                      Test for plot_many_trials
 
-#data_iteration=[]
-#plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+data_iteration=[]
+plot_many_trials(G2, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
 
 
 
