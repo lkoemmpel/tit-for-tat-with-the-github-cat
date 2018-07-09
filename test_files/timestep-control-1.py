@@ -260,7 +260,7 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
         graph=init.generate_weighted(n, graph_type, d, m)
         init.label_birth_death(graph, strat_list, start_prop_cooperators)
         this_game=game(graph, update_name, t, u, d, plotting, show_graph)
-        trial_outcome=this_game.trial(graph, n, d, data_iteration, u, t, nx.kamada_kawai_layout(G), graph_type, update_name, plotting, show_graph, saving, color_fitness)
+        trial_outcome=this_game.trial(graph, n, d, data_iteration, u, t, nx.spring_layout(G), graph_type, update_name, plotting, show_graph, saving, color_fitness)
         #append record for this trial of the concentrations of the_strat
         result_matrix.append(trial_outcome[1][the_strat])
     #scatter plot
