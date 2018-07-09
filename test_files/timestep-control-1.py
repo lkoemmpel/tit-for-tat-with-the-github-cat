@@ -386,22 +386,30 @@ u = .4
 
 b = 2
 c = 1
-delta = 1
+delta = .2
 
-n=20
+n=50
 m = 10
 
 d=10
-graph_type = 'dumbell_multiple'
+graph_type = 'complete'
 update_name = 'BD'
 
+<<<<<<< HEAD
 time_length = 20
+=======
+time_length = 10
+>>>>>>> bc2f4e51f748807548b52b8974d47cef46ca5651
 number_trials=1
 
 n_lattice = 50
 m_lattice = 50
 
+<<<<<<< HEAD
 start_prop_cooperators = .5
+=======
+start_prop_cooperators = .4
+>>>>>>> bc2f4e51f748807548b52b8974d47cef46ca5651
 
 
 
@@ -416,13 +424,13 @@ TYPES OF GRAPHS
 #G = init.generate_graph(n, graph_type, d, m)
 
 #Complete/Dumbbell graph
-#G = init.generate_graph(n, graph_type)
+G = init.generate_graph(n, graph_type)
 
 #Multiple dumbell
 #G=init.generate_dumbell_multiple_cliques(10,5,1)
 
 #Random regular graph
-G = init.generate_graph(n, graph_type, d)
+#G = init.generate_graph(n, graph_type, d)
 
 #Erdos-Reyni
 #G = init.generate_graph(n, type = 'random', d, 40)
