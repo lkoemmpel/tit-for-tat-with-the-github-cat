@@ -56,7 +56,7 @@ REPRODUCTION
 make all of the reproduction process based on the fitness, weight and mutation parameters.
 --------'''
 
-def birth_death(G, strat_list, u):
+def birth_death(G, strat_list, u, num_rep):
     # choose a random node proportinal to its fitness to reproduce
 
     fitness_dict = nx.get_node_attributes(G, 'fitness')

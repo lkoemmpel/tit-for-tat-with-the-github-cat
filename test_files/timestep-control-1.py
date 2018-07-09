@@ -136,7 +136,7 @@ class game():
 
             return new_graph, concentrations, plotting
 
-    def trial_with_plot(G, n, d, data_iteration, u, t, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False, saving = False):
+    def trial_with_plot(G, n, d, data_iteration, u, t, num_rep = 1, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False, saving = False):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -177,7 +177,7 @@ class game():
                 # into the birth-death function
 
                 #adjust node strategies 
-                birth_death_results = rep.birth_death(G, strat_list, u)
+                birth_death_results = rep.birth_death(G, strat_list, u, num_rep)
                 new_graph = birth_death_results[0]
                 new_strategy = birth_death_results[1]
                 old_strategy = birth_death_results[2]
@@ -405,6 +405,9 @@ m_lattice = 50
 
 start_prop_cooperators = .4
 
+#Number of nodes to reproduce at each timestep 
+num_rep = 5
+
 
 
 
@@ -447,8 +450,12 @@ init.label_birth_death(G, strat_list, start_prop_cooperators)
 
 
 #dis.color_fitness_and_draw_graph(G2, nx.spring_layout(G2))
+
 dis.color_fitness_and_draw_graph(G, nx.spring_layout(G))
+
+
 #dis.color_fitness_and_draw_graph(G2, nx.spring_layout(G2))
+
 
 '''-------------
 TIMESTEP
@@ -470,6 +477,7 @@ TIMESTEP
 
 data_iteration=[]
 plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+
 
 
 

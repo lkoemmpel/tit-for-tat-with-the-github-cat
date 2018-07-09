@@ -165,6 +165,7 @@ def color_fitness_and_draw_graph(G, pos):
 
     pause(.001)
 
+
     plt.gcf().clear()
 
 
