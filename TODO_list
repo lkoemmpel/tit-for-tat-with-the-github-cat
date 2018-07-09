@@ -29,6 +29,12 @@ what impact does the distance have on all of this
 
 
 
+	--- maybe could be good to make the input for generate_graph to be: 	
+				tuple(	graph_type , list_with_parameters	)
+	because this might make it easier to just call the function and not having to specify all of the parameters fo all the types of graphs at once.
+
+
+
 
 -------------------General---------------------------
 	Improve/organize class structure
