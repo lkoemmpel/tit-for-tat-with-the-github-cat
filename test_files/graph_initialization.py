@@ -179,8 +179,11 @@ def generate_dumbell_multiple_cliques(m, N, L):
       edges.append( ((pair,1),((b,b),b*m+1)) )
     else:
       edges.append(((a,a),a*m+1), ((b,b),b*m+1))
-      #edges.append( (a*m+1,b*m+1) )
   G.add_edges_from(edges)
+
+  for n in G.nodes():
+    G.node[n]['coord']=n
+  G=nx.convert_node_labels_to_integers(G)
   return G
 
 def generate_weighted(n, type= 'random', d=0, m=0, periodic=False, with_positions=True, create_using=None):
@@ -337,10 +340,8 @@ def label_dumbell_multiple_cliques(G, set_cooperators):
   for n in G.nodes():
     #elif type(n[0])==tuple:
     #  G.node[n]['strategy']='Cooperate'
-    print(n)
-    print('***')
-    if n[0][0]==n[0][1]:
-      if n[0][0] in set_cooperators:
+    if G.node[n]['coord'][0][0]==G.node[n]['coord'][0][1]:
+      if G.node[n]['coord'][0][0] in set_cooperators:
         G.node[n]['strategy']='Cooperate'
       else:
         G.node[n]['strategy']='Defect'
@@ -439,8 +440,8 @@ graph[7]=generate_graph([5,20],'rich_club')
 #label_birth_death(graph[3], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[3])
 
-label_dumbell_multiple_cliques(graph[6], {0,3})
-color_and_draw_graph(graph[6])
+#label_dumbell_multiple_cliques(graph[6], {0,3})
+#color_and_draw_graph(graph[6])
 
 #label_birth_death(graph[7], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[7])
