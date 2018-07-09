@@ -137,7 +137,8 @@ class game():
 
             return new_graph, concentrations, plotting
 
-    def trial_with_plot(G, n, d, data_iteration, u, t, num_rep = 1, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False, saving = False):
+    def trial_with_plot(G, n, d, data_iteration, u, t, num_rep = 1, graph_type = 'random', \
+        update_name = 'BD', plotting = False, show_graph = False, saving = False):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -244,7 +245,7 @@ def get_histogram_and_concentration_dict(G, strat_list):
         conc_dict[strat].append(histo_dict[strat]/nx.number_of_nodes(G))
     return histo_dict, conc_dict
 
-def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, graph_type = 'random', \
+def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, num_rep, graph_type = 'random', \
     update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
     '''
     matrix in which entry n,t is the concentration 
@@ -260,7 +261,8 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
         graph=init.generate_weighted(n, graph_type, d, m)
         init.label_birth_death(graph, strat_list, start_prop_cooperators)
         this_game=game(graph, update_name, t, u, d, plotting, show_graph)
-        trial_outcome=this_game.trial(graph, n, d, data_iteration, u, t, nx.spring_layout(G), graph_type, update_name, plotting, show_graph, saving, color_fitness)
+        trial_outcome=this_game.trial(graph, n, d, data_iteration, u, t, nx.spring_layout(G, 1/n**.2), \
+            graph_type, update_name, plotting, show_graph, saving, color_fitness)
         #append record for this trial of the concentrations of the_strat
         result_matrix.append(trial_outcome[1][the_strat])
     #scatter plot
@@ -397,7 +399,7 @@ d=10
 graph_type = 'dumbell_multiple'
 update_name = 'BD'
 
-time_length = 300
+time_length = 20
 
 number_trials=1
 
@@ -428,11 +430,13 @@ TYPES OF GRAPHS
 
 #Multiple dumbell
 #G=init.generate_dumbell_multiple_cliques(10,5,1)
-#G = init.generate_graph(graph_type, [n])
+graph_type = 'random'
+parameters = [10, 3]
+G1 = init.generate_graph(parameters, graph_type)
 
 
 #Multiple dumbell
-G1=init.generate_graph([20,4,3], graph_type)
+#G1=init.generate_graph([5,4,2], graph_type)
 
 #G2=init.generate_graph([20],'dumbell')
 
@@ -448,16 +452,16 @@ LABELS
 --------------'''
 
 
-#init.label_birth_death(G2, strat_list, start_prop_cooperators)
+init.label_birth_death(G1, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, d)
 #init.label_dumbbell_birth_death(G, strat_list)
-init.label_dumbell_multiple_cliques(G1, {0,1,3})
+#init.label_dumbell_multiple_cliques(G1, {0,1,3})
 
 
-
-#dis.color_fitness_and_draw_graph(G2, nx.spring_layout(G2))
 
 dis.color_fitness_and_draw_graph(G1, nx.spring_layout(G1))
+
+#dis.color_fitness_and_draw_graph(G1, nx.spring_layout(G1))
 #dis.color_fitness_and_draw_graph(G2, nx.spring_layout(G2))
 
 
@@ -479,8 +483,9 @@ TIMESTEP
 
 #2                      Test for plot_many_trials
 
-#data_iteration=[]
-plot_many_trials(G2, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', num_rep, graph_type, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+data_iteration=[]
+plot_many_trials(G1, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', num_rep, graph_type, \
+    'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
 
 
 
