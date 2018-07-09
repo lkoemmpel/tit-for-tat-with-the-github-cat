@@ -1,24 +1,14 @@
 
 
 -----------------TODO List---------------------------
-Make sure fitness labels don't go to 1
+R 	Keep an eye on fitness label changes
 
 Add noise to interaction
 add indirect reciprocity to interaction
 add more nodes reproducing
 Highlight nodes that have reproduced
 
-
-
-
-
-think about structures that are interesting
-like the dumbell graph
-
 Abstract some real world phenomenon that brings some moral
-
-what impact does the distance have on all of this
-
 
 -----------------Graph Initialization------------------
 
@@ -28,42 +18,26 @@ what impact does the distance have on all of this
 	Have different games be played on different parts of the graph
 
 
-
-	--- maybe could be good to make the input for generate_graph to be: 	
-				tuple(	graph_type , list_with_parameters	)
-	because this might make it easier to just call the function and not having to specify all of the parameters fo all the types of graphs at once.
-
-
-
-
 -------------------General---------------------------
-	Improve/organize class structure
-
-	test various values of delta
-
+R	test various values of delta
 
 ---------------Reproduction--------------------------
-	Handle colors for each strategy
-	Implement other reproduction functions like death-birth
-
-
+	Implement other reproduction functions like imitation
 
 ---------------Timestep--------------------------
 	plot relationship between b/c and proportion cooperators 
-	graph many trials in same graph
-	fix errors with saving images
-
-	Make aggregated data object to handle data averages
-
-	Make plotting functions to plot data and averages of data
-	Add error bars to graphs of averaged data
-	Delete triangular markers 
-		Make error bars lines 
-	Plot different data in different colors
-
-
-
+	fix errors of the form 'node 38 has no coordinate'
 
 ---------------Interaction--------------------------
 	make action handle other strategies
 	make payoff matrix an input that varies on parts of the graph
+
+
+---------------Wednesday goals--------------------------
+B 	Highlight nodes that have reproduced
+B	fix errors of the form 'node 38 has no coordinate'
+
+O 	plot relationship between b/c and proportion cooperators 
+
+L 	add more nodes reproducing
+
