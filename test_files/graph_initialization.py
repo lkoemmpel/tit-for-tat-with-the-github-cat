@@ -38,17 +38,14 @@ def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_
     except ValueError:
         print("The specified lattice type was invalid.")
 
-def generate_graph_new(parameters, type = 'random'):
+def generate_graph(parameters, type = 'random'):
 
-#n, type='random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None
+  #n, type='random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None
   '''
     INPUTS: 
     
     type              Type of graph
     parameters        List of parameters specific to the type of graph
-    periodic          ?
-    with_positions    ?
-    create_using      ?
 
     OUTPUTS:
     Graph satisfying the specified parameters and of the specified type
@@ -82,9 +79,6 @@ def generate_graph_new(parameters, type = 'random'):
       size_dumbell=parameters[0]
       num_dumbell=parameters[1]
       size_path=parameters[2]
-      #m=10
-      #N=5
-      #L=2
       graph=generate_dumbell_multiple_cliques(size_dumbell, num_dumbell, size_path)
 
     elif type == 'rich_club':
@@ -97,7 +91,7 @@ def generate_graph_new(parameters, type = 'random'):
   except ValueError:
     print("The specified graph type was invalid.")
 
-def generate_graph(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None):
+def generate_graph_original(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None):
   '''
     INPUTS: 
     n               Number of nodes 
@@ -173,15 +167,16 @@ def generate_dumbell_multiple_cliques(m, N, L):
     a=pair[0]
     b=pair[1]
     if L>1:
-      edges.append( ((a,a*m+1),(pair,1)) )
-      edges.append( ((pair,L), (b,b*m+1)) )
+      edges.append( (((a,a),a*m+1),(pair,1)) )
+      edges.append( ((pair,L), ((b,b),b*m+1)) )
       for k in range(1,L):
         edges.append( ((pair,k),(pair,k+1)) )
     elif L==1:
-      edges.append( ((a,a*m+1),(pair,1)) )
-      edges.append( ((pair,1),(b,b*m+1)) )
+      edges.append( (((a,a),a*m+1),(pair,1)) )
+      edges.append( ((pair,1),((b,b),b*m+1)) )
     else:
-      edges.append( (a*m+1,b*m+1) )
+      edges.append(((a,a),a*m+1), ((b,b),b*m+1))
+      #edges.append( (a*m+1,b*m+1) )
   G.add_edges_from(edges)
   return G
 
@@ -230,7 +225,7 @@ def generate_weighted(n, type= 'random', d=0, m=0, periodic=False, with_position
 
 def generate_rich_club(size_club, size_periphery):
   graph=nx.complete_graph(size_club)
-  for A in range(1,size_club):
+  for A in range(size_club):
     for B in range(size_club+1,size_club+size_periphery+1):
       graph.add_edge(A,B)
   return graph
@@ -265,7 +260,6 @@ def label_birth_death(G, strat_list, start_prop_coop=None):
         G.node[n]['strategy'] = random.choice(strat_list)
 
     G.node[n]['fitness'] = random.uniform(0,1)
-    #G.node[n]['fitness'] = 1
     G.node[n]['payoffs'] = []
 
 def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=0):
@@ -336,9 +330,15 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
     print("Labeling connecting node ", c)
     G.node[c]['strategy'] = random.choice(strat_list)
 
-def label_dumbel_multiple_cliques(G, set_defectors):
+def label_dumbel_multiple_cliques(G, set_cooperators):
   for n in G.nodes():
-    print(n)
+    if type(n[0])==tuple:
+      G.node[n]['strategy']='Cooperate'
+    elif type(n[0])==int:
+      if n[0] in set_cooperators:
+        G.node[n]['strategy']='Cooperate'
+      else:
+        G.node[n]['strategy']='Defect'
 
 def label_BD_according_to_one_dim(G, strat_list, width):
   '''
@@ -385,3 +385,54 @@ def label_utkovski(G):
     G.node[n]['coop-state'] = random.uniform(0,1)
 
 
+'''---------------------
+    FROM DISPLAY.PY
+---------------------'''
+
+def color_and_draw_graph(G):
+    '''
+    INPUTS:     Graph with strategy node attributes
+    OUTPUTS:    Graph where color maps has colors according to 
+                node strategy attributes
+    '''
+    # initializes color map
+    color_map = []
+    for n in nx.nodes(G):
+        if G.node[n]['strategy'] == 'Cooperate':
+            color_map.append('green')
+        else:
+            color_map.append('red')
+
+    # draws colored graph
+    #plt.ion()
+    nx.draw(G,node_color = color_map,with_labels = True)
+    plt.show()
+    #plt.pause(2.0)
+
+    return G
+
+
+'''---------------------
+    TESTING GRAPHS
+---------------------'''
+graph={}
+
+graph[1]=generate_graph([10], 'hypercube')
+graph[2]=generate_graph([10, 5], 'random')
+graph[3]=generate_graph([10,30], 'erdos_renyi')
+graph[4]=generate_graph([20], 'complete')
+graph[5]=generate_graph([30],'dumbell')
+graph[6]=generate_graph([5,4,2], 'dumbell_multiple')
+graph[7]=generate_graph([5,20],'rich_club')
+
+label_birth_death(graph[5], ['Cooperate','Defect'], 0.5)
+color_and_draw_graph(graph[5])
+
+label_birth_death(graph[3], ['Cooperate','Defect'], 0.5)
+#color_and_draw_graph(graph[3])
+
+label_dumbel_multiple_cliques(graph[6], {0,3})
+#color_and_draw_graph(graph[6])
+
+label_birth_death(graph[7], ['Cooperate','Defect'], 0.5)
+#color_and_draw_graph(graph[7])
