@@ -120,9 +120,7 @@ def interaction_BD(G, payoff_mtx, delta=0, noise=0):
           record.add((v,w))
           G.node[v]['payoffs'].append(payoff_mtx[action_v][action_w][0])
           G.node[w]['payoffs'].append(payoff_mtx[action_v][action_w][1])
-      if len(G.node[v]['payoffs'])==0:
-        G.node[v]['fitness']=1
-      else:
+      if len(G.node[v]['payoffs']) != 0:
         G.node[v]['fitness']=Theta(1+delta*sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']))
         #restart payoff list for next round
         G.node[v]['payoffs']=[]
