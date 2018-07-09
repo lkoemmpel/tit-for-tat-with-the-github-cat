@@ -38,10 +38,12 @@ def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_
     except ValueError:
         print("The specified lattice type was invalid.")
 
+
 def generate_graph(parameters, type = 'random'):
 
   #n, type='random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None
   '''
+
     INPUTS: 
     
     type              Type of graph
@@ -90,6 +92,7 @@ def generate_graph(parameters, type = 'random'):
 
   except ValueError:
     print("The specified graph type was invalid.")
+
 
 def generate_graph_original(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None):
   '''

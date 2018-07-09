@@ -57,7 +57,7 @@ class game():
         self.show_graph = show_graph
 
 
-    def trial(self, G, n, d, data_iteration, u, t, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False, saving = False, color_fitness=False):
+    def trial(self, G, n, d, data_iteration, u, t, pos, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False, saving = False, color_fitness=False):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -73,7 +73,7 @@ class game():
         #if update_name=='BD':
 
             if show_graph:
-                dis.color_fitness_and_draw_graph(G)
+                dis.color_fitness_and_draw_graph(G, pos)
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print("-----------------------------------------------")
 
@@ -106,7 +106,7 @@ class game():
                 if show_graph:
                     if i%1 == 0:
                         if color_fitness:
-                            dis.color_fitness_and_draw_graph(new_graph)
+                            dis.color_fitness_and_draw_graph(new_graph, pos)
                         else:
                             # Creates picture of graph 
                             dis.color_and_draw_graph(new_graph)
@@ -260,7 +260,7 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, gr
         graph=init.generate_weighted(n, graph_type, d, m)
         init.label_birth_death(graph, strat_list, start_prop_cooperators)
         this_game=game(graph, update_name, t, u, d, plotting, show_graph)
-        trial_outcome=this_game.trial(graph, n, d, data_iteration, u, t, graph_type, update_name, plotting, show_graph, saving, color_fitness)
+        trial_outcome=this_game.trial(graph, n, d, data_iteration, u, t, nx.kamada_kawai_layout(G), graph_type, update_name, plotting, show_graph, saving, color_fitness)
         #append record for this trial of the concentrations of the_strat
         result_matrix.append(trial_outcome[1][the_strat])
     #scatter plot
@@ -386,19 +386,19 @@ def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, 
 strat_list = ['Cooperate', 'Defect']
 u = .4
 
-b = 2
+b = 6
 c = 1
 delta = .2
 
-n=50
+n=30
 m = 10
 
 d=10
-graph_type = 'complete'
+graph_type = 'dumbell'
 update_name = 'BD'
 
+time_length = 300
 
-time_length = 10
 number_trials=1
 
 n_lattice = 50
@@ -420,11 +420,16 @@ TYPES OF GRAPHS
 #Erdos-Renyi graph
 #G=init.generate_graph([d,m], graph_type)
 
-#Complete graph
-G = init.generate_graph([n], graph_type)
+#Complete/Dumbbell graph
+#G = init.generate_graph([n], graph_type)
 
 #Multiple dumbell
-#G=init.generate_dumbell_multiple_cliques([20,4,3], graph_type)
+#G=init.generate_dumbell_multiple_cliques(10,5,1)
+#G = init.generate_graph(graph_type, [n])
+
+
+#Multiple dumbell
+G=init.generate_dumbell_multiple_cliques([20,4,3], graph_type)
 
 #Random regular graph
 #G = init.generate_graph([n,d], graph_type)

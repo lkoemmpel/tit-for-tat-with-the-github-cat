@@ -4,6 +4,10 @@ import holoviews as hv
 import matplotlib.pyplot as plt
 import networkx as nx
 
+import pylab
+from matplotlib.pyplot import pause
+pylab.ion()
+
 #from collections import OrderedDict
 
 import graph_initialization as init
@@ -96,7 +100,7 @@ def color_and_draw_graph(G):
 
     return G
 
-def color_fitness_and_draw_graph(G):
+def color_fitness_and_draw_graph(G, pos):
     '''
     INPUTS:     Graph with strategy node attributes
     OUTPUTS:    Graph where color maps has colors according to 
@@ -109,29 +113,61 @@ def color_fitness_and_draw_graph(G):
     defect_labels = {}
 
     for i in node_labels:
-        node_labels[i] = round(node_labels[i], 4)
+        node_labels[i] = round(node_labels[i], 3)
         if G.node[i]['strategy'] == 'Cooperate':
             coop_labels[i] = node_labels[i]
         else:
             defect_labels[i] = node_labels[i]
 
-    pos = nx.spring_layout(G, iterations=200)
+    #print("There are ", len(coop_labels.keys()), " cooperators and ", len(coop_labels.values()), " coop fitness values")
+    #print("There are ", len(defect_labels.keys()), " defectors and ", len(defect_labels.values()), " defect fitness values")
+
+
+    #fig = pylab.figure()
+    #nx.draw_networkx(G, pos, nodelist=node_labels.keys(), node_color=[fitness*255 for fitness in node_labels.values()], node_shape='^', labels=node_labels)
+
+
+
+    #fig.canvas.draw()
+    #pylab.draw()
+    #pause(2)
+    #pylab.close(fig)
+
+    cmap_type = plt.cm.plasma
+    vmin_val = 0
+    vmax_val = 1
+
+    #Display all types of nodes at once
+    #nx.draw_networkx_nodes(G, pos, nodelist=G.nodes, node_color=[fitness for fitness in nx.get_node_attributes(G,'fitness')], node_shape='^', cmap=plt.cm.Blues)
 
     #Display cooperator nodes
-    nx.draw_networkx_nodes(G, pos, nodelist=coop_labels.keys(), node_color=[fitness for fitness in coop_labels.values()], node_shape='o', cmap=plt.cm.YlGnBu)
+    nx.draw_networkx_nodes(G, pos, nodelist=coop_labels.keys(), node_color=[fitness for fitness in coop_labels.values()], \
+        node_shape='o', vmin=vmin_val, vmax=vmax_val, cmap=cmap_type)
 
     #Display defector nodes
-    nx.draw_networkx_nodes(G, pos, nodelist=defect_labels.keys(), node_color=[fitness for fitness in defect_labels.values()], node_shape='^', cmap=plt.cm.RdPu)
+    nx.draw_networkx_nodes(G, pos, nodelist=defect_labels.keys(), node_color=[fitness for fitness in defect_labels.values()], \
+        node_shape='^', vmin=vmin_val, vmax=vmax_val, cmap=cmap_type)
 
     #Display edges
     nx.draw_networkx_edges(G, pos)
 
     #Display node labels
-    nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_color='y', font_family='sans-serif', font_weight='normal')
+    nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_color='darkgreen', font_family='sans-serif', font_weight='normal')
+
 
     plt.axis('off')
+    pylab.draw()
+
+    sm = plt.cm.ScalarMappable(cmap=cmap_type, norm=plt.Normalize(vmin=vmin_val, vmax=vmax_val))
+    sm._A = []
+    plt.colorbar(sm)
     plt.show()
-    plt.close('all')
+
+    pause(.2)
+
+    plt.gcf().clear()
+
+
 
 
 
