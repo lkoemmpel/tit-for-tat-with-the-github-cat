@@ -172,7 +172,15 @@ def generate_weighted(n, type= 'random', d=0, m=0, periodic=False, with_position
   except ValueError:
     print("The specified graph type was invalid.")
 
-
+def generate_rich_club(parameters):
+  size_club=parameters[0]
+  size_periphery=parameters[1]
+  graph=nx.complete_graph(size_club)
+  for A in range(1,size_club):
+    for B in range(size_club+1,size_club+size_periphery+1):
+      graph.add_edge(A,B)
+  return graph
+  
 '''---------------------
     GRAPH LABELING
 ---------------------'''
@@ -271,6 +279,10 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
   for c in connecting_nodes:
     print("Labeling connecting node ", c)
     G.node[c]['strategy'] = random.choice(strat_list)
+
+def label_dumbel_multiple_cliques(G, set_defectors):
+  for n in G.nodes():
+    print(n)
 
 def label_BD_according_to_one_dim(G, strat_list, width):
   '''
