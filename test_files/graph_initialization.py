@@ -160,7 +160,7 @@ def generate_dumbell_multiple_cliques(m, N, L):
     range_clique=range(k*m+1,(k+1)*m+1)
     for pair in itertools.combinations(range_clique,2):
       a,b = pair[0], pair[1]
-      edges.append( ((k,a),(k,b)) )
+      edges.append( (( (k,k) ,a),( (k,k) ,b)) )
     #edges+= [pair for pair in itertools.combinations(range_clique,2)]
 
   for pair in itertools.combinations(range(N),2):
@@ -333,10 +333,12 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
     print("Labeling connecting node ", c)
     G.node[c]['strategy'] = random.choice(strat_list)
 
-def label_dumbel_multiple_cliques(G, set_cooperators):
+def label_dumbell_multiple_cliques(G, set_cooperators):
   for n in G.nodes():
     #elif type(n[0])==tuple:
     #  G.node[n]['strategy']='Cooperate'
+    print(n)
+    print('***')
     if n[0][0]==n[0][1]:
       if n[0][0] in set_cooperators:
         G.node[n]['strategy']='Cooperate'
@@ -431,14 +433,14 @@ graph[5]=generate_graph([30],'dumbell')
 graph[6]=generate_graph([5,4,2], 'dumbell_multiple')
 graph[7]=generate_graph([5,20],'rich_club')
 
-label_birth_death(graph[5], ['Cooperate','Defect'], 0.5)
+#label_birth_death(graph[5], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[5])
 
-label_birth_death(graph[3], ['Cooperate','Defect'], 0.5)
+#label_birth_death(graph[3], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[3])
 
-#label_dumbel_multiple_cliques(graph[6], {0,3})
-#color_and_draw_graph(graph[6])
+label_dumbell_multiple_cliques(graph[6], {0,3})
+color_and_draw_graph(graph[6])
 
-label_birth_death(graph[7], ['Cooperate','Defect'], 0.5)
+#label_birth_death(graph[7], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[7])

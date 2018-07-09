@@ -94,7 +94,7 @@ def color_and_draw_graph(G):
 
     # draws colored graph
     #plt.ion()
-    nx.draw(G,node_color = color_map,with_labels = True)
+    nx.draw(G,node_color = color_map, with_labels = True)
     plt.show()
     #plt.pause(2.0)
 
