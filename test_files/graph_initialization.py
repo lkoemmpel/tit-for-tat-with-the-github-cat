@@ -348,7 +348,6 @@ def label_dumbell_multiple_cliques(G, set_cooperators):
     else:
       G.node[n]['strategy']='Cooperate'
 
-
 def label_BD_according_to_one_dim(G, strat_list, width):
   '''
     INPUTS: 
@@ -420,19 +419,18 @@ def color_and_draw_graph(G):
 
     return G
 
-
 '''---------------------
     TESTING GRAPHS
 ---------------------'''
-graph={}
+# graph={}
 
-graph[1]=generate_graph([10], 'hypercube')
-graph[2]=generate_graph([10, 5], 'random')
-graph[3]=generate_graph([10,30], 'erdos_renyi')
-graph[4]=generate_graph([20], 'complete')
-graph[5]=generate_graph([30],'dumbell')
-graph[6]=generate_graph([5,4,2], 'dumbell_multiple')
-graph[7]=generate_graph([5,20],'rich_club')
+# graph[1]=generate_graph([10], 'hypercube')
+# graph[2]=generate_graph([10, 5], 'random')
+# graph[3]=generate_graph([10,30], 'erdos_renyi')
+# graph[4]=generate_graph([20], 'complete')
+# graph[5]=generate_graph([30],'dumbell')
+# graph[6]=generate_graph([5,4,2], 'dumbell_multiple')
+# graph[7]=generate_graph([5,20],'rich_club')
 
 #label_birth_death(graph[5], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[5])
