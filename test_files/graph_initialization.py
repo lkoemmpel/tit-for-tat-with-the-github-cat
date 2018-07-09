@@ -38,6 +38,65 @@ def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_
     except ValueError:
         print("The specified lattice type was invalid.")
 
+def generate_graph_new(type = 'random', parameters):
+
+#n, type='random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None
+  '''
+    INPUTS: 
+    
+    type              Type of graph
+    parameters        List of parameters specific to the type of graph
+    periodic          ?
+    with_positions    ?
+    create_using      ?
+
+    OUTPUTS:
+    Graph satisfying the specified parameters and of the specified type
+  '''
+  try:
+    if type == 'hypercube':
+      num_nodes=parameters[0]
+      graph = nx.hypercube_graph(num_nodes)
+      return graph
+
+    elif type == 'random':
+      num_nodes=parameters[0]
+      av_deg=parameters[1]
+      graph = nx.random_regular_graph(av_deg, num_nodes)
+      return graph
+
+    elif type == 'erdos_renyi':
+        num_nodes=parameters[0]
+        edges=parameters[1]
+        graph=nx.erdos_renyi_graph(num_nodes, edges)
+
+    elif type == 'complete':
+      num_nodes=parameters[0]
+      graph = nx.complete_graph(num_nodes)
+
+    elif type == 'dumbell':
+      n=parameters[0]
+      graph=nx.barbell_graph(n//2-1, n-2*(n//2-1))
+
+    elif type == 'dumbell_multiple':
+      size_dumbell=parameters[0]
+      num_dumbell=parameters[1]
+      size_path=parameters[2]
+      #m=10
+      #N=5
+      #L=2
+      graph=generate_dumbell_multiple_cliques(size_dumbell, num_dumbell, size_path)
+
+    elif type == 'rich_club':
+      size_club=parameters[0]
+      size_periphery=parameters[1]
+      graph=generate_rich_club(size_club, size_periphery)
+
+    return graph 
+
+  except ValueError:
+    print("The specified graph type was invalid.")
+
 def generate_graph(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None):
   '''
     INPUTS: 
@@ -64,9 +123,6 @@ def generate_graph(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with
       graph = nx.complete_graph(n)
     elif type == 'dumbell':
       graph=nx.barbell_graph(n//2-1, n-2*(n//2-1))
-      print('*')
-      print('wuuuu')
-      print('*')
     elif type == 'dumbell_multiple':
       m=10
       N=5
@@ -172,15 +228,13 @@ def generate_weighted(n, type= 'random', d=0, m=0, periodic=False, with_position
   except ValueError:
     print("The specified graph type was invalid.")
 
-def generate_rich_club(parameters):
-  size_club=parameters[0]
-  size_periphery=parameters[1]
+def generate_rich_club(size_club, size_periphery):
   graph=nx.complete_graph(size_club)
   for A in range(1,size_club):
     for B in range(size_club+1,size_club+size_periphery+1):
       graph.add_edge(A,B)
   return graph
-  
+
 '''---------------------
     GRAPH LABELING
 ---------------------'''
