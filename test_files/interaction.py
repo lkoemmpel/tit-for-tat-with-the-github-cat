@@ -116,11 +116,15 @@ def interaction_BD(G, payoff_mtx, delta=0, noise=0):
         #they haven't interacted yet
         if (w,v) not in record:
           action_v=action(G, v, noise)
-          action_w=action(G, w,noise)
+          action_w=action(G, w, noise)
           record.add((v,w))
           G.node[v]['payoffs'].append(payoff_mtx[action_v][action_w][0])
           G.node[w]['payoffs'].append(payoff_mtx[action_v][action_w][1])
+<<<<<<< HEAD
+      if len(G.node[v]['payoffs'])!=0:
+=======
       if len(G.node[v]['payoffs']) != 0:
+>>>>>>> bc2f4e51f748807548b52b8974d47cef46ca5651
         G.node[v]['fitness']=Theta(1+delta*sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']))
         #restart payoff list for next round
         G.node[v]['payoffs']=[]

@@ -69,7 +69,8 @@ class game():
         Plots how proportions of each strategy change over time
         '''
         
-        if update_name=='BD':
+        if type(update_name)==str:
+        #if update_name=='BD':
 
             if show_graph:
                 dis.color_fitness_and_draw_graph(G, pos)
@@ -88,7 +89,8 @@ class game():
             for i in range(t):
 
                 #adjust node strategies 
-                birth_death_results = rep.death_birth(G, strat_list, u)
+                birth_death_results = names_to_functions[update_name](G, strat_list, u)
+                #birth_death_results = rep.death_birth(G, strat_list, u)
                 new_graph = birth_death_results[0]
                 new_strategy = birth_death_results[1]
                 old_strategy = birth_death_results[2]
@@ -396,6 +398,7 @@ graph_type = 'dumbell'
 update_name = 'BD'
 
 time_length = 300
+
 number_trials=1
 
 n_lattice = 50
@@ -405,39 +408,43 @@ start_prop_cooperators = .4
 
 
 
+
 '''------------
 TYPES OF GRAPHS
 ------------'''
+
 
 #Lattice
 #G=init.generate_lattice(n_lattice, m_lattice)
 
 #Complete graph
-#G = init.generate_graph(n, graph_type, d, m)
+#G=init.generate_graph([d,m], graph_type)
 
 #Complete/Dumbbell graph
 #G = init.generate_graph(n, graph_type)
 
 #Multiple dumbell
-G=init.generate_dumbell_multiple_cliques(10,5,1)
+#G=init.generate_dumbell_multiple_cliques(10,5,1)
+#G = init.generate_graph(graph_type, [n])
+
+#Multiple dumbell
+G=init.generate_dumbell_multiple_cliques([20,4,3], graph_type)
 
 #Random regular graph
-#G = init.generate_graph(n, graph_type, d)
+#G = init.generate_graph([n,d], graph_type)
 
 #Erdos-Reyni
-#G = init.generate_graph(n, type = 'random', d, 40)
+#G = init.generate_graph([n,d,40], graph_type)
 
 '''--------------
 LABELS
 --------------'''
 
-#init.label_dumbbell_birth_death(G, strat_list)
-
-init.label_birth_death(G, strat_list, start_prop_cooperators)
-#init.label_BD_according_to_one_dim(G, strat_list, d)
 
 #init.label_birth_death(G, strat_list, start_prop_cooperators)
-#init.label_BD_according_to_one_dim(G, strat_list, n_lattice)
+#init.label_BD_according_to_one_dim(G, strat_list, d)
+#init.label_dumbbell_birth_death(G, strat_list)
+init.label_dumbell_multiple_cliques(G, {0,1,3})
 
 #dis.color_and_draw_graph(G)
 
@@ -445,44 +452,25 @@ init.label_birth_death(G, strat_list, start_prop_cooperators)
 TIMESTEP
 --------------'''
 
-'''
-for data_iteration in range(5):
-    #init.label_birth_death(G, strat_list, start_prop_cooperators)
-    G=init.generate_dumbell_multiple_cliques(10,5,1)
-    init.label_birth_death(G, strat_list, start_prop_cooperators)
-    #rep.color_and_draw_graph(G)
+#1                      Test for trial_with_plot
 
-    game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, \
-        update_name= 'BD', plotting = True, show_graph = False, saving = False)
-'''
+# for data_iteration in range(5):
+#     #init.label_birth_death(G, strat_list, start_prop_cooperators)
+#     G=init.generate_dumbell_multiple_cliques(10,5,1)
+#     init.label_birth_death(G, strat_list, start_prop_cooperators)
+#     #rep.color_and_draw_graph(G)
 
-data_iteration=[]
-plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
-
-#    game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, \
-#        update_name= 'BD', plotting = True, show_graph = False, saving = False)
+#     game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, \
+#         update_name= 'BD', plotting = True, show_graph = False, saving = False)
 
 
+#2                      Test for plot_many_trials
+
+#data_iteration=[]
+#plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
 
 
 
-
-
-
-'''
-#Initialize a graph
-G=generate_lattice(4,5)
-game1=game(G, 'DB', 0.5, 0)
-#run birth death process 1000 times
-for t in range(1000):
-    game1.timestep()
-'''
-
-# n=20
-# m=30
-# T=100000
-# G=generate_lattice(n, m, 'triangular', 4)
-# plt.show()
 
 
 
