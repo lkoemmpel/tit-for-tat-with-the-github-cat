@@ -56,7 +56,6 @@ class game():
         self.plotting = plotting
         self.show_graph = show_graph
 
-
     def trial(self, G, n, d, data_iteration, u, t, pos, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False, saving = False, color_fitness=False):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
@@ -396,7 +395,7 @@ n=30
 m = 10
 
 d=10
-graph_type = 'dumbell_multiple'
+graph_type = 'random'
 update_name = 'BD'
 
 time_length = 20
@@ -429,6 +428,7 @@ TYPES OF GRAPHS
 #G = init.generate_graph([n], graph_type)
 
 #Multiple dumbell
+
 #G=init.generate_dumbell_multiple_cliques(10,5,1)
 graph_type = 'random'
 parameters = [10, 3]
@@ -438,11 +438,14 @@ G1 = init.generate_graph(parameters, graph_type)
 #Multiple dumbell
 #G1=init.generate_graph([5,4,2], graph_type)
 
+#G=init.generate_graph([5,4,3], graph_type)
+
+
+#Basic dumbell
 #G2=init.generate_graph([20],'dumbell')
 
-
 #Random regular graph
-#G = init.generate_graph([n,d], graph_type)
+G = init.generate_graph([n,d], graph_type)
 
 #Erdos-Reyni
 #G = init.generate_graph([n,d,40], graph_type)
@@ -452,16 +455,22 @@ LABELS
 --------------'''
 
 
-init.label_birth_death(G1, strat_list, start_prop_cooperators)
+
+init.label_birth_death(G, strat_list, start_prop_cooperators)
+
 #init.label_BD_according_to_one_dim(G, strat_list, d)
 #init.label_dumbbell_birth_death(G, strat_list)
 #init.label_dumbell_multiple_cliques(G1, {0,1,3})
 
 
 
-dis.color_fitness_and_draw_graph(G1, nx.spring_layout(G1))
 
-#dis.color_fitness_and_draw_graph(G1, nx.spring_layout(G1))
+#dis.color_fitness_and_draw_graph(G2, nx.spring_layout(G2))
+
+dis.color_fitness_and_draw_graph(G, nx.spring_layout(G))
+
+
+
 #dis.color_fitness_and_draw_graph(G2, nx.spring_layout(G2))
 
 
@@ -484,9 +493,8 @@ TIMESTEP
 #2                      Test for plot_many_trials
 
 data_iteration=[]
-plot_many_trials(G1, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', num_rep, graph_type, \
-    'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
 
+plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
 
 
 
