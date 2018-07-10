@@ -548,7 +548,9 @@ def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n
 
     return None
 
-
+def plot_for_different_b_over_c(parameters, graph_type, u, t, number_trials, the_strat, num_rep, \
+    update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):
+    return
 '''
 def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, d, i):
     
