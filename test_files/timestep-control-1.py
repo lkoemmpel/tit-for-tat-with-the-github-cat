@@ -257,7 +257,7 @@ def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, nu
     for each in range(number_trials):
         print("Evaluating trial ", number_trials)
         #graph=init.generate_dumbell_multiple_cliques(10,5,1)
-        graph=init.generate_weighted(n, graph_type, d, m)
+        graph=init.generate_weighted([n, d], graph_type)
         init.label_birth_death(graph, strat_list, start_prop_cooperators)
         this_game=game(graph, update_name, t, u, d, plotting, show_graph)
         trial_outcome=this_game.trial(graph, n, d, data_iteration, u, t, nx.spring_layout(G, 1/n**.2), \
@@ -430,9 +430,9 @@ TYPES OF GRAPHS
 #Multiple dumbell
 
 #G=init.generate_dumbell_multiple_cliques(10,5,1)
-graph_type = 'random'
-parameters = [10, 3]
-G1 = init.generate_graph(parameters, graph_type)
+#graph_type = 'random'
+#parameters = [10, 3]
+#G = init.generate_graph(parameters, graph_type)
 
 
 #Multiple dumbell
