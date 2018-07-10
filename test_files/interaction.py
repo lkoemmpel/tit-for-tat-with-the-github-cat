@@ -173,7 +173,7 @@ GRAPH FOR TESTING
 -------------------'''
 
 strat_list=['Cooperate', 'Defect']
-G=init.generate_lattice(3,4)
+G=init.generate_graph([3,4], 'triangular_lattice')
 init.label_birth_death(G, strat_list)
 init.label_utkovski(G)
 

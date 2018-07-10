@@ -16,6 +16,8 @@ import reproduction as rep
 import interaction as inter
 import display as dis
 
+from matplotlib.pyplot import pause
+
 # Print iterations progress
 def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
     """
@@ -110,6 +112,101 @@ class game():
                 payoff_mtx = [ [(b-c, b-c), (-c, b)] , [(b, -c), (0,0)] ]
                 coop_index={'Cooperate':0, 'Defect':1}
                 new_graph = inter.interaction_depends_fitness(new_graph, payoff_mtx, delta, noise=0.5)
+                #print(nx.get_node_attributes(G, 'fitness'))
+                #print(nx.get_node_attributes(G, 'strategy'))
+                #print('\n')
+
+                if self.show_graph:
+                    if i%1 == 0:
+                        if self.color_fitness:
+                            dis.color_fitness_and_draw_graph(new_graph, pos, reproducing_nodes)
+                        else:
+                            # Creates picture of graph 
+                            dis.color_and_draw_graph(new_graph)
+
+                if self.plotting:
+                    for index in range(len(old_strategies)):
+                        new=new_strategies[index]
+                        old=old_strategies[index]
+                        strat_data_dict[new]+=1
+                        strat_data_dict[old]-=1
+
+                    # if new_strategy != None:
+                    #     # update tallies for each strategy
+                    #     strat_data_dict[new_strategy] += 1
+                    #     strat_data_dict[old_strategy] -= 1
+
+                    # update strategy proportions for each strategy
+                    for strat in strat_data_dict:
+                        concentrations[strat].append(strat_data_dict[strat]/nx.number_of_nodes(G))
+
+                    #print("Current time data is", time_data)
+                    time_data.append(i+1)
+
+                    #print(time_data)
+                    #print(final_data)
+                    #print("Plotting data at time ", t)
+                    #plot_proportion_data(time_data, final_data)
+
+                graph = new_graph
+
+            #if self.plotting:
+            #    plot_proportion_data(time_data, final_data, saving, graph_type,t, update_name, n, u, d, data_iteration)
+
+            return new_graph, concentrations, self.plotting
+    def lattice_density_and_payoff_trial(self, pos, num_rep, graph_type = 'random'):
+        '''
+        INPUTS:     G: networkx graph object with fitness and strategy attributes
+                    u: rate of mutation for reproduction
+                    t: number of times to have stratgies update
+
+        OUTPUTS:    new_graph: updated networkx graph object where strategies have been updated
+
+        Prints graph at every stage of strategy updating
+        Plots how proportions of each strategy change over time
+        '''
+
+        G=self.graph
+        u=self.u
+        t=self.t
+
+
+        if type(self.name)==str:
+        #if update_name=='BD':
+
+            if self.show_graph:
+                dis.color_fitness_and_draw_graph(G, pos)
+                #print(nx.get_node_attributes(G, 'strategy'))
+                #print("-----------------------------------------------")
+
+            if self.plotting:
+                time_data=[]
+                strat_data_dict, concentrations= get_histogram_and_concentration_dict(G, strat_list)
+                # strat_data_dict maps      strategy ---> freq(strat)
+                # concentrations maps       strategy ---> matrix 
+                #                                         entry n,t : freq(strat)/number(nodes)
+                #                                         at trial n, time t
+
+            for i in range(t):
+                #------------
+                #REPRODUCTION
+                #------------ 
+                birth_death_results = names_to_functions[update_name](G, strat_list, u, num_rep)
+                #naming the results from rep
+                new_graph = birth_death_results[0]
+                new_strategies=birth_death_results[1]
+                old_strategies = birth_death_results[2]
+                reproducing_nodes = birth_death_results[3]
+
+                #new_strategy = birth_death_results[1]
+                #old_strategy = birth_death_results[2]
+
+                #------------
+                #INTERACTION
+                #------------
+                payoff_mtx = [ [(b-c, b-c), (-c, b)] , [(b, -c), (0,0)] ]
+                coop_index={'Cooperate':0, 'Defect':1}
+                new_graph = inter.interaction_BD(new_graph, payoff_mtx, delta, noise=0)
                 #print(nx.get_node_attributes(G, 'fitness'))
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print('\n')
@@ -273,9 +370,19 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
     for each in range(number_trials):
         print("Evaluating trial ", each)
         graph=init.generate_graph(parameters, graph_type)
-        init.label_birth_death(graph, strat_list, start_prop_cooperators)
+
+        #init.label_birth_death(graph, strat_list, start_prop_cooperators)
+        init.label_BD_according_to_one_dim(graph, strat_list, parameters[1])        
+
         this_game=game(graph, update_name, t, u, d, plotting, show_graph, saving, color_fitness)
-        trial_outcome = this_game.trial(nx.spring_layout(graph, 1/n**.2), num_rep, graph_type)
+
+
+        if graph_type == 'triangular_lattice':
+            pos = dict( (n, n) for n in graph.nodes() )
+        else:
+            pos = nx.spring_layout(graph)
+
+        trial_outcome = this_game.trial(pos, num_rep, graph_type)
         
 
         #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
@@ -314,6 +421,8 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
 
     #show plot
     plt.show()   
+    print("Attempting to show plot -----------------")
+    pause(60)
     #plt.close()     
 
     if saving:
@@ -322,6 +431,83 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
             str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
     #plt.close()
 
+    return None
+
+
+
+
+def plot_lattice_density_and_payoff(parameters, graph_type, rho, u, number_trials, \
+    update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
+
+    #matrix in which entry n,t is the concentration 
+    #of the_strat at time t in trial n
+    result_matrix=[]
+    #run the game for each trial
+    for each in range(number_trials):
+        print("Evaluating trial ", each)
+        graph=init.generate_graph(parameters, graph_type)
+
+        init.label_birth_death(graph, strat_list, start_prop_cooperators)
+        #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1])        
+
+        this_game=game(graph, update_name, rho, u, d, plotting, show_graph, saving, color_fitness)
+
+
+        if graph_type == 'triangular_lattice':
+            pos = dict( (n, n) for n in graph.nodes() )
+        else:
+            pos = nx.spring_layout(graph)
+
+        trial_outcome = this_game.lattice_density_and_payoff_trial(pos, num_rep, graph_type)
+        
+
+        #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
+        #    graph_type, update_name, plotting, show_graph, saving, color_fitness)
+        #append record for this trial of the concentrations of the_strat
+        
+        result_matrix.append(trial_outcome[1][the_strat])
+
+
+    #scatter plot X axis! 
+    X=[tictoc for tictoc in range(rho)]
+    #three lines to plot: average, and pm stdev
+    Yavg, Yplus, Yminus=[], [], []
+    for tictoc in range(rho):
+        at_time_t=[trial[tictoc] for trial in result_matrix]
+        #average at time t over all the trials
+        average=sum(at_time_t)/len(at_time_t)
+        stdev=np.std(at_time_t)
+        Yavg.append(average)
+        Yplus.append(average+stdev)
+        Yminus.append(average-stdev)
+
+    #plot the 3 lines
+    plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
+    plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
+    plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
+    
+    #change axes ranges
+    plt.xlim(0,rho-1)
+    plt.ylim(0,1)
+    #add title
+    #plt.title('Relationship between time and proportion of nodes with strategy ' + the_strat + ' in '+str(number_trials)+ ' trials')
+    #add x and y labels
+    plt.ylabel('Proportion of nodes with strategy ' + the_strat)
+    plt.xlabel('Population density')
+
+    #show plot
+    plt.show()   
+    pause(600)
+
+    if saving:
+    #    print("Attempting to save plot ", data_iteration)+1
+        plt.savefig(graph_type + '_' + \
+                    update_name + '_' + \
+                    'n=' + str(n) + "_" + \
+                    'm= ', str(m) + '_' + \
+                    'u=' + str(u) + '_' + \
+                    str(number_trials) + 'trials' + '_' + \
+                    'b/c=' + str(b) + '.png')
     return None
 
 def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n, u, d, data_iteration):
@@ -346,7 +532,9 @@ def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n
             plt.xlabel('Time')
 
             #show plot
-            plt.show()   
+            plt.show()  
+
+ 
             #plt.close()     
 
             if saving:
@@ -410,43 +598,34 @@ def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, 
 strat_list = ['Cooperate', 'Defect']
 u = .4
 
-b = 2
+b = 1
 c = 1
 delta = .2
 
-n=20
+n=10
 m = 10
-d=7
-graph_type = 'random'
+d=6
+graph_type = 'triangular_lattice'
+
 update_name = 'BD'
 #list of parameters that will be used to build graph
-parameters = [n,d]
+parameters = [n,m]
 
-time_length = 120
+time_length = 400
 
 number_trials=1
 
 n_lattice = 50
 m_lattice = 50
 
-start_prop_cooperators = .4
+start_prop_cooperators = .2
 
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
 
-
-
-
-
-
-
 '''------------
 TYPES OF GRAPHS
 ------------'''
-
-
-#Lattice
-#G=init.generate_lattice(n_lattice, m_lattice)
 
 #Erdos-Renyi graph
 #G=init.generate_graph([d,m], graph_type)
@@ -460,15 +639,11 @@ TYPES OF GRAPHS
 #Multiple dumbell
 #G1=init.generate_graph([5,4,2], graph_type)
 
-#G=init.generate_graph([5,4,3], graph_type)
-
-
 #Basic dumbell
 #G2=init.generate_graph([20],'dumbell')
 
 #Random regular graph
 #G = init.generate_graph([n,d], graph_type)
-
 
 #Erdos-Reyni
 #G = init.generate_graph([n,d,40], graph_type)
@@ -501,7 +676,13 @@ TIMESTEP
 
 
 #2                      Test for plot_many_trials
-plot_many_trials(parameters, graph_type, u, time_length, number_trials, 'Cooperate', num_rep, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+c=1
+for b in range(20):
+    plot_lattice_density_and_payoff(parameters, graph_type, rho, u, number_trials, \
+    update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)
+
+
+#plot_many_trials(parameters, graph_type, u, time_length, number_trials, 'Cooperate', num_rep, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
 
 
 

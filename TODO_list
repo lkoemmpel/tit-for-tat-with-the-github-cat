@@ -1,6 +1,13 @@
 
 
 -----------------TODO List---------------------------
+rewrite interaction
+	people cooperate more with neighbors with high fitness
+	implement interaction techniques from Utkovski paper
+	run multiple clique dombell simulation w/o display 
+
+
+
 R 	Keep an eye on fitness label changes
 
 Add noise to interaction
