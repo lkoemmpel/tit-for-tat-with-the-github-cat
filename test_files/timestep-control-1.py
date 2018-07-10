@@ -106,15 +106,12 @@ class game():
                 old_strategies = birth_death_results[2]
                 reproducing_nodes = birth_death_results[3]
 
-                #new_strategy = birth_death_results[1]
-                #old_strategy = birth_death_results[2]
-
                 #------------
                 #INTERACTION
                 #------------
                 payoff_mtx = [ [(b-c, b-c), (-c, b)] , [(b, -c), (0,0)] ]
                 coop_index={'Cooperate':0, 'Defect':1}
-                new_graph = inter.interaction_BD(new_graph, payoff_mtx, delta, noise=0)
+                new_graph = inter.interaction_depends_fitness(new_graph, payoff_mtx, delta, noise=0.5)
                 #print(nx.get_node_attributes(G, 'fitness'))
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print('\n')
@@ -603,6 +600,7 @@ n=10
 m = 10
 d=6
 graph_type = 'triangular_lattice'
+
 update_name = 'BD'
 #list of parameters that will be used to build graph
 parameters = [n,m]
@@ -630,7 +628,6 @@ TYPES OF GRAPHS
 #G = init.generate_graph([n], graph_type)
 
 #Multiple dumbell
-
 #G=init.generate_dumbell_multiple_cliques(10,5,1)
 
 #Multiple dumbell
