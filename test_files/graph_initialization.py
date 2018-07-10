@@ -14,31 +14,6 @@ import itertools
     GRAPH GENERATORS
 ---------------------'''
 
-def generate_lattice(n, m, type = 'triangular', dim = 2, periodic = False, with_positions = True, create_using = None):
-    '''
-    INPUTS: 
-    n               Number of nodes horizontally
-    m               Number of nodes vertically
-    type            Type of graph
-    dim             Dimension
-    periodic        Bool: is the graph periodic?
-    with_positions
-    create_using
-
-    OUTPUTS:
-    Lattice triangular graph with the specified parameters
-    '''
-    try:
-        if dim == 2:
-          if type == 'triangular':
-              lattice = nx.triangular_lattice_graph(n, m, periodic=False, create_using=None)
-              #nx.draw(lattice)
-              #plt.show()
-              return lattice
-    except ValueError:
-        print("The specified lattice type was invalid.")
-
-
 def generate_graph(parameters, type = 'random'):
 
   #n, type='random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None
@@ -53,6 +28,12 @@ def generate_graph(parameters, type = 'random'):
     Graph satisfying the specified parameters and of the specified type
   '''
   try:
+    if type == 'triangular_lattice':
+      n_dim = parameters[0]
+      m_dim = parameters[1]
+      graph = nx.triangular_lattice_graph(n_dim, m_dim)
+      return graph
+
     if type == 'hypercube':
       num_nodes=parameters[0]
       graph = nx.hypercube_graph(num_nodes)
