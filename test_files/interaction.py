@@ -36,20 +36,29 @@ def bernoulli(p):
           return 1
      return 0
 
-def action(G, v, noise):
+def action(G, intention_v, noise):
   #noise=Pr[node does not do intended action]
   #changes strategy with Pr=noise
-  strat=G.node[v]['strategy']
+  action=intention_v
   if random.random()<=noise:
-    if strat=='Cooperate':
-      strat='Defect'
-    elif strat=='Defect':
-      strat='Cooperate'
-  return coop_index[strat]
+    if action=='Cooperate':
+      action='Defect'
+    elif action=='Defect':
+      action='Cooperate'
+  return coop_index[action]
+
+def intention(G, v):
+  if G.node[v]['strategy'] == 'Cooperate':
+    return 'Cooperate'
+  elif G.node[v]['strategy'] == 'Defect':
+    return 'Defect'
 
 def Theta(val):
     V=1+math.exp(-val)
     return 1/V
+
+def f1(x):
+  return x**2
 
 '''-------------------
 KINDS OF INTERACTION PROCESSES
@@ -115,8 +124,8 @@ def interaction_BD(G, payoff_mtx, delta=0, noise=0):
       if occurs:
         #they haven't interacted yet
         if (w,v) not in record:
-          action_v=action(G, v, noise)
-          action_w=action(G, w, noise)
+          action_v=action(G, intention(G,v), noise)
+          action_w=action(G, intention(G,w), noise)
           record.add((v,w))
           G.node[v]['payoffs'].append(payoff_mtx[action_v][action_w][0])
           G.node[w]['payoffs'].append(payoff_mtx[action_v][action_w][1])
@@ -125,7 +134,40 @@ def interaction_BD(G, payoff_mtx, delta=0, noise=0):
         #restart payoff list for next round
         G.node[v]['payoffs']=[]
   return G
-     
+
+def interaction_depends_fitness(G, payoff_mtx, delta=0, noise=0, function=f1):
+  D={}
+  #D[(A,B)]=whether A cooperates with B or not
+  for a in nx.nodes(G):
+    for b in G.neighbors(a):
+      if random.random()<function(G.node[b]['fitness']):
+        D[(a,b)]='Defect'
+      else:
+        D[(a,b)]='Cooperate'
+  for a in nx.nodes(G):
+    for b in G.neighbors(a):
+      action_a=action(G, D[(a,b)], noise)
+      action_b=action(G, D[(b,a)], noise)
+      G.node[a]['payoffs'].append(payoff_mtx[action_a][action_b][0])
+      G.node[b]['payoffs'].append(payoff_mtx[action_a][action_b][1])
+  for v in nx.nodes(G):
+    if len(G.node[v]['payoffs']) != 0:
+      G.node[v]['fitness']=Theta(1+delta*sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']))
+      G.node[v]['payoffs']=[]
+  return G
+
+def interaction_some_edges_strat(G,k, num_interactions, matrices, delta=0, noise=0):
+  edges=nx.edges(G)
+  selected=random.sample(nx.edges(G), num_interactions)
+  #choose k edges among the ones in the graph
+  return
+
+def interaction_some_edges_fitness(G,k, num_interactions, matrices, delta=0, noise=0):
+  edges=nx.edges(G)
+  selected=random.sample(nx.edges(G), num_interactions)
+  #choose k edges among the ones in the graph
+  return
+
 '''-------------------
 GRAPH FOR TESTING
 -------------------'''

@@ -84,9 +84,12 @@ def generate_graph(parameters, type = 'random'):
       graph=generate_dumbell_multiple_cliques(size_dumbell, num_dumbell, size_path)
 
     elif type == 'rich_club':
-      size_club=parameters[0]
-      size_periphery=parameters[1]
-      graph=generate_rich_club(size_club, size_periphery)
+      size_club = parameters[0]
+      size_periphery = parameters[1]
+      prob_rp = parameters[2]
+      prob_rr = parameters[3]
+      prob_pp = parameters[4]
+      graph=generate_rich_club(size_club, size_periphery, prob_rp, prob_rr, prob_pp)
 
     return graph 
 
@@ -184,6 +187,7 @@ def generate_dumbell_multiple_cliques(m, N, L):
   for n in G.nodes():
     G.node[n]['coord']=n
   G=nx.convert_node_labels_to_integers(G)
+
   return G
 
 def generate_weighted(n, type= 'random', d=0, m=0, periodic=False, with_positions=True, create_using=None):
@@ -229,11 +233,25 @@ def generate_weighted(n, type= 'random', d=0, m=0, periodic=False, with_position
   except ValueError:
     print("The specified graph type was invalid.")
 
-def generate_rich_club(size_club, size_periphery):
+def generate_rich_club(size_club, size_periphery, prob_rp=1, prob_rr=1, prob_pp=0):
   graph=nx.complete_graph(size_club)
   for A in range(size_club):
     for B in range(size_club+1,size_club+size_periphery+1):
-      graph.add_edge(A,B)
+      #add edge with Pr[rich<->poor]
+      if random.random()<prob_rp:
+        graph.add_edge(A,B)
+  for r_1 in range(size_club):
+    for r_2 in range(size_club):
+      m , M = min(r_1,r_2), max(r_1,r_2)
+      #add edge with Pr[rich<->rich]
+      if random.random()<prob_rr:
+        graph.add_edge(m,M)
+  for p_1 in range(size_club+1,size_club+size_periphery+1):
+    for p_2 in range(size_club+1,size_club+size_periphery+1):
+      m, M = min(p_1,p_2), max(p_1,p_2)
+      #add edge with Pr[poor<->poor]
+      if random.random()<prob_pp:
+        graph.add_edge(m,M)
   return graph
 
 
@@ -423,7 +441,7 @@ def color_and_draw_graph(G):
     TESTING GRAPHS
 ---------------------'''
 
-# graph={}
+#graph={}
 
 # graph[1]=generate_graph([10], 'hypercube')
 # graph[2]=generate_graph([10, 5], 'random')
@@ -431,7 +449,7 @@ def color_and_draw_graph(G):
 # graph[4]=generate_graph([20], 'complete')
 # graph[5]=generate_graph([30],'dumbell')
 # graph[6]=generate_graph([5,4,2], 'dumbell_multiple')
-# graph[7]=generate_graph([5,20],'rich_club')
+#graph[7]=generate_graph([10,30, .8,.999, .001],'rich_club')
 
 
 #label_birth_death(graph[5], ['Cooperate','Defect'], 0.5)
