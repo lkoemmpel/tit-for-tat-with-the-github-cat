@@ -41,22 +41,26 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
 names_to_functions={'BD': rep.birth_death, 'DB': rep.death_birth}
 
 class game():
-    def __init__(self, graph, name, t, u=0, delta=0, plotting = False, show_graph = False ):
+    def __init__(self, graph, name, t, u=0, delta=0, plotting = False, show_graph = False, saving=False, color_fitness=False):
         self.graph=graph
         #name of the game
         self.name=name
-
-        #What does this do?
-        #self.strategy_update=strategy_update(graph, u, strat_list)
-        #self.fitness_update=interaction_process(graph, 2, 1)
-
+        #mutation rate
         self.u = u
+        #strength of selection
         self.delta = delta
+        #time of a trial
         self.t = t
+        #are we going to plot?
         self.plotting = plotting
+        #do we want to show graph?
         self.show_graph = show_graph
+        #do we want to save images?
+        self.saving=saving
+        #do we want to use a heat map for fitness?
+        self.color_fitness=color_fitness
 
-    def trial(self, G, n, d, data_iteration, u, t, pos, graph_type = 'random', update_name = 'BD', plotting = False, show_graph = False, saving = False, color_fitness=False):
+    def trial(self, pos, num_rep, graph_type = 'random'):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -67,18 +71,22 @@ class game():
         Prints graph at every stage of strategy updating
         Plots how proportions of each strategy change over time
         '''
-        
-        if type(update_name)==str:
+
+        G=self.graph
+        u=self.u
+        t=self.t
+
+
+        if type(self.name)==str:
         #if update_name=='BD':
 
-            if show_graph:
+            if self.show_graph:
                 dis.color_fitness_and_draw_graph(G, pos)
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print("-----------------------------------------------")
 
-            if plotting:
+            if self.plotting:
                 time_data=[]
-
                 strat_data_dict, concentrations= get_histogram_and_concentration_dict(G, strat_list)
                 # strat_data_dict maps      strategy ---> freq(strat)
                 # concentrations maps       strategy ---> matrix 
@@ -86,15 +94,21 @@ class game():
                 #                                         at trial n, time t
 
             for i in range(t):
-
-                #adjust node strategies 
-                birth_death_results = names_to_functions[update_name](G, strat_list, u)
-                #birth_death_results = rep.death_birth(G, strat_list, u)
+                #------------
+                #REPRODUCTION
+                #------------ 
+                birth_death_results = names_to_functions[update_name](G, strat_list, u, num_rep)
+                #naming the results from rep
                 new_graph = birth_death_results[0]
-                new_strategy = birth_death_results[1]
-                old_strategy = birth_death_results[2]
+                new_strategies=birth_death_results[1]
+                old_strategies = birth_death_results[2]
 
-                #play the interaction game
+                #new_strategy = birth_death_results[1]
+                #old_strategy = birth_death_results[2]
+
+                #------------
+                #INTERACTION
+                #------------
                 payoff_mtx = [ [(b-c, b-c), (-c, b)] , [(b, -c), (0,0)] ]
                 coop_index={'Cooperate':0, 'Defect':1}
                 new_graph = inter.interaction_BD(new_graph, payoff_mtx, delta, noise=0)
@@ -102,20 +116,25 @@ class game():
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print('\n')
 
-                if show_graph:
+                if self.show_graph:
                     if i%1 == 0:
-                        if color_fitness:
+                        if self.color_fitness:
                             dis.color_fitness_and_draw_graph(new_graph, pos)
                         else:
                             # Creates picture of graph 
                             dis.color_and_draw_graph(new_graph)
 
+                if self.plotting:
+                    for index in range(len(old_strategies)):
+                        new=new_strategies[index]
+                        old=old_strategies[index]
+                        strat_data_dict[new]+=1
+                        strat_data_dict[old]-=1
 
-                if plotting:
-                    if new_strategy != None:
-                        # update tallies for each strategy
-                        strat_data_dict[new_strategy] += 1
-                        strat_data_dict[old_strategy] -= 1
+                    # if new_strategy != None:
+                    #     # update tallies for each strategy
+                    #     strat_data_dict[new_strategy] += 1
+                    #     strat_data_dict[old_strategy] -= 1
 
                     # update strategy proportions for each strategy
                     for strat in strat_data_dict:
@@ -127,17 +146,16 @@ class game():
                     #print(time_data)
                     #print(final_data)
                     #print("Plotting data at time ", t)
-                    #rep.plot_proportion_data(time_data, final_data)
+                    #plot_proportion_data(time_data, final_data)
 
-                #print(new_graph.adj)
                 graph = new_graph
-            #if plotting:
+
+            #if self.plotting:
             #    plot_proportion_data(time_data, final_data, saving, graph_type,t, update_name, n, u, d, data_iteration)
 
-            return new_graph, concentrations, plotting
+            return new_graph, concentrations, self.plotting
 
-    def trial_with_plot(G, n, d, data_iteration, u, t, num_rep = 1, graph_type = 'random', \
-        update_name = 'BD', plotting = False, show_graph = False, saving = False):
+    def trial_with_plot(G, n, d, data_iteration, u, t, num_rep = 1, graph_type = 'random'):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -148,13 +166,16 @@ class game():
         Prints graph at every stage of strategy updating
         Plots how proportions of each strategy change over time
         '''
-        if update_name=='BD':
-            if show_graph:
+        G=self.graph
+        n=len(list(nx.nodes(G)))
+
+        if self.name=='BD':
+            if self.show_graph:
                 rep.color_and_draw_graph(G)
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print("-----------------------------------------------")
 
-            if plotting:
+            if self.plotting:
                 time_data = [0]
                 final_data = {}
                 proportions_dict = {}
@@ -191,13 +212,13 @@ class game():
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print('\n')
 
-                if show_graph:
+                if self.show_graph:
                     if i%100 ==0:
                         # Creates picture of graph 
                         dis.color_fitness_and_draw_graph(new_graph)
 
 
-                if plotting:
+                if self.plotting:
                     # update tallies for each strategy
                     strat_data_dict[new_strategy] += 1
                     strat_data_dict[old_strategy] -= 1
@@ -217,7 +238,7 @@ class game():
                 #print(new_graph.adj)
                 graph = new_graph
 
-            if plotting:
+            if self.plotting:
                 plot_proportion_data(time_data, final_data, saving, graph_type,t, update_name, n, u, d, data_iteration)
 
             #rep.color_and_draw_graph(new_graph)
@@ -244,27 +265,29 @@ def get_histogram_and_concentration_dict(G, strat_list):
         conc_dict[strat].append(histo_dict[strat]/nx.number_of_nodes(G))
     return histo_dict, conc_dict
 
-def plot_many_trials(G, n, d, data_iteration, u, t, number_trials, the_strat, num_rep, graph_type = 'random', \
+def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num_rep, \
     update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
-    '''
-    matrix in which entry n,t is the concentration 
-    of the_strat at time t in trial n
-    '''
+
     #matrix in which entry n,t is the concentration 
     #of the_strat at time t in trial n
     result_matrix=[]
     #run the game for each trial
     for each in range(number_trials):
-        print("Evaluating trial ", number_trials)
-        #graph=init.generate_dumbell_multiple_cliques(10,5,1)
-        graph=init.generate_weighted(n, graph_type, d, m)
+        print("Evaluating trial ", each)
+        graph=init.generate_graph(parameters, graph_type)
         init.label_birth_death(graph, strat_list, start_prop_cooperators)
-        this_game=game(graph, update_name, t, u, d, plotting, show_graph)
-        trial_outcome=this_game.trial(graph, n, d, data_iteration, u, t, nx.spring_layout(G, 1/n**.2), \
-            graph_type, update_name, plotting, show_graph, saving, color_fitness)
+        this_game=game(graph, update_name, t, u, d, plotting, show_graph, saving, color_fitness)
+        trial_outcome = this_game.trial(nx.spring_layout(graph, 1/n**.2), num_rep, graph_type)
+        
+
+        #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
+        #    graph_type, update_name, plotting, show_graph, saving, color_fitness)
         #append record for this trial of the concentrations of the_strat
+        
         result_matrix.append(trial_outcome[1][the_strat])
-    #scatter plot
+
+
+    #scatter plot X axis! 
     X=[tictoc for tictoc in range(t)]
     #three lines to plot: average, and pm stdev
     Yavg, Yplus, Yminus=[], [], []
@@ -393,10 +416,11 @@ delta = .2
 
 n=30
 m = 10
-
 d=10
 graph_type = 'random'
 update_name = 'BD'
+#list of parameters that will be used to build graph
+parameters = [n,d]
 
 time_length = 20
 
@@ -409,6 +433,9 @@ start_prop_cooperators = .4
 
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
+
+
+
 
 
 
@@ -430,9 +457,7 @@ TYPES OF GRAPHS
 #Multiple dumbell
 
 #G=init.generate_dumbell_multiple_cliques(10,5,1)
-graph_type = 'random'
-parameters = [10, 3]
-G1 = init.generate_graph(parameters, graph_type)
+#G1 = init.generate_graph(parameters, graph_type)
 
 
 #Multiple dumbell
@@ -445,7 +470,8 @@ G1 = init.generate_graph(parameters, graph_type)
 #G2=init.generate_graph([20],'dumbell')
 
 #Random regular graph
-G = init.generate_graph([n,d], graph_type)
+#G = init.generate_graph([n,d], graph_type)
+
 
 #Erdos-Reyni
 #G = init.generate_graph([n,d,40], graph_type)
@@ -454,24 +480,11 @@ G = init.generate_graph([n,d], graph_type)
 LABELS
 --------------'''
 
-
-
-init.label_birth_death(G, strat_list, start_prop_cooperators)
-
+#init.label_birth_death(G, strat_list, start_prop_cooperators)
 #init.label_BD_according_to_one_dim(G, strat_list, d)
 #init.label_dumbbell_birth_death(G, strat_list)
 #init.label_dumbell_multiple_cliques(G1, {0,1,3})
-
-
-
-
-#dis.color_fitness_and_draw_graph(G2, nx.spring_layout(G2))
-
-dis.color_fitness_and_draw_graph(G, nx.spring_layout(G))
-
-
-
-#dis.color_fitness_and_draw_graph(G2, nx.spring_layout(G2))
+#dis.color_fitness_and_draw_graph(G, nx.spring_layout(G))
 
 
 '''-------------
@@ -491,10 +504,7 @@ TIMESTEP
 
 
 #2                      Test for plot_many_trials
-
-data_iteration=[]
-
-plot_many_trials(G, n, d, data_iteration, u, time_length, number_trials, 'Cooperate', graph_type, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+plot_many_trials(parameters, graph_type, u, time_length, number_trials, 'Cooperate', num_rep, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
 
 
 
