@@ -439,58 +439,52 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
 
 
 
-def plot_lattice_density_and_payoff(parameters, graph_type, rho, u, number_trials, \
+def plot_lattice_density_and_payoff(parameters, graph_type, u, max_b, \
     update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
 
-    #matrix in which entry n,t is the concentration 
-    #of the_strat at time t in trial n
+    #matrix in which entry n,rho is the concentration 
+    #of the_strat at population density rho when b=n
     result_matrix=[]
-    #run the game for each trial
-    for each in range(number_trials):
-        print("Evaluating trial ", each)
+    #run the game for each value of b
+    for b in range(max_b*10):
+        print("Plotting b=", b)
         graph=init.generate_graph(parameters, graph_type)
 
         init.label_birth_death(graph, strat_list, start_prop_cooperators)
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1])        
 
-        this_game=game(graph, update_name, rho, u, d, plotting, show_graph, saving, color_fitness)
+        this_game=game(graph, update_name, u, d, plotting, show_graph, saving, color_fitness)
 
 
         if graph_type == 'triangular_lattice':
+            # Use a dictionary to make graph positioning homogenous
             pos = dict( (n, n) for n in graph.nodes() )
         else:
             pos = nx.spring_layout(graph)
 
-        trial_outcome = this_game.lattice_density_and_payoff_trial(pos, num_rep, graph_type)
+        # run a timestep of the game where reproduction and interaction are called 
+        trial_outcome = this_game.lattice_density_and_payoff_trial(pos, num_rep, graph_type, \
+            update_name, plotting, show_graph, saving, color_fitness)
         
-
-        #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
-        #    graph_type, update_name, plotting, show_graph, saving, color_fitness)
         #append record for this trial of the concentrations of the_strat
-        
         result_matrix.append(trial_outcome[1][the_strat])
 
 
-    #scatter plot X axis! 
-    X=[tictoc for tictoc in range(rho)]
-    #three lines to plot: average, and pm stdev
-    Yavg, Yplus, Yminus=[], [], []
+    #Density values for the X axis 
+    #X values denote the percentage of the lattice that is filled in 
+    X=[tictoc for tictoc in range(100)]
+
     for tictoc in range(rho):
         at_time_t=[trial[tictoc] for trial in result_matrix]
-        #average at time t over all the trials
-        average=sum(at_time_t)/len(at_time_t)
-        stdev=np.std(at_time_t)
-        Yavg.append(average)
-        Yplus.append(average+stdev)
-        Yminus.append(average-stdev)
 
-    #plot the 3 lines
-    plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
-    plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
-    plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
+
+    #plot the line for every value of b
+    for b in range(max_b*100):
+        plt.plot(X, Yavg, color='b/100', marker='', linestyle = '-')
+
     
     #change axes ranges
-    plt.xlim(0,rho-1)
+    plt.xlim(0,1)
     plt.ylim(0,1)
     #add title
     #plt.title('Relationship between time and proportion of nodes with strategy ' + the_strat + ' in '+str(number_trials)+ ' trials')
@@ -680,9 +674,9 @@ TIMESTEP
 
 #2                      Test for plot_many_trials
 c=1
-for b in range(20):
-    plot_lattice_density_and_payoff(parameters, graph_type, rho, u, number_trials, \
-    update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)
+b=1
+plot_lattice_density_and_payoff(parameters, graph_type, u, max_b, \
+update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)
 
 
 #plot_many_trials(parameters, graph_type, u, time_length, number_trials, 'Cooperate', num_rep, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
