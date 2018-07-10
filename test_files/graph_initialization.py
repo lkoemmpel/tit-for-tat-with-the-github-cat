@@ -77,7 +77,6 @@ def generate_graph(parameters, type = 'random'):
   except ValueError:
     print("The specified graph type was invalid.")
 
-
 def generate_graph_original(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None):
   '''
     INPUTS: 
@@ -391,6 +390,32 @@ def label_utkovski(G):
     #cooperative_state = probability of helping another node
     G.node[n]['coop-state'] = random.uniform(0,1)
 
+def label_more_strategies(G, strat_list, dist_prob_strats=None):
+  for n in nx.nodes(G):
+    #-----------------
+    #LABEL FOR STRATEGY
+    #-----------------
+    if dist_prob_strats:
+      #dist_prob_strats is a dictionary that maps
+      #strategy----> Pr [chosen by a node] ; sum values is 1
+      cutoff=random.random()
+      prev=0
+      sum_now=0
+      for strat in strat_list:
+        prev=sum_now
+        sum_now+=dist_prob_strats[strat]
+        if prev<cutoff<sum_now:
+          G.node[n]['strategy']=strat
+    else:
+      G.node[n]['strategy']=random.choice(strat_list)
+    #--------------
+    #LABEL FOR ASSESSMENT
+    #--------------
+    #memory
+    G.node[n]['assessment']='good'
+    G.node[n]['memory']=('helped','good')
+    G.node[n]['fitness']=random.random()
+    G.node[n]['payoffs']=[]
 
 '''---------------------
     FROM DISPLAY.PY

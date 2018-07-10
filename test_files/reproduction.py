@@ -262,9 +262,6 @@ def imitation(G, strat_list, u):
         G.node[replaced]['strategy']=G.node[reproduced]['strategy']
     return [G, G.node[replaced]['strategy'], old_strategy]
 
-
-
-
 # The following code may be modified to ''
 '''
 def color_graph(G):
