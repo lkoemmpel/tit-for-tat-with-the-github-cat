@@ -100,7 +100,7 @@ def color_and_draw_graph(G):
 
     return G
 
-def color_fitness_and_draw_graph(G, pos):
+def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None):
     '''
     INPUTS:     Graph with strategy node attributes
     OUTPUTS:    Graph where color maps has colors according to 
@@ -119,23 +119,30 @@ def color_fitness_and_draw_graph(G, pos):
         else:
             defect_labels[i] = node_labels[i]
 
-    #print("There are ", len(coop_labels.keys()), " cooperators and ", len(coop_labels.values()), " coop fitness values")
-    #print("There are ", len(defect_labels.keys()), " defectors and ", len(defect_labels.values()), " defect fitness values")
-
-
-    #fig = pylab.figure()
-    #nx.draw_networkx(G, pos, nodelist=node_labels.keys(), node_color=[fitness*255 for fitness in node_labels.values()], node_shape='^', labels=node_labels)
-
-
-
-    #fig.canvas.draw()
-    #pylab.draw()
-    #pause(2)
-    #pylab.close(fig)
 
     cmap_type = plt.cm.plasma
     vmin_val = 0
     vmax_val = 1
+
+
+    if reproducing_nodes != None:
+        rep_coop_node_labels = {}
+        rep_defect_node_labels = {}
+        for j in reproducing_nodes:
+            if G.node[j]['strategy'] == 'Cooperate':
+                rep_coop_node_labels[j] = round(G.node[j]['fitness'], 3)
+            else:
+                rep_defect_node_labels[j] = round(G.node[j]['fitness'], 3)
+
+        #Display cooperating nodes that have just reproduced
+        nx.draw_networkx_nodes(G, pos, nodelist=rep_coop_node_labels.keys(), node_color='lime', node_size=400, \
+            node_shape='o', vmin=vmin_val, vmax=vmax_val)
+
+        #Display defecting nodes that have just reproduced
+        nx.draw_networkx_nodes(G, pos, nodelist=rep_defect_node_labels.keys(), node_color='lime', node_size=400, \
+            node_shape='^', vmin=vmin_val, vmax=vmax_val)
+
+
 
     #Display all types of nodes at once
     #nx.draw_networkx_nodes(G, pos, nodelist=G.nodes, node_color=[fitness for fitness in nx.get_node_attributes(G,'fitness')], node_shape='^', cmap=plt.cm.Blues)

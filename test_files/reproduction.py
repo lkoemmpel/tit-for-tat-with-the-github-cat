@@ -106,7 +106,7 @@ def birth_death(G, strat_list, u, num_rep):
         G.node[j]['fitness'] = 0.5
         reproduced_strategies.append(reproduced_strategy)
         old_strategies.append(old_strategy)
-    return [G, reproduced_strategies, old_strategies]
+    return [G, reproduced_strategies, old_strategies, reproduced_nodes]
 
     '''
     # Iterate through all nodes of the graph

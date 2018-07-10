@@ -102,6 +102,7 @@ class game():
                 new_graph = birth_death_results[0]
                 new_strategies=birth_death_results[1]
                 old_strategies = birth_death_results[2]
+                reproducing_nodes = birth_death_results[3]
 
                 #new_strategy = birth_death_results[1]
                 #old_strategy = birth_death_results[2]
@@ -119,7 +120,7 @@ class game():
                 if self.show_graph:
                     if i%1 == 0:
                         if self.color_fitness:
-                            dis.color_fitness_and_draw_graph(new_graph, pos)
+                            dis.color_fitness_and_draw_graph(new_graph, pos, reproducing_nodes)
                         else:
                             # Creates picture of graph 
                             dis.color_and_draw_graph(new_graph)
@@ -424,7 +425,7 @@ update_name = 'BD'
 #list of parameters that will be used to build graph
 parameters = [n,d]
 
-time_length = 20
+time_length = 200
 
 number_trials=1
 
@@ -459,7 +460,8 @@ TYPES OF GRAPHS
 #Multiple dumbell
 
 #G=init.generate_dumbell_multiple_cliques(10,5,1)
-#G1 = init.generate_graph(parameters, graph_type)
+
+
 
 
 #Multiple dumbell
