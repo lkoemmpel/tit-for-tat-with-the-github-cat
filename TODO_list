@@ -1,6 +1,17 @@
 
 
 -----------------TODO List---------------------------
+
+
+----------Things Ankor suggested---------------------
+	run simulations on dumbell graphs where cooperators/defectors are grouped
+	don't conflate too many variables when looking for what causes phenomenon
+	examine how graph expanders affect proportion of cooperators
+	
+
+
+
+
 rewrite interaction
 	people cooperate more with neighbors with high fitness
 	implement interaction techniques from Utkovski paper

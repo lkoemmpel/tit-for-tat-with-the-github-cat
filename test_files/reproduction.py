@@ -228,7 +228,8 @@ def pairwise_comparison(G, strat_list, u):
             reproduced=node
     #replacement with probability Theta(F_i-F_j)
     difference=G.node[reproduced]['fitness']-G.node[replaced]['fitness']
-    if random.random()<=Theta(difference):
+    if random.random()<=q(difference, .1, 3):
+    #if random.random()<=Theta(difference):
         #place reproduced into replaced,consider mutation
         mistake_indicator = random.uniform(0, 1)
         if mistake_indicator<u:
@@ -310,4 +311,7 @@ def Theta(val):
     V=1+math.exp(-val)
     return 1/V
 
+def q(val, K, d):
+    V = 1+ math.exp(val/(K*d))
+    return 1/V 
 

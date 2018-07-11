@@ -170,7 +170,7 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None):
     plt.colorbar(sm)
     plt.show()
 
-    pause(.001)
+    pause(.1)
 
 
     plt.gcf().clear()

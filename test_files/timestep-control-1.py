@@ -8,6 +8,8 @@ import math
 import numpy as np 
 import pylab
 
+from matplotlib import colors as mcolors
+
 '''-------------------
         IMPORTS
 -------------------'''
@@ -450,7 +452,9 @@ def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_str
     #run the game for each value of b
     b_increments = np.arange(0, max_b, 0.25)
     print(len(b_increments))
-    remaining_colors=['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
+
+    remaining_colors = list(mcolors.CSS4_COLORS.keys())
+    #remaining_colors=['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
     for b in b_increments:    
 
         #initialize lists for this b value's graph
@@ -479,20 +483,21 @@ def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_str
         plt.ylabel('Proportion of nodes with strategy ' + the_strat)
         plt.xlabel('Population density')
 
-
-    #show plot
-    plt.show()   
-    pause(600)
+    if plotting:
+        #show plot
+        plt.show()   
+        #pause(600)
 
     if saving:
-    #    print("Attempting to save plot ", data_iteration)+1
+        print("Attempting to save plot ")
         plt.savefig(graph_type + '_' + \
                     update_name + '_' + \
-                    'n=' + str(n) + "_" + \
-                    'm= ', str(m) + '_' + \
+                    'n=' + str(n) + '_' + \
+                    'm=' + str(m) + '_' + \
                     'u=' + str(u) + '_' + \
                     str(number_trials) + 'trials' + '_' + \
-                    'b/c=' + str(b) + '.png')
+                    str(t) + 'timesteps' + '_' + \
+                    'b_over_c=' + str(b) + '.png')
     return None
 
 def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n, u, d, data_iteration):
@@ -580,8 +585,8 @@ b = 1
 c = 1
 delta = .2
 
-n = 10
-m = 5
+n = 3
+m = 3
 d = 6
 graph_type = 'triangular_lattice'
 
@@ -591,7 +596,7 @@ parameters = [n,m]
 
 t = 4
 
-number_trials=30
+number_trials=4
 
 n_lattice = 50
 m_lattice = 50
@@ -654,14 +659,13 @@ TIMESTEP
 
 
 #2                      Test for plot_many_trials
-c=1
+c=7
 b=1
 max_b = 2
-plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, 'Cooperate', \
-    update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness = True)
+plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, 'Cooperate', update_name = 'BD', \
+    plotting = True, show_graph = False, saving = True, color_fitness = True)
 
-
-#plot_many_trials(parameters, graph_type, u, time_length, number_trials, 'Cooperate', num_rep, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+#plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
 
 
 
