@@ -160,6 +160,18 @@ def interaction_some_edges_strat(G,k, num_interactions, matrices, delta=0, noise
   edges=nx.edges(G)
   selected=random.sample(nx.edges(G), num_interactions)
   #choose k edges among the ones in the graph
+  for pair in edges:
+    v=pair[0]
+    w=pair[1]
+    action_v=action(G, intention(G,v), noise)
+    action_w=action(G, intention(G,w), noise)
+    G.node[v]['payoffs'].append(payoff_mtx[action_v][action_w][0])
+    G.node[w]['payoffs'].append(payoff_mtx[action_v][action_w][1])
+  for v in nx.nodes(G):
+    if len(G.node[v]['payoffs']) != 0:
+      G.node[v]['fitness']=Theta(1+delta*sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']))
+    #restart payoff list for next round
+    G.node[v]['payoffs']=[]
   return
 
 def interaction_some_edges_fitness(G,k, num_interactions, matrices, delta=0, noise=0):
