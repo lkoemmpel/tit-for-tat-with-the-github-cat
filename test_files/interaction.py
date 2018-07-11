@@ -182,13 +182,13 @@ def interaction_some_edges_fitness(G,k, num_interactions, matrices, delta=0, noi
     a=pair[0]
     b=pair[1]
     if random.random()<function(G.node[b]['fitness']):
-        D[(a,b)]='Defect'
-      else:
-        D[(a,b)]='Cooperate'
+      D[(a,b)]='Defect'
+    else:
+      D[(a,b)]='Cooperate'
     if random.random()<function(G.node[a]['fitness']):
-        D[(b,a)]='Defect'
-      else:
-        D[(b,a)]='Cooperate'
+      D[(b,a)]='Defect'
+    else:
+      D[(b,a)]='Cooperate'
   for a in nx.nodes(G):
     for b in G.neighbors(a):
       action_a=action(G, D[(a,b)], noise)
