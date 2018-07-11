@@ -6,6 +6,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import math 
 import numpy as np 
+import pylab
 
 '''-------------------
         IMPORTS
@@ -149,6 +150,7 @@ class game():
             #    plot_proportion_data(time_data, final_data, saving, graph_type,t, update_name, n, u, d, data_iteration)
 
             return new_graph, concentrations, self.plotting
+
     def lattice_density_and_payoff_trial(self, pos, num_rep, graph_type = 'random'):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
@@ -359,7 +361,7 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
     result_matrix=[]
     #run the game for each trial
     for each in range(number_trials):
-        print("Evaluating trial ", each)
+        #print("Evaluating trial ", each)
         graph=init.generate_graph(parameters, graph_type)
 
         if rho != None:
@@ -435,10 +437,9 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
             str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
     #plt.close()
 
+    #last_5=Yavg[-5:]
+    #return sum(last_5)/len(last_5)
     return Yavg[-1]
-
-
-
 
 def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_strat, \
     update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness = True):    
@@ -447,7 +448,9 @@ def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_str
     #of the_strat at population density rho when b=n
 
     #run the game for each value of b
-    b_increments = np.arange(0, max_b, 0.1)
+    b_increments = np.arange(0, max_b, 0.25)
+    print(len(b_increments))
+    remaining_colors=['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
     for b in b_increments:    
 
         #initialize lists for this b value's graph
@@ -462,14 +465,16 @@ def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_str
 
         X = rho_values
         Y = prop_coop_values
-        plt.plot(X, Y, color='b', marker='', linestyle = '-')
+        this_color=remaining_colors.pop()
+        plt.plot(X, Y, color=this_color, marker='', linestyle = '-', label= 'b= '+str(b))
 
+        pylab.legend(loc='lower left')
     
         #change axes ranges
         plt.xlim(0,1)
         plt.ylim(0,1)
         #add title
-        #plt.title('Relationship between time and proportion of nodes with strategy ' + the_strat + ' in '+str(number_trials)+ ' trials')
+        plt.title('Relationship between population density and long-term proportion \n of nodes with strategy ' + the_strat + ' in '+str(number_trials)+ ' trials')
         #add x and y labels
         plt.ylabel('Proportion of nodes with strategy ' + the_strat)
         plt.xlabel('Population density')
@@ -575,9 +580,9 @@ b = 1
 c = 1
 delta = .2
 
-n=1
-m = 2
-d=6
+n = 10
+m = 5
+d = 6
 graph_type = 'triangular_lattice'
 
 update_name = 'BD'
@@ -586,7 +591,7 @@ parameters = [n,m]
 
 t = 4
 
-number_trials=2
+number_trials=30
 
 n_lattice = 50
 m_lattice = 50
