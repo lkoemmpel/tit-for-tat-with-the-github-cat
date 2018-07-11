@@ -160,7 +160,7 @@ def interaction_some_edges_strat(G,k, num_interactions, matrices, delta=0, noise
   edges=nx.edges(G)
   selected=random.sample(nx.edges(G), num_interactions)
   #choose k edges among the ones in the graph
-  for pair in edges:
+  for pair in selected:
     v=pair[0]
     w=pair[1]
     action_v=action(G, intention(G,v), noise)
@@ -178,7 +178,28 @@ def interaction_some_edges_fitness(G,k, num_interactions, matrices, delta=0, noi
   edges=nx.edges(G)
   selected=random.sample(nx.edges(G), num_interactions)
   #choose k edges among the ones in the graph
-  return
+  for pair in sleected:
+    a=pair[0]
+    b=pair[1]
+    if random.random()<function(G.node[b]['fitness']):
+        D[(a,b)]='Defect'
+      else:
+        D[(a,b)]='Cooperate'
+    if random.random()<function(G.node[a]['fitness']):
+        D[(b,a)]='Defect'
+      else:
+        D[(b,a)]='Cooperate'
+  for a in nx.nodes(G):
+    for b in G.neighbors(a):
+      action_a=action(G, D[(a,b)], noise)
+      action_b=action(G, D[(b,a)], noise)
+      G.node[a]['payoffs'].append(payoff_mtx[action_a][action_b][0])
+      G.node[b]['payoffs'].append(payoff_mtx[action_a][action_b][1])
+  for v in nx.nodes(G):
+    if len(G.node[v]['payoffs']) != 0:
+      G.node[v]['fitness']=Theta(1+delta*sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']))
+      G.node[v]['payoffs']=[]
+  return G
 
 '''-------------------
 GRAPH FOR TESTING
