@@ -76,7 +76,8 @@ def birth_death(G, strat_list, u, num_rep):
             last=marker
             marker+=nx.get_node_attributes(G, 'fitness')[n]
             if last<cut<marker:
-                reproduced_nodes.add(n)
+                if list(G.adj[n].keys()) != []:
+                    reproduced_nodes.add(n)
                 break
     old_strategies=[]
     reproduced_strategies=[]

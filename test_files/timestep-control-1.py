@@ -359,7 +359,7 @@ def get_histogram_and_concentration_dict(G, strat_list):
     return histo_dict, conc_dict
 
 def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num_rep, \
-    update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
+    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
 
     #matrix in which entry n,t is the concentration 
     #of the_strat at time t in trial n
@@ -368,6 +368,18 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
     for each in range(number_trials):
         print("Evaluating trial ", each)
         graph=init.generate_graph(parameters, graph_type)
+
+        if rho != None:
+            # Remove lattice nodes until only rho percent remain
+            sparse_graph = graph.copy()
+            for n in graph.nodes():
+                indicator = random.uniform(0,1)
+                if indicator > rho:
+                    if nx.number_of_nodes(sparse_graph) != 1:
+                        #this node should be deleted
+                        sparse_graph.remove_node(n)
+            graph = sparse_graph
+
 
         #init.label_birth_death(graph, strat_list, start_prop_cooperators)
         init.label_BD_according_to_one_dim(graph, strat_list, parameters[1])        
@@ -453,7 +465,7 @@ def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_str
         for rho in rho_increments:
             rho_values.append(rho)
             prop_coop_values.append(plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num_rep, \
-                update_name = 'BD', plotting = False, show_graph = False, saving = False, color_fitness=False))
+                rho, update_name = 'BD', plotting = False, show_graph = False, saving = False, color_fitness=False))
 
         X = rho_values
         Y = prop_coop_values
