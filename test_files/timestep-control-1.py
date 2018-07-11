@@ -403,22 +403,22 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
         Yplus.append(average+stdev)
         Yminus.append(average-stdev)
 
-    #plot the 3 lines
-    plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
-    plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
-    plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
-    
-    #change axes ranges
-    plt.xlim(0,t-1)
-    plt.ylim(0,1)
-    #add title
-    plt.title('Relationship between time and proportion of nodes with strategy ' + the_strat + ' in '+str(number_trials)+ ' trials')
-    #add x and y labels
-    plt.ylabel('Proportion of nodes with strategy ' + the_strat)
-    plt.xlabel('Time')
-
-    #show plot
     if plotting:
+        #plot the 3 lines
+        plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
+        plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
+        plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
+        
+        #change axes ranges
+        plt.xlim(0,t-1)
+        plt.ylim(0,1)
+        #add title
+        plt.title('Relationship between time and proportion of nodes with strategy ' + the_strat + ' in '+str(number_trials)+ ' trials')
+        #add x and y labels
+        plt.ylabel('Proportion of nodes with strategy ' + the_strat)
+        plt.xlabel('Time')
+
+        #show plot
         plt.show()   
         print("Attempting to show plot -----------------")
         pause(60)
@@ -449,7 +449,7 @@ def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_str
         rho_values = []
         prop_coop_values = []
 
-        rho_increments = np.arange(0, 1, 0.1)
+        rho_increments = np.arange(0, 1.1, 0.1)
         for rho in rho_increments:
             rho_values.append(rho)
             prop_coop_values.append(plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num_rep, \
