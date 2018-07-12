@@ -89,7 +89,7 @@ def birth_death(G, strat_list, u, num_rep):
         old_strategy = G.node[j]['strategy']
 
         difference=G.node[i]['fitness']-G.node[j]['fitness']
-        if random.random()<=q(difference, .1, 3):
+        if random.random()<=q(difference, .1, 6):
             #i will replace j
             #now decide which strategy will be inherited!
             mistake_indicator = random.uniform(0, 1)

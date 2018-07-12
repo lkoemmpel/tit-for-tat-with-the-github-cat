@@ -451,7 +451,7 @@ def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_str
 
     #run the game for each value of b
 
-    b_increments = np.arange(0, max_b, 0.25)
+    b_increments = np.arange(0, max_b, 0.01)
     print(len(b_increments))
 
     #Currently there are 148 possible colors
@@ -588,8 +588,8 @@ b = 1
 c = 1
 delta = .2
 
-n = 5
-m = 5
+n = 10
+m = 10
 d = 6
 graph_type = 'triangular_lattice'
 
@@ -597,9 +597,9 @@ update_name = 'BD'
 #list of parameters that will be used to build graph
 parameters = [n,m]
 
-t = 10
+t = 300
 
-number_trials=4
+number_trials=20
 
 n_lattice = 50
 m_lattice = 50
@@ -662,12 +662,12 @@ TIMESTEP
 
 
 #2                      Test for plot_many_trials
-c=7
+c=1
 b=1
 max_b = 2
 
 #prop_increments = np.arange(.3, 1.1, 0.1)
-start_prop_cooperators=.6
+start_prop_cooperators=.5
 #for start_prop_cooperators in prop_increments:
 plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, 'Cooperate', update_name = 'BD', \
     plotting = True, show_graph = False, saving = True, color_fitness = True)
