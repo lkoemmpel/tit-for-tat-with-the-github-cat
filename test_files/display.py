@@ -170,7 +170,7 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None):
     plt.colorbar(sm)
     plt.show()
 
-    pause(.1)
+    pause(.3)
 
 
     plt.gcf().clear()
@@ -199,3 +199,8 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None):
 
     return G
 '''
+
+#graph = init.generate_graph([5,4,2], 'dumbell_multiple')
+#init.label_birth_death(graph, ['Cooperate','Defect'], 0.5)
+#color_and_draw_graph(graph)
+#color_fitness_and_draw_graph(graph, nx.spring_layout(graph))
