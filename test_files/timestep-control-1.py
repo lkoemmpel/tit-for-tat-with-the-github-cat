@@ -370,16 +370,16 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
             # Remove lattice nodes until only rho percent remain
             sparse_graph = graph.copy()
             for n in graph.nodes():
-                indicator = random.uniform(0,1)
-                if indicator > rho:
+                #indicator is random.uniform(0,1)
+                if random.uniform(0,1) > rho:
                     if nx.number_of_nodes(sparse_graph) != 1:
                         #this node should be deleted
                         sparse_graph.remove_node(n)
             graph = sparse_graph
 
 
-        #init.label_birth_death(graph, strat_list, start_prop_cooperators)
-        init.label_BD_according_to_one_dim(graph, strat_list, parameters[1])        
+        init.label_birth_death(graph, strat_list, start_prop_cooperators)
+        #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1])        
 
         this_game=game(graph, update_name, t, u, d, plotting, show_graph, saving, color_fitness)
 
@@ -584,27 +584,29 @@ def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, 
 strat_list = ['Cooperate', 'Defect']
 u = .4
 
-b = 1
+b = 3
 c = 1
 delta = .2
 
 n = 10
 m = 10
 d = 6
-graph_type = 'triangular_lattice'
+graph_type = 'dumbell_multiple'
 
 update_name = 'BD'
 #list of parameters that will be used to build graph
 parameters = [n,m]
 
+
 t = 300
+
 
 number_trials=20
 
 n_lattice = 50
 m_lattice = 50
 
-start_prop_cooperators = .5
+start_prop_cooperators = .1
 
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
@@ -667,12 +669,15 @@ b=1
 max_b = 2
 
 #prop_increments = np.arange(.3, 1.1, 0.1)
-start_prop_cooperators=.5
-#for start_prop_cooperators in prop_increments:
-plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, 'Cooperate', update_name = 'BD', \
-    plotting = True, show_graph = False, saving = True, color_fitness = True)
 
-#plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+start_prop_cooperators=.5
+
+#for start_prop_cooperators in prop_increments:
+#plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, 'Cooperate', update_name = 'BD', \
+#    plotting = True, show_graph = False, saving = True, color_fitness = True)
+
+parameters=[7,7,7]
+plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
 
 
 

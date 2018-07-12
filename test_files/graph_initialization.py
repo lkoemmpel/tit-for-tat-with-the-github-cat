@@ -167,7 +167,6 @@ def generate_dumbell_multiple_cliques(m, N, L):
   for n in G.nodes():
     G.node[n]['coord']=n
   G=nx.convert_node_labels_to_integers(G)
-
   return G
 
 def generate_weighted(n, type= 'random', d=0, m=0, periodic=False, with_positions=True, create_using=None):
@@ -233,7 +232,6 @@ def generate_rich_club(size_club, size_periphery, prob_rp=1, prob_rr=1, prob_pp=
       if random.random()<prob_pp:
         graph.add_edge(m,M)
   return graph
-
 
 
 '''---------------------

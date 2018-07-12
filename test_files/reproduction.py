@@ -82,6 +82,7 @@ def birth_death(G, strat_list, u, num_rep):
     old_strategies=[]
     reproduced_strategies=[]
     #print(reproduced_nodes)
+    inheritance = {}
     for i in reproduced_nodes:
         reproduced_strategy=G.node[i]['strategy']
         #set rep strat
@@ -98,83 +99,24 @@ def birth_death(G, strat_list, u, num_rep):
                 mutation_list = [x for x in strat_list if x != reproduced_strategy]
                 if mutation_list == []:
                     #print("There cannot be mutations in this population.")
-                    G.node[j]['strategy'] = reproduced_strategy
+                    inheritance[j] = reproduced_strategy
                 else:
-                    G.node[j]['strategy'] = np.random.choice(mutation_list)
-                    reproduced_strategy = G.node[j]['strategy']
+                    inheritance[j] = np.random.choice(mutation_list)
+                    reproduced_strategy = inheritance[j]
                 #print("Node ", j, " now has strategy ", G.node[j]['strategy'])        
             else:
                 # there is not a mutation
-                G.node[j]['strategy'] = reproduced_strategy
+                inheritance[j] = reproduced_strategy
             # Node j has now just been born, so we set its fitness to 0
             G.node[j]['fitness'] = 0.5
             reproduced_strategies.append(reproduced_strategy)
             old_strategies.append(old_strategy)
+    #now we do all the accordingly replacements
+    for j in inheritance.keys():
+        print('yay!')
+        G.node[j]['strategy'] = inheritance[j]
+
     return [G, reproduced_strategies, old_strategies, reproduced_nodes]
-
-    '''
-    # Iterate through all nodes of the graph
-    # Note, i is a coordinate whose dimension depends on the dimension of the graph
-    current_place_in_sum = 0
-    prev_place_in_sum = 0
-    node_reproduced = False 
-    for i in nx.nodes(G):
-        current_place_in_sum += nx.get_node_attributes(G, 'fitness')[i]
-        #G.node[i]['fitness']
-        #print("Currently examining node ", i, " which has fitness ", G.node[i]['fitness'])
-        #print("Current place in the fitness sum is ", current_place_in_sum)
-        if prev_place_in_sum < cutoff < current_place_in_sum:
-            node_reproduced = True
-            #print("We have found a node to reproduce")
-            #print("        It is node ", i, " has fitness ", G.node[i]['fitness'], " and strategy ", G.node[i]['strategy'])
-            #This is the node that will reproduce
-            #so we now find a neighbor it can replace
-            reproduced_strategy = G.node[i]['strategy'] 
-            #print("Node ", i, " has been chosen to reproduce strategy ", reproduced_strategy)
-
-            #print("-----------------------------------")
-            neighbors = list(G.adj[i].keys())
-            #print("Neighbors are ", neighbors)
-            num_neighbors = len(neighbors)
-            k = random.randint(0, num_neighbors - 1)
-            j = neighbors[k]
-            old_strategy = G.node[j]['strategy']
-            # set the strategy of the node selected to die to the strategy of the node selected to reproduce
-            #print("Updating the strategy of node ", j, " from ", old_strategy, " to ", reproduced_strategy)
-                
-
-            mistake_indicator = random.uniform(0, 1)
-            if mistake_indicator < u:
-                # there is a mutation
-                #print("There has been a mutation!")
-                mutation_list = [x for x in strat_list if x != reproduced_strategy]
-                if mutation_list == []:
-                    #print("There cannot be mutations in this population.")
-                    G.node[j]['strategy'] = reproduced_strategy
-                else:
-                    G.node[j]['strategy'] = np.random.choice(mutation_list)
-                #print("Node ", j, " now has strategy ", G.node[j]['strategy'])
-                     
-            else:
-                # there is not a mutation
-                G.node[j]['strategy'] = reproduced_strategy
-
-            # Node j has now just been born, so we set its fitness to 0
-            G.node[j]['fitness'] = 0.5
-            #print("------------------------------------------------------------------------")
-            #print("reproduction has finished for this round")
-            # no need to examine any more nodes for reproducibility, so we break our for loop
-            break
-        prev_place_in_sum = current_place_in_sum
-
-    # Creates picture of graph 
-    #nx.draw(G,with_labels=True)
-    #plt.show()
-    if node_reproduced:
-        return [G, G.node[j]['strategy'], old_strategy]
-    else:
-        return [G, None, None]
-    '''
 
 def death_birth(G, strat_list, u):
     replaced=random.choice(list(G.nodes()))
