@@ -120,7 +120,8 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None):
             defect_labels[i] = node_labels[i]
 
 
-    cmap_type = plt.cm.plasma
+    cmap_type = plt.cm.GnBu
+    cmap_type_defectors = plt.cm.OrRd
     vmin_val = 0
     vmax_val = 1
 
@@ -140,7 +141,7 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None):
 
         #Display defecting nodes that have just reproduced
         nx.draw_networkx_nodes(G, pos, nodelist=rep_defect_node_labels.keys(), node_color='lime', node_size=400, \
-            node_shape='^', vmin=vmin_val, vmax=vmax_val)
+            node_shape='o', vmin=vmin_val, vmax=vmax_val)
 
 
 
@@ -153,7 +154,7 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None):
 
     #Display defector nodes
     nx.draw_networkx_nodes(G, pos, nodelist=defect_labels.keys(), node_color=[fitness for fitness in defect_labels.values()], \
-        node_shape='^', vmin=vmin_val, vmax=vmax_val, cmap=cmap_type)
+        node_shape='o', vmin=vmin_val, vmax=vmax_val, cmap=cmap_type_defectors)
 
     #Display edges
     nx.draw_networkx_edges(G, pos)
@@ -161,15 +162,21 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None):
     #Display node labels
     nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_color='darkgreen', font_family='sans-serif', font_weight='normal')
 
-
+    plt.title('Cooperators-> Blue     Defectors -> Red')
     plt.axis('off')
     pylab.draw()
 
     sm = plt.cm.ScalarMappable(cmap=cmap_type, norm=plt.Normalize(vmin=vmin_val, vmax=vmax_val))
     sm._A = []
     plt.colorbar(sm)
-    plt.show()
 
+
+    sm2 = plt.cm.ScalarMappable(cmap=cmap_type_defectors, norm=plt.Normalize(vmin=vmin_val, vmax=vmax_val))
+    sm2._A = []
+    plt.colorbar(sm2)
+
+
+    plt.show()
     pause(.3)
 
 
