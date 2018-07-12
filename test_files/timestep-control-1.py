@@ -450,9 +450,11 @@ def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_str
     #of the_strat at population density rho when b=n
 
     #run the game for each value of b
+
     b_increments = np.arange(0, max_b, 0.25)
     print(len(b_increments))
 
+    #Currently there are 148 possible colors
     remaining_colors = list(mcolors.CSS4_COLORS.keys())
     #remaining_colors=['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
     for b in b_increments:    
@@ -461,7 +463,7 @@ def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_str
         rho_values = []
         prop_coop_values = []
 
-        rho_increments = np.arange(0, 1.1, 0.1)
+        rho_increments = np.arange(0, 1.01, 0.01)
         for rho in rho_increments:
             rho_values.append(rho)
             prop_coop_values.append(plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num_rep, \
@@ -495,6 +497,7 @@ def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_str
                     'n=' + str(n) + '_' + \
                     'm=' + str(m) + '_' + \
                     'u=' + str(u) + '_' + \
+                    'prop_coop=' + str(start_prop_cooperators) + '_' + \
                     str(number_trials) + 'trials' + '_' + \
                     str(t) + 'timesteps' + '_' + \
                     'b_over_c=' + str(b) + '.png')
@@ -585,8 +588,8 @@ b = 1
 c = 1
 delta = .2
 
-n = 3
-m = 3
+n = 5
+m = 5
 d = 6
 graph_type = 'triangular_lattice'
 
@@ -594,14 +597,14 @@ update_name = 'BD'
 #list of parameters that will be used to build graph
 parameters = [n,m]
 
-t = 4
+t = 10
 
 number_trials=4
 
 n_lattice = 50
 m_lattice = 50
 
-start_prop_cooperators = .2
+start_prop_cooperators = .5
 
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
@@ -662,6 +665,10 @@ TIMESTEP
 c=7
 b=1
 max_b = 2
+
+#prop_increments = np.arange(.3, 1.1, 0.1)
+start_prop_cooperators=.6
+#for start_prop_cooperators in prop_increments:
 plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, 'Cooperate', update_name = 'BD', \
     plotting = True, show_graph = False, saving = True, color_fitness = True)
 

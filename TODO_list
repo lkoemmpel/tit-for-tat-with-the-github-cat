@@ -3,11 +3,22 @@
 -----------------TODO List---------------------------
 
 
+---------priorities Ashwin suggested------------------
+	heterogeneous distributions on 2-dumbell
+	find supplementary material for wang lattice density paper
+	do rich club peroperties sustain certain properties?
+	connecting lattices of varying density
+
+
+
+
 ----------Things Ankor suggested---------------------
 	run simulations on dumbell graphs where cooperators/defectors are grouped
 	don't conflate too many variables when looking for what causes phenomenon
 	examine how graph expanders affect proportion of cooperators
-	
+	test expanders
+	examine sparsest cut
+	see if prop of cooperators on each side of the dumbell become equal 
 
 
 
