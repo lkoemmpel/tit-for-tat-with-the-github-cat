@@ -94,6 +94,7 @@ def birth_death(G, strat_list, u, num_rep):
             #i will replace j
             #now decide which strategy will be inherited!
             mistake_indicator = random.uniform(0, 1)
+            mistake_indicator=0
             if mistake_indicator < u:
                 #print("There has been a mutation!")
                 mutation_list = [x for x in strat_list if x != reproduced_strategy]
@@ -113,14 +114,14 @@ def birth_death(G, strat_list, u, num_rep):
             old_strategies.append(old_strategy)
     #now we do all the accordingly replacements
     for j in inheritance.keys():
-        print('yay!')
         G.node[j]['strategy'] = inheritance[j]
 
     return [G, reproduced_strategies, old_strategies, reproduced_nodes]
 
 def death_birth(G, strat_list, u):
+    #CHOOSE REPLACED NODE
     replaced=random.choice(list(G.nodes()))
-    old_strategy=nx.get_node_attributes(G, 'strategy')[replaced]    #G.node[replaced]['strategy']
+    old_strategy=G.node[replaced]['strategy']    #G.node[replaced]['strategy']
     #competition dictionary through which neighbors will compete
     weights=nx.get_edge_attributes(G, 'weight')
     fits=nx.get_node_attributes(G, 'fitness')

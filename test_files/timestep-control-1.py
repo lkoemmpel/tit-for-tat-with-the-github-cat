@@ -378,8 +378,8 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
             graph = sparse_graph
 
 
-        init.label_birth_death(graph, strat_list, start_prop_cooperators)
-        #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1])        
+        #init.label_birth_death(graph, strat_list, start_prop_cooperators)
+        init.label_BD_according_to_one_dim(graph, strat_list, parameters[1])        
 
         this_game=game(graph, update_name, t, u, d, plotting, show_graph, saving, color_fitness)
 
@@ -588,16 +588,16 @@ b = 3
 c = 1
 delta = .2
 
-n = 5
-m = 5
+n = 6
+m = 6
 d = 6
-graph_type = 'dumbell_multiple'
+graph_type = 'triangular_lattice'
 
 update_name = 'BD'
 #list of parameters that will be used to build graph
 parameters = [n,m]
 
-t = 100
+t = 200
 
 number_trials=4
 
@@ -672,8 +672,10 @@ max_b = 2
 #plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, 'Cooperate', update_name = 'BD', \
 #    plotting = True, show_graph = False, saving = True, color_fitness = True)
 
-parameters=[7,7,7]
-plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+
+#parameters=[7,7,7]
+#plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+
 
 
 
