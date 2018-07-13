@@ -588,13 +588,9 @@ b = 3
 c = 1
 delta = .2
 
-<<<<<<< HEAD
 n = 6
 m = 6
-=======
-n = 10
-m = 10
->>>>>>> d5f375034515987a42d76472e7fef6e1bad5074b
+
 d = 6
 graph_type = 'dumbell_multiple'
 
