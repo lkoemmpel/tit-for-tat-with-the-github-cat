@@ -64,7 +64,7 @@ class game():
         #do we want to use a heat map for fitness?
         self.color_fitness=color_fitness
 
-    def trial(self, pos, num_rep, graph_type = 'random'):
+    def trial(self, pos, num_rep, graph_type = 'random', num_of_trial=None):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -83,7 +83,7 @@ class game():
         #if update_name=='BD':
 
             if self.show_graph:
-                dis.color_fitness_and_draw_graph(G, pos)
+                dis.color_fitness_and_draw_graph(G, pos, None, num_of_trial, 0)
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print("-----------------------------------------------")
 
@@ -118,7 +118,7 @@ class game():
                 if self.show_graph:
                     if i%1 == 0:
                         if self.color_fitness:
-                            dis.color_fitness_and_draw_graph(new_graph, pos, reproducing_nodes)
+                            dis.color_fitness_and_draw_graph(new_graph, pos, reproducing_nodes, num_of_trial, i+1)
                         else:
                             # Creates picture of graph 
                             dis.color_and_draw_graph(new_graph)
@@ -389,7 +389,7 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
         else:
             pos = nx.spring_layout(graph)
 
-        trial_outcome = this_game.trial(pos, num_rep, graph_type)
+        trial_outcome = this_game.trial(pos, num_rep, graph_type, each+1)
         
 
         #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
@@ -422,7 +422,7 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
         plt.xlim(0,t-1)
         plt.ylim(0,1)
         #add title
-        plt.title('Relationship between time and proportion of nodes with strategy ' + the_strat + ' in '+str(number_trials)+ ' trials')
+        plt.title('Relationship between time and proportion of nodes with \n strategy ' + the_strat + ' in '+str(number_trials)+ ' trials')
         #add x and y labels
         plt.ylabel('Proportion of nodes with strategy ' + the_strat)
         plt.xlabel('Time')
@@ -599,10 +599,10 @@ update_name = 'BD'
 parameters = [n,m]
 
 
-t = 300
+t = 10
 
 
-number_trials=20
+number_trials=5
 
 n_lattice = 50
 m_lattice = 50
@@ -671,14 +671,14 @@ max_b = 2
 
 #prop_increments = np.arange(.3, 1.1, 0.1)
 
-start_prop_cooperators=.5
+#start_prop_cooperators=.1
 
 #for start_prop_cooperators in prop_increments:
 #plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, 'Cooperate', update_name = 'BD', \
 #    plotting = True, show_graph = False, saving = True, color_fitness = True)
 
 
-parameters=[5,4,4]
+parameters=[30,2,4]
 plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
 
 

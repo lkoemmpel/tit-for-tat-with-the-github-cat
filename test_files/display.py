@@ -100,7 +100,7 @@ def color_and_draw_graph(G):
 
     return G
 
-def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None):
+def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None, num_of_trial=None, timestep=None):
     '''
     INPUTS:     Graph with strategy node attributes
     OUTPUTS:    Graph where color maps has colors according to 
@@ -162,7 +162,7 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None):
     #Display node labels
     nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_color='darkgreen', font_family='sans-serif', font_weight='normal')
 
-    plt.title('Cooperators-> Blue     Defectors -> Red')
+    plt.title('Cooperators-> Blue     Defectors -> Red \n Number of trial: '+str(num_of_trial)+ '   Timestep: '+str(timestep))
     plt.axis('off')
     pylab.draw()
 
@@ -206,8 +206,3 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None):
 
     return G
 '''
-
-#graph = init.generate_graph([5,4,2], 'dumbell_multiple')
-#init.label_birth_death(graph, ['Cooperate','Defect'], 0.5)
-#color_and_draw_graph(graph)
-#color_fitness_and_draw_graph(graph, nx.spring_layout(graph))
