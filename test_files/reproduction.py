@@ -114,10 +114,6 @@ def birth_death(G, strat_list, u, num_rep):
             old_strategies.append(old_strategy)
     #now we do all the accordingly replacements
     for j in inheritance.keys():
-<<<<<<< HEAD
-        #print('yay!')
-=======
->>>>>>> a82738766a89b4ffe5514425dfcb632444923b12
         G.node[j]['strategy'] = inheritance[j]
 
     return [G, reproduced_strategies, old_strategies, reproduced_nodes]
