@@ -94,6 +94,7 @@ def birth_death(G, strat_list, u, num_rep):
             #i will replace j
             #now decide which strategy will be inherited!
             mistake_indicator = random.uniform(0, 1)
+            mistake_indicator=0
             if mistake_indicator < u:
                 #print("There has been a mutation!")
                 mutation_list = [x for x in strat_list if x != reproduced_strategy]
@@ -113,47 +114,57 @@ def birth_death(G, strat_list, u, num_rep):
             old_strategies.append(old_strategy)
     #now we do all the accordingly replacements
     for j in inheritance.keys():
+<<<<<<< HEAD
         #print('yay!')
+=======
+>>>>>>> a82738766a89b4ffe5514425dfcb632444923b12
         G.node[j]['strategy'] = inheritance[j]
 
     return [G, reproduced_strategies, old_strategies, reproduced_nodes]
 
-def death_birth(G, strat_list, u):
-    replaced=random.choice(list(G.nodes()))
-    old_strategy=nx.get_node_attributes(G, 'strategy')[replaced]    #G.node[replaced]['strategy']
+def death_birth(G, strat_list, u, num_rep):
+    #CHOOSE REPLACED NODES 
+    replaced_nodes = random.sample(list(G.nodes()),num_rep)
+    old_strategies = []
+    for replaced in replaced_nodes:
+        old_strategies.append(G.node[replaced]['strategy'])  
     #competition dictionary through which neighbors will compete
     weights=nx.get_edge_attributes(G, 'weight')
     fits=nx.get_node_attributes(G, 'fitness')
-    competition={}
+    #initialize reproduced nodes and strategies
+    reproduced_nodes = []
+    reproduced_strategies = []
 
-    for n in list(G.neighbors(replaced)):
-        possible_orders=[(n,replaced), (replaced,n)]
-        for order in possible_orders:
-            try:
-                competition[n]=fits[n]* weights[order]
-            except:
-                pass
+    for replaced in replaced_nodes:
+        #MAKE A DICT COMPETITION FOR REPLACED'S NEIGHBORS
+        competition={}
+        for n in list(G.neighbors(replaced)):
+            m=min([n,replaced])
+            M=max([n,replaced])
+            competition[n]=fits[n]* weights[(m,M)]
+            #G.node(n)['fitness']* weights[(n,replaced)]
 
-        #m=min([n,replaced])
-        #M=max([n,replaced])
-        #competition[n]=fits[n]* weights[(m,M)]
-        #G.node(n)['fitness']* weights[(n,replaced)]
-    sum_competition=sum(competition.values())
-    cutoff=random.uniform(0,sum_competition)
-    sum_so_far=0
-    for node in G.neighbors(replaced):
-        sum_so_far+=competition[node]
-        if cutoff<sum_so_far:
-            reproduced=node
-    #now place reproduced into the replaced node, 
-    #consider mutation
-    mistake_indicator = random.uniform(0, 1)
-    if mistake_indicator<u:
-        #there is a mutation
-        G.node[replaced]['strategy']=random.choice(strat_list)
-    else:
-        G.node[replaced]['strategy']=G.node[reproduced]['strategy']
-    return [G, G.node[replaced]['strategy'], old_strategy]
+        sum_competition = sum(competition.values())
+        cutoff = random.uniform(0,sum_competition)
+        marker = 0
+        prev = 0
+        for n in G.neighbors(replaced):
+            prev = marker
+            marker+=competition[n]
+            if prev<cutoff<marker:
+                if list(G.adj[n].keys()) != []:
+                    reproduced_nodes.append(n)
+                    if random.random()<u:
+                        #therewas a mutation
+                        reproduced_strategies.append(random.choice(strat_list))
+                    else:
+                        reproduced_strategies.append(G.node[n]['strategy'])
+                break
+        for index in len(replaced_nodes):
+            i = replaced_nodes[index]
+            G.node[i]['strategy'] = reproduced_strategies[index]
+
+    return [G, reproduced_strategies, old_strategies, reproduced_nodes]
 
 def pairwise_comparison(G, strat_list, u):
     #Like above, choose uniformly for replaced

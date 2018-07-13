@@ -332,17 +332,22 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
     print("Labeling connecting node ", c)
     G.node[c]['strategy'] = random.choice(strat_list)
 
-def label_dumbell_multiple_cliques(G, set_cooperators):
+def label_dumbell_multiple_cliques(G, clique_to_prop):
+  '''
+  G                   A multiple dumbell graph
+  clique_to_prop      dictionary maps clique_index---->prop of cooperators    
+  '''
   for n in G.nodes():
-    #elif type(n[0])==tuple:
-    #  G.node[n]['strategy']='Cooperate'
-    if G.node[n]['coord'][0][0]==G.node[n]['coord'][0][1]:
-      if G.node[n]['coord'][0][0] in set_cooperators:
-        G.node[n]['strategy']='Cooperate'
+    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
+      clique_num = G.node[n]['coord'][0][0]
+      if random.uniform(0,1)<clique_to_prop[clique_num]:
+        G.node[n]['strategy'] = 'Cooperate'
       else:
-        G.node[n]['strategy']='Defect'
+        G.node[n]['strategy'] = 'Defect'
     else:
-      G.node[n]['strategy']='Cooperate'
+      G.node[n]['strategy'] = 'Cooperate'
+    G.node[n]['fitness'] = random.uniform(0,1)
+    G.node[n]['payoffs'] = []
 
 def label_BD_according_to_one_dim(G, strat_list, width):
   '''

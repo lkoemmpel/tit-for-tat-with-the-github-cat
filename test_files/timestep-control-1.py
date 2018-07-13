@@ -593,6 +593,7 @@ delta = .2
 
 n = 5
 m = 5
+
 d = 6
 graph_type = 'dumbell_multiple'
 
@@ -679,8 +680,10 @@ start_prop_cooperators=.5
 #plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, 'Cooperate', update_name = 'BD', \
 #    plotting = True, show_graph = False, saving = True, color_fitness = True)
 
-parameters=[3,4,7]
+
+parameters=[5,4,4]
 plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+
 
 
 
