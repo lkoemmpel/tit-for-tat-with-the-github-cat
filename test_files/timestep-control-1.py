@@ -95,6 +95,7 @@ class game():
             #                                         at trial n, time t
 
             for i in range(t):
+                print("Running time ", t)
                 #------------
                 #REPRODUCTION
                 #------------ 
@@ -363,6 +364,8 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
     result_matrix=[]
     #run the game for each trial
     for each in range(number_trials):
+        print('\n')
+        print("Running trial ", each)
         #print("Evaluating trial ", each)
         graph=init.generate_graph(parameters, graph_type)
 
@@ -588,8 +591,8 @@ b = 3
 c = 1
 delta = .2
 
-n = 10
-m = 10
+n = 5
+m = 5
 d = 6
 graph_type = 'dumbell_multiple'
 
@@ -601,12 +604,12 @@ parameters = [n,m]
 t = 300
 
 
-number_trials=20
+number_trials=1
 
 n_lattice = 50
 m_lattice = 50
 
-start_prop_cooperators = .1
+start_prop_cooperators = .5
 
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
@@ -676,7 +679,7 @@ start_prop_cooperators=.5
 #plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, 'Cooperate', update_name = 'BD', \
 #    plotting = True, show_graph = False, saving = True, color_fitness = True)
 
-parameters=[7,7,7]
+parameters=[3,4,7]
 plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
 
 
