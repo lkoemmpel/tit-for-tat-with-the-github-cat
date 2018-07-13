@@ -95,6 +95,7 @@ class game():
             #                                         at trial n, time t
 
             for i in range(t):
+                print("Running time ", t)
                 #------------
                 #REPRODUCTION
                 #------------ 
@@ -363,6 +364,8 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
     result_matrix=[]
     #run the game for each trial
     for each in range(number_trials):
+        print('\n')
+        print("Running trial ", each)
         #print("Evaluating trial ", each)
         graph=init.generate_graph(parameters, graph_type)
 
@@ -588,8 +591,8 @@ b = 3
 c = 1
 delta = .2
 
-n = 6
-m = 6
+n = 5
+m = 5
 
 d = 6
 graph_type = 'dumbell_multiple'
@@ -604,10 +607,11 @@ t = 10
 
 number_trials=5
 
+
 n_lattice = 50
 m_lattice = 50
 
-start_prop_cooperators = .1
+start_prop_cooperators = .5
 
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
