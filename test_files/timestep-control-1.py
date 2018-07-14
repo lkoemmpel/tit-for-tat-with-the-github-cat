@@ -95,7 +95,7 @@ class game():
             #                                         at trial n, time t
 
             for i in range(t):
-                print("Running time ", t)
+                #print("Running time ", t)
                 #------------
                 #REPRODUCTION
                 #------------ 
@@ -380,9 +380,12 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
                         sparse_graph.remove_node(n)
             graph = sparse_graph
 
-
-        init.label_birth_death(graph, strat_list, start_prop_cooperators)
-        #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1])        
+        #LABEL BIRTH DEATH
+        #init.label_birth_death(graph, strat_list, start_prop_cooperators)
+        #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
+        #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
+        #LABEL MULTIPLE CLIQUES 
+        init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.5, 1:1})       
 
         this_game=game(graph, update_name, t, u, d, plotting, show_graph, saving, color_fitness)
 
@@ -585,7 +588,7 @@ def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, 
 --------------------------'''
 #strat_list = ['Cooperate', 'Defect', 'Tit_for_tat']
 strat_list = ['Cooperate', 'Defect']
-u = .4
+u = .2
 
 b = 3
 c = 1
@@ -602,16 +605,16 @@ update_name = 'BD'
 parameters = [n,m]
 
 
-t = 10
+t = 20
 
 
-number_trials=5
+number_trials = 4
 
 
 n_lattice = 50
 m_lattice = 50
 
-start_prop_cooperators = .5
+start_prop_cooperators = .2
 
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
@@ -682,8 +685,8 @@ max_b = 2
 #    plotting = True, show_graph = False, saving = True, color_fitness = True)
 
 
-parameters=[30,2,4]
-plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+parameters=[10,2,4]
+plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=True, saving=True, color_fitness=True)
 
 
 

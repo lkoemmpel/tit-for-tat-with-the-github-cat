@@ -332,7 +332,7 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
     print("Labeling connecting node ", c)
     G.node[c]['strategy'] = random.choice(strat_list)
 
-def label_dumbell_multiple_cliques(G, clique_to_prop):
+def label_dumbell_multiple_cliques(G, strat_list, clique_to_prop):
   '''
   G                   A multiple dumbell graph
   clique_to_prop      dictionary maps clique_index---->prop of cooperators    
