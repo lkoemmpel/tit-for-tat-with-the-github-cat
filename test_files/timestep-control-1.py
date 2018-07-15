@@ -381,11 +381,11 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
             graph = sparse_graph
 
         #LABEL BIRTH DEATH
-        #init.label_birth_death(graph, strat_list, start_prop_cooperators)
+        init.label_birth_death(graph, strat_list, start_prop_cooperators)
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
         #LABEL MULTIPLE CLIQUES 
-        init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.5, 1:1})       
+        #init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.5, 1:1})       
 
         this_game=game(graph, update_name, t, u, d, plotting, show_graph, saving, color_fitness)
 
@@ -544,9 +544,110 @@ def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n
 
     return None
 
-def plot_for_different_b_over_c(parameters, graph_type, u, t, number_trials, the_strat, num_rep, \
+def plot_trials_until_stable(parameters, graph_type, u, t, number_trials, the_strat, num_rep, \
     update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):
-    return
+    #matrix in which entry n,t is the concentration 
+    #of the_strat at time t in trial n
+    result_matrix=[]
+    #run the game for each trial
+    std_dev=2
+    num_of_trial=0
+    while std_dev>0.1:
+        num_of_trial+=1
+        print('\n')
+        print("Running trial ", num_of_trial)
+        #print("Evaluating trial ", each)
+        graph=init.generate_graph(parameters, graph_type)
+
+        if rho != None:
+            # Remove lattice nodes until only rho percent remain
+            sparse_graph = graph.copy()
+            for n in graph.nodes():
+                #indicator is random.uniform(0,1)
+                if random.uniform(0,1) > rho:
+                    if nx.number_of_nodes(sparse_graph) != 1:
+                        #this node should be deleted
+                        sparse_graph.remove_node(n)
+            graph = sparse_graph
+
+        #LABEL BIRTH DEATH
+        init.label_birth_death(graph, strat_list, start_prop_cooperators)
+        #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
+        #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
+        #LABEL MULTIPLE CLIQUES 
+        #init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.5, 1:1})       
+
+        this_game=game(graph, update_name, t, u, d, plotting, show_graph, saving, color_fitness)
+
+
+        if graph_type == 'triangular_lattice':
+            pos = dict( (n, n) for n in graph.nodes() )
+        else:
+            pos = nx.spring_layout(graph)
+
+        trial_outcome = this_game.trial(pos, num_rep, graph_type, each+1)
+        
+
+        #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
+        #    graph_type, update_name, plotting, show_graph, saving, color_fitness)
+        #append record for this trial of the concentrations of the_strat
+        
+        result_matrix.append(trial_outcome[1][the_strat])
+        try:
+            last_ten=result_matrix[-9:]
+        except:
+            last_ten=result_matrix
+        averages=[]
+        for obj in range(len(last_ten)):
+            to_avg=[trial[obj] for trial in last_ten]
+            averages.append(sum(to_avg)/len(to_avg))
+        std_dev=stdev(averages)
+
+
+
+    #scatter plot X axis! 
+    X=[tictoc for tictoc in range(num_of_trial)]
+    #three lines to plot: average, and pm stdev
+    Yavg, Yplus, Yminus=[], [], []
+    for tictoc in range(t):
+        at_time_t=[trial[tictoc] for trial in result_matrix]
+        #average at time t over all the trials
+        average=sum(at_time_t)/len(at_time_t)
+        stdev=np.std(at_time_t)
+        Yavg.append(average)
+        Yplus.append(average+stdev)
+        Yminus.append(average-stdev)
+
+    if plotting:
+        #plot the 3 lines
+        plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
+        plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
+        plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
+        
+        #change axes ranges
+        plt.xlim(0,t-1)
+        plt.ylim(0,1)
+        #add title
+        plt.title('Relationship between time and proportion of nodes with \n strategy ' + the_strat + ' in '+str(number_trials)+ ' trials')
+        #add x and y labels
+        plt.ylabel('Proportion of nodes with strategy ' + the_strat)
+        plt.xlabel('Time')
+
+        #show plot
+        plt.show()   
+        print("Attempting to show plot -----------------")
+        pause(60)
+    #plt.close()     
+
+    if saving:
+    #    print("Attempting to save plot ", data_iteration)+1
+        plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + \
+            str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
+    #plt.close()
+
+    #last_5=Yavg[-5:]
+    #return sum(last_5)/len(last_5)
+    return Yavg[-1]
 '''
 def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, d, i):
     
@@ -686,7 +787,7 @@ max_b = 2
 
 
 parameters=[10,2,4]
-plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=True, saving=True, color_fitness=True)
+plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=False, show_graph=True, saving=True, color_fitness=True)
 
 
 
