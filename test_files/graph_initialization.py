@@ -264,6 +264,20 @@ def label_birth_death(G, strat_list, start_prop_coop=None):
     G.node[n]['fitness'] = random.uniform(0,1)
     G.node[n]['payoffs'] = []
 
+def label_birth_death_precise_prop(G,strat_list, start_prop_coop=None):
+  num_nodes=len(G.nodes())
+  num_coops=int(round(num_nodes*start_prop_coop))
+  selected_coops=random.choice(list(G.nodes()), num_coops)
+  selected_coops=set(selected_coops)
+  for n in G.nodes():
+    if n in selected_coops:
+      G.node[n]['strategy'] = 'Cooperate'
+    else:
+      G.node[n]['strategy'] = 'Defect'
+    G.node[n]['fitness'] = random.uniform(0,1)
+    G.node[n]['payoffs'] = []
+
+    
 def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=0):
   '''
     INPUTS: 
@@ -332,7 +346,7 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
     print("Labeling connecting node ", c)
     G.node[c]['strategy'] = random.choice(strat_list)
 
-def label_dumbell_multiple_cliques(G, clique_to_prop):
+def label_dumbell_multiple_cliques(G, strat_list, clique_to_prop):
   '''
   G                   A multiple dumbell graph
   clique_to_prop      dictionary maps clique_index---->prop of cooperators    
