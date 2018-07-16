@@ -1124,17 +1124,19 @@ for start_prop_cooperators in prop_increments:
 CODE FOR MULTIPLE DUMBELLS
 AND MULTIPLE PROPORTIONS
 -------------------------'''
-plot_multiple_dumbell_each_clique(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, None, \
-    'BD', plotting=True, show_graph=True, saving=True, color_fitness=True)
+#plot_multiple_dumbell_each_clique(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, None, \
+#    'BD', plotting=True, show_graph=True, saving=True, color_fitness=True)
 
 
 
 #plot_trial_until_stable(parameters, graph_type, u, t, 'Cooperate', num_rep, \
 #    update_name = 'BD', plotting = True, show_graph = True, saving = False, color_fitness=False)
-'''
+
 graph=init.generate_graph([[5,7,9],2], 'dumbell_multiple_sized')
-init.label_dumbell_multiple_cliques(graph, strat_list, {0:0.2, 1:0.9, 2:0.9})
+init.label_dumbell_multiple_cliques_precise(graph, strat_list, {0:0.2, 1:0.9, 2:0.9})
 dis.color_and_draw_graph(graph)
 dis.color_fitness_and_draw_graph(graph, nx.spring_layout(graph))
 print(get_props_cliques(graph))
-'''
+
+
+
