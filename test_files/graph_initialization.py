@@ -72,6 +72,11 @@ def generate_graph(parameters, type = 'random'):
       prob_pp = parameters[4]
       graph=generate_rich_club(size_club, size_periphery, prob_rp, prob_rr, prob_pp)
 
+    elif type == 'dumbell_multiple_sized':
+      size_list=parameters[0]
+      path_length=parameters[1]
+      graph=generate_dumbell_multiple_sizes(size_list, path_length)
+
     return graph 
 
   except ValueError:
@@ -168,6 +173,46 @@ def generate_dumbell_multiple_cliques(m, N, L):
     G.node[n]['coord']=n
   G=nx.convert_node_labels_to_integers(G)
   return G
+
+def generate_dumbell_multiple_sizes(sizes, path_length):
+  nodes_so_far=0
+  sums={}
+  edges=[]
+  G=nx.Graph()
+  for clique_index in range(len(sizes)):
+    prev=nodes_so_far
+    nodes_so_far+=sizes[clique_index]
+    #later going to be used for the paths
+    sums[clique_index]=prev
+
+    range_clique=range(prev+1, nodes_so_far+1)
+    for pair in itertools.combinations(range_clique,2):
+      a,b = pair[0], pair[1]
+      edges.append( (( (clique_index,clique_index) ,a),( (clique_index,clique_index) ,b)) )
+  #NOW PATH EDGES!
+  for pair in itertools.combinations(range(len(sizes)),2):
+    a = pair[0]
+    b = pair[1]
+    if path_length>1:
+      edges.append( (((a,a),sums[a]+1),(pair,1)) )
+      edges.append( ((pair,path_length), ((b,b),sums[b]+1)) )
+      for k in range(1,path_length):
+        edges.append( ((pair,k),(pair,k+1)) )
+    elif path_length==1:
+      edges.append( (((a,a),sums[a]+1),(pair,1)) )
+      edges.append( ((pair,1),((b,b),sums[b]+1)) )
+    else:
+      edges.append(((a,a),sums[a]+1), ((b,b),sums[b]+1))
+  G.add_edges_from(edges)
+
+  for n in G.nodes():
+    G.node[n]['coord']=n
+  G=nx.convert_node_labels_to_integers(G)
+  return G
+
+
+  return G
+
 
 def generate_weighted(n, type= 'random', d=0, m=0, periodic=False, with_positions=True, create_using=None):
   '''
@@ -276,7 +321,6 @@ def label_birth_death_precise_prop(G,strat_list, start_prop_coop=None):
       G.node[n]['strategy'] = 'Defect'
     G.node[n]['fitness'] = random.uniform(0,1)
     G.node[n]['payoffs'] = []
-
 
 def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=0):
   '''
@@ -461,13 +505,6 @@ def color_and_draw_graph(G):
 
     return G
 
-'''------------------------
-    GETTING INFO FROM GRAPHS
--------------------------'''
-
-
-
-
 '''---------------------
     TESTING GRAPHS
 ---------------------'''
@@ -480,7 +517,8 @@ def color_and_draw_graph(G):
 # graph[4]=generate_graph([20], 'complete')
 # graph[5]=generate_graph([30],'dumbell')
 # graph[6]=generate_graph([5,4,2], 'dumbell_multiple')
-#graph[7]=generate_graph([10,30, .8,.999, .001],'rich_club')
+# graph[7]=generate_graph([10,30, .8,.999, .001],'rich_club')
+# graph[8]=generate_graph([[5,7,9],2], 'dumbell_multiple_sized')
 
 
 #label_birth_death(graph[5], ['Cooperate','Defect'], 0.5)
@@ -494,3 +532,6 @@ def color_and_draw_graph(G):
 
 #label_birth_death(graph[7], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[7])
+
+#label_birth_death(graph[8], ['Cooperate','Defect'], 0.5)
+#color_and_draw_graph(graph[8])
