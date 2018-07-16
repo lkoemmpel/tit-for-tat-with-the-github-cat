@@ -111,7 +111,7 @@ class game():
                 #------------
                 payoff_mtx = [ [(b-c, b-c), (-c, b)] , [(b, -c), (0,0)] ]
                 coop_index={'Cooperate':0, 'Defect':1}
-                new_graph = inter.interaction_depends_fitness(new_graph, payoff_mtx, delta, noise=0.5)
+                new_graph = inter.interaction_BD(new_graph, payoff_mtx, delta, noise=0.1)
                 #print(nx.get_node_attributes(G, 'fitness'))
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print('\n')
@@ -381,11 +381,11 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
             graph = sparse_graph
 
         #LABEL BIRTH DEATH
-        init.label_birth_death(graph, strat_list, start_prop_cooperators)
+        #init.label_birth_death_precise_prop(graph, strat_list, start_prop_cooperators)
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
         #LABEL MULTIPLE CLIQUES 
-        #init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.5, 1:1})       
+        init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.2, 1:0.9, 2:0, 3:0.1, 4:1})       
 
         this_game=game(graph, update_name, t, u, d, plotting, show_graph, saving, color_fitness)
 
@@ -440,9 +440,9 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
     #plt.close()     
 
     if saving:
-    #    print("Attempting to save plot ", data_iteration)+1
-        plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + \
-            str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
+    #    print("Attempting to save plot ", t)+1
+        plt.savefig(graph_type + '_t=' + str(t) + '_' + update_name + '_n=' + str(len(list(nx.nodes(graph)))) + '_u=' + \
+            str(u) + '_d=' + str(d) + '_' + '.png')
     #plt.close()
 
     #last_5=Yavg[-5:]
@@ -544,54 +544,49 @@ def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n
 
     return None
 
-def plot_trials_until_stable(parameters, graph_type, u, t, number_trials, the_strat, num_rep, \
-    update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):
+def plot_trial_until_stable(parameters, graph_type, u, t, the_strat, num_rep, \
+    update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False, rho=None):
     #matrix in which entry n,t is the concentration 
     #of the_strat at time t in trial n
     result_matrix=[]
     #run the game for each trial
     std_dev=2
-    num_of_trial=0
+    timestep=0
+    #GENERATE GRAPH
+    graph=init.generate_graph(parameters, graph_type)
+    #given density
+    if rho != None:
+        # Remove lattice nodes until only rho percent remain
+        sparse_graph = graph.copy()
+        for n in graph.nodes():
+            #indicator is random.uniform(0,1)
+            if random.uniform(0,1) > rho:
+                if nx.number_of_nodes(sparse_graph) != 1:
+                    #this node should be deleted
+                    sparse_graph.remove_node(n)
+        graph = sparse_graph
+
+    #LABEL BIRTH DEATH
+    init.label_birth_death(graph, strat_list, start_prop_cooperators)
+    #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
+    #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
+    #LABEL MULTIPLE CLIQUES 
+    #init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.5, 1:1})
+
+    #MAKE GAME
+    this_game=game(graph, update_name, 1, u, d, plotting, show_graph, saving, color_fitness)
+
     while std_dev>0.1:
-        num_of_trial+=1
+        timestep+=1
         print('\n')
-        print("Running trial ", num_of_trial)
-        #print("Evaluating trial ", each)
-        graph=init.generate_graph(parameters, graph_type)
-
-        if rho != None:
-            # Remove lattice nodes until only rho percent remain
-            sparse_graph = graph.copy()
-            for n in graph.nodes():
-                #indicator is random.uniform(0,1)
-                if random.uniform(0,1) > rho:
-                    if nx.number_of_nodes(sparse_graph) != 1:
-                        #this node should be deleted
-                        sparse_graph.remove_node(n)
-            graph = sparse_graph
-
-        #LABEL BIRTH DEATH
-        init.label_birth_death(graph, strat_list, start_prop_cooperators)
-        #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
-        #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
-        #LABEL MULTIPLE CLIQUES 
-        #init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.5, 1:1})       
-
-        this_game=game(graph, update_name, t, u, d, plotting, show_graph, saving, color_fitness)
-
+        print("Running step ", str(timestep))
 
         if graph_type == 'triangular_lattice':
             pos = dict( (n, n) for n in graph.nodes() )
         else:
             pos = nx.spring_layout(graph)
 
-        trial_outcome = this_game.trial(pos, num_rep, graph_type, each+1)
-        
-
-        #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
-        #    graph_type, update_name, plotting, show_graph, saving, color_fitness)
-        #append record for this trial of the concentrations of the_strat
-        
+        trial_outcome = this_game.trial(pos, num_rep, graph_type, 1)
         result_matrix.append(trial_outcome[1][the_strat])
         try:
             last_ten=result_matrix[-9:]
@@ -601,15 +596,15 @@ def plot_trials_until_stable(parameters, graph_type, u, t, number_trials, the_st
         for obj in range(len(last_ten)):
             to_avg=[trial[obj] for trial in last_ten]
             averages.append(sum(to_avg)/len(to_avg))
-        std_dev=stdev(averages)
+        std_dev=np.std(averages)
 
 
-
+    
     #scatter plot X axis! 
-    X=[tictoc for tictoc in range(num_of_trial)]
+    X=[tictoc for tictoc in range(timestep)]
     #three lines to plot: average, and pm stdev
     Yavg, Yplus, Yminus=[], [], []
-    for tictoc in range(t):
+    for tictoc in range(timestep):
         at_time_t=[trial[tictoc] for trial in result_matrix]
         #average at time t over all the trials
         average=sum(at_time_t)/len(at_time_t)
@@ -628,7 +623,7 @@ def plot_trials_until_stable(parameters, graph_type, u, t, number_trials, the_st
         plt.xlim(0,t-1)
         plt.ylim(0,1)
         #add title
-        plt.title('Relationship between time and proportion of nodes with \n strategy ' + the_strat + ' in '+str(number_trials)+ ' trials')
+        plt.title('Relationship between time and proportion of nodes with \n strategy ' + the_strat + ' in '+str(timestep)+ ' timesteps')
         #add x and y labels
         plt.ylabel('Proportion of nodes with strategy ' + the_strat)
         plt.xlabel('Time')
@@ -639,15 +634,19 @@ def plot_trials_until_stable(parameters, graph_type, u, t, number_trials, the_st
         pause(60)
     #plt.close()     
 
-    if saving:
+    #if saving:
     #    print("Attempting to save plot ", data_iteration)+1
-        plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + \
-            str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
+    #    plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + \
+    #        str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
     #plt.close()
 
     #last_5=Yavg[-5:]
     #return sum(last_5)/len(last_5)
+    
     return Yavg[-1]
+
+
+
 '''
 def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, d, i):
     
@@ -706,10 +705,10 @@ update_name = 'BD'
 parameters = [n,m]
 
 
-t = 20
+t = 30
 
 
-number_trials = 4
+number_trials = 10
 
 
 n_lattice = 50
@@ -786,9 +785,10 @@ max_b = 2
 #    plotting = True, show_graph = False, saving = True, color_fitness = True)
 
 
-parameters=[10,2,4]
-plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=False, show_graph=True, saving=True, color_fitness=True)
+parameters=[15,2,4]
+plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
 
-
+#plot_trial_until_stable(parameters, graph_type, u, t, 'Cooperate', num_rep, \
+#    update_name = 'BD', plotting = True, show_graph = True, saving = False, color_fitness=False)
 
 

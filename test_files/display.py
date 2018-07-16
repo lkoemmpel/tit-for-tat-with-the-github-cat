@@ -177,7 +177,7 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None, num_of_trial=No
 
 
     plt.show()
-    pause(3)
+    pause(0.4)
 
 
     plt.gcf().clear()

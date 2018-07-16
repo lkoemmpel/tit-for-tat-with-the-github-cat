@@ -267,7 +267,7 @@ def label_birth_death(G, strat_list, start_prop_coop=None):
 def label_birth_death_precise_prop(G,strat_list, start_prop_coop=None):
   num_nodes=len(G.nodes())
   num_coops=int(round(num_nodes*start_prop_coop))
-  selected_coops=random.choice(list(G.nodes()), num_coops)
+  selected_coops=random.sample(list(G.nodes()), num_coops)
   selected_coops=set(selected_coops)
   for n in G.nodes():
     if n in selected_coops:
@@ -277,7 +277,7 @@ def label_birth_death_precise_prop(G,strat_list, start_prop_coop=None):
     G.node[n]['fitness'] = random.uniform(0,1)
     G.node[n]['payoffs'] = []
 
-    
+
 def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=0):
   '''
     INPUTS: 
@@ -352,6 +352,7 @@ def label_dumbell_multiple_cliques(G, strat_list, clique_to_prop):
   clique_to_prop      dictionary maps clique_index---->prop of cooperators    
   '''
   for n in G.nodes():
+    #if this is a clique node
     if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
       clique_num = G.node[n]['coord'][0][0]
       if random.uniform(0,1)<clique_to_prop[clique_num]:
@@ -359,7 +360,7 @@ def label_dumbell_multiple_cliques(G, strat_list, clique_to_prop):
       else:
         G.node[n]['strategy'] = 'Defect'
     else:
-      G.node[n]['strategy'] = 'Cooperate'
+      G.node[n]['strategy'] = random.choice(strat_list)
     G.node[n]['fitness'] = random.uniform(0,1)
     G.node[n]['payoffs'] = []
 
@@ -459,6 +460,13 @@ def color_and_draw_graph(G):
     #plt.pause(2.0)
 
     return G
+
+'''------------------------
+    GETTING INFO FROM GRAPHS
+-------------------------'''
+
+
+
 
 '''---------------------
     TESTING GRAPHS
