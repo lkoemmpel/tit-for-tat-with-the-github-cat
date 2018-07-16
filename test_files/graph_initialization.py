@@ -213,7 +213,6 @@ def generate_dumbell_multiple_sizes(sizes, path_length):
   #  print(G.node[n]['coord'])
   return G
 
-
 def generate_weighted(n, type= 'random', d=0, m=0, periodic=False, with_positions=True, create_using=None):
   '''
     INPUTS: 
@@ -388,7 +387,7 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
   #Now we go back and label the connecting nodes
   for c in connecting_nodes:
     print("Labeling connecting node ", c)
-    G.node[c]['strategy'] = random.choice(strat_list)
+    G.node[c]['strategy'] = random.choice(strat_list)   
 
 def label_dumbell_multiple_cliques(G, strat_list, clique_to_prop):
   '''
@@ -400,6 +399,42 @@ def label_dumbell_multiple_cliques(G, strat_list, clique_to_prop):
     if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
       clique_num = G.node[n]['coord'][0][0]
       if random.uniform(0,1)<clique_to_prop[clique_num]:
+        G.node[n]['strategy'] = 'Cooperate'
+      else:
+        G.node[n]['strategy'] = 'Defect'
+    else:
+      G.node[n]['strategy'] = random.choice(strat_list)
+    G.node[n]['fitness'] = random.uniform(0,1)
+    G.node[n]['payoffs'] = []
+
+def label_dumbell_multiple_cliques_precise(G, strat_list, clique_to_prop):
+  '''
+  G                   A multiple dumbell graph
+  clique_to_prop      dictionary maps clique_index---->prop of cooperators    
+  '''
+  index_to_set={}
+  selected_overall=set()
+  num_cliques=0
+  for n in G.nodes():
+      if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
+        clique=G.node[n]['coord'][0][0]
+        try:
+          index_to_set[clique].add(n)
+        except:
+          index_to_set[clique] = {n}
+
+  num_cliques = len(index_to_set)
+  for k in range(num_cliques):
+    num_elts = len(index_to_set[k])
+    prop_coop = clique_to_prop[k]
+    num_coops = int(round(num_elts*prop_coop))
+    selected_clique = random.sample(index_to_set[k], num_coops)
+    selected_overall = selected_overall.union(selected_clique)
+
+  for n in G.nodes():
+    #if this is a clique node
+    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
+      if n in selected_overall:
         G.node[n]['strategy'] = 'Cooperate'
       else:
         G.node[n]['strategy'] = 'Defect'
@@ -535,3 +570,5 @@ def color_and_draw_graph(G):
 
 #label_birth_death(graph[8], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[8])
+
+
