@@ -96,7 +96,7 @@ def color_and_draw_graph(G):
     #plt.ion()
     nx.draw(G,node_color = color_map, with_labels = True)
     plt.show()
-    #plt.pause(2.0)
+    pause(10)
 
     return G
 
@@ -177,7 +177,7 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None, num_of_trial=No
 
 
     plt.show()
-    pause(0.4)
+    pause(20)
 
 
     plt.gcf().clear()
