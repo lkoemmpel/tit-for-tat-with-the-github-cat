@@ -361,7 +361,7 @@ def get_histogram_and_concentration_dict(G, strat_list):
         conc_dict[strat].append(histo_dict[strat]/nx.number_of_nodes(G))
     return histo_dict, conc_dict
 
-def plot_many_trials(parameters, graph_type, u, noise, t, number_trials, the_strat, num_rep, \
+def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, the_strat, num_rep, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
 
     #matrix in which entry n,t is the concentration 
@@ -392,7 +392,8 @@ def plot_many_trials(parameters, graph_type, u, noise, t, number_trials, the_str
         #LABEL MULTIPLE CLIQUES 
         init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.2, 1:0.9, 2:0, 3:0.1, 4:1})       
 
-        this_game=game(graph, update_name, t, u, plotting, show_graph, saving, color_fitness)
+
+        this_game=game(graph, update_name, t, u, delta, plotting, show_graph, saving, color_fitness)
 
 
         if graph_type == 'triangular_lattice':
@@ -440,7 +441,7 @@ def plot_many_trials(parameters, graph_type, u, noise, t, number_trials, the_str
 
         #show plot
         plt.show()   
-        print("Attempting to show plot -----------------")
+        #print("Attempting to show plot -----------------")
         #pause(60)
     #plt.close()     
 
@@ -882,8 +883,9 @@ CODE FOR MULTIPLE DUMBELLS
 
 prop_increments = np.arange(.1, 1.1, 0.1)
 for start_prop_cooperators in prop_increments:
+    start_prop_cooperators = round(start_prop_cooperators, 3)
     plt.gcf().clear()
-    plot_many_trials(parameters, graph_type, u, noise, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=False, saving=True, color_fitness=True)
+    plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=False, saving=True, color_fitness=True)
 
 
 
