@@ -525,6 +525,110 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
     #return sum(last_5)/len(last_5)
     return Yavg[-1]
 
+def plot_multiple_dumbell_each_clique(parameters, graph_type, u, delta, noise, t, number_trials, the_strat, num_rep, \
+    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
+
+    #matrix in which entry n,t is the concentration 
+    #of the_strat at time t in trial n
+    result_matrix=[]
+    #run the game for each trial
+    for each in range(number_trials):
+        print('\n')
+        print("Running trial ", each)
+        #print("Evaluating trial ", each)
+        graph=init.generate_graph(parameters, graph_type)
+
+        if rho != None:
+            # Remove lattice nodes until only rho percent remain
+            sparse_graph = graph.copy()
+            for n in graph.nodes():
+                #indicator is random.uniform(0,1)
+                if random.uniform(0,1) > rho:
+                    if nx.number_of_nodes(sparse_graph) != 1:
+                        #this node should be deleted
+                        sparse_graph.remove_node(n)
+            graph = sparse_graph
+
+        #LABEL BIRTH DEATH
+        #init.label_birth_death_precise_prop(graph, strat_list, start_prop_cooperators)
+        #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
+        #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
+        #LABEL MULTIPLE CLIQUES 
+        init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.2, 1:0.9, 2:0, 3:0.1, 4:1})       
+
+
+        this_game=game(graph, update_name, t, u, delta, plotting, show_graph, saving, color_fitness)
+
+
+        if graph_type == 'triangular_lattice':
+            pos = dict( (n, n) for n in graph.nodes() )
+        else:
+            pos = nx.spring_layout(graph)
+
+        trial_outcome = this_game.trial(pos, num_rep, noise, graph_type, each+1)
+        
+
+        #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
+        #    graph_type, update_name, plotting, show_graph, saving, color_fitness)
+        #append record for this trial of the concentrations of the_strat
+        
+        result_matrix.append(trial_outcome[1][the_strat])
+
+
+    #scatter plot X axis! 
+    X=[tictoc for tictoc in range(t)]
+    #three lines to plot: average, and pm stdev
+    Yavg, Yplus, Yminus=[], [], []
+    for tictoc in range(t):
+        at_time_t=[trial[tictoc] for trial in result_matrix]
+        #average at time t over all the trials
+        average=sum(at_time_t)/len(at_time_t)
+        stdev=np.std(at_time_t)
+        Yavg.append(average)
+        Yplus.append(average+stdev)
+        Yminus.append(average-stdev)
+
+    if plotting:
+        #plot the 3 lines
+        plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
+        plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
+        plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
+        
+        #change axes ranges
+        plt.xlim(0,t-1)
+        plt.ylim(0,1)
+        #add title
+        plt.title('Relationship between time and proportion of nodes with \n strategy ' + the_strat + ' in '+str(number_trials)+ ' trials')
+        #add x and y labels
+        plt.ylabel('Proportion of nodes with strategy ' + the_strat)
+        plt.xlabel('Time')
+
+        #show plot
+        plt.show()   
+        #print("Attempting to show plot -----------------")
+        #pause(60)
+    #plt.close()     
+
+    if saving:
+        file_id = 0
+        #randint(10**5, 10**6 - 1)
+    #   print("Attempting to save plot ", data_iteration)+1
+        plt.savefig(graph_type + '_' + \
+            update_name + '_' + \
+            'u=' + str(u) + '_' + \
+            'noise=' + str(noise) + '_' + \
+            'size_dumbell=' + str(parameters[0]) + '_' + \
+            'num_dumbell=' + str(parameters[1]) + '_' + \
+            'size_path=' + str(parameters[2]) + '_' + \
+            'prop_coop=' + str(start_prop_cooperators) + '_' + \
+            str(number_trials) + 'trials' + '_' + \
+            str(t) + 'timesteps' + '_' + \
+            'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        
+    #last_5=Yavg[-5:]
+    #return sum(last_5)/len(last_5)
+    return Yavg[-1]
+
 def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_strat, \
     update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness = True):    
 
