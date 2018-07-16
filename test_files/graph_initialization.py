@@ -208,9 +208,9 @@ def generate_dumbell_multiple_sizes(sizes, path_length):
   for n in G.nodes():
     G.node[n]['coord']=n
   G=nx.convert_node_labels_to_integers(G)
-  return G
 
-
+  #for n in G.nodes():
+  #  print(G.node[n]['coord'])
   return G
 
 

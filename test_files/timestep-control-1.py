@@ -21,6 +21,10 @@ import display as dis
 
 from matplotlib.pyplot import pause
 
+'''--------------------------
+        HELPERS
+--------------------------'''
+
 # Print iterations progress
 def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
     """
@@ -41,6 +45,33 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
     # Print New Line on Complete
     if iteration == total: 
         print()
+
+def get_props_cliques (G):
+    '''
+    G is a multiple dumbell
+    '''
+    num_cliques=0
+    for n in G.nodes():
+        if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
+            num_cliques = max(G.node[n]['coord'][0][0]+1, num_cliques)
+    #print(num_cliques)
+    counts = [ 0 for k in range(num_cliques) ]
+    sizes = [ 0 for k in range(num_cliques) ]
+
+    for n in G.nodes():
+        if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
+            k = G.node[n]['coord'][0][0]
+            sizes[k]+=1
+            if G.node[n]['strategy'] == 'Cooperate':
+                counts[k]+=1
+
+    #MAKE A LIST:       props[k]=proportion at clique k
+    props = [ counts[k]/sizes[k] for k in range(num_cliques) ]
+    return props
+
+'''----------------------------------
+        THE ONE AND ONLY (code)
+----------------------------------'''
 
 
 names_to_functions={'BD': rep.birth_death, 'DB': rep.death_birth}
@@ -157,6 +188,97 @@ class game():
             #    plot_proportion_data(time_data, final_data, saving, graph_type,t, update_name, n, u, d, data_iteration)
 
             return new_graph, concentrations, self.plotting
+
+    def trial_multidumbell(self, pos, num_rep, graph_type = 'random', num_of_trial=None):
+        '''
+        INPUTS:     G: networkx graph object with fitness and strategy attributes
+                    u: rate of mutation for reproduction
+                    t: number of times to have stratgies update
+        OUTPUTS:    new_graph: updated networkx graph object where strategies have been updated
+        Prints graph at every stage of strategy updating
+        Plots how proportions of each strategy change over time
+        '''
+        graph=self.graph
+        u=self.u
+        t=self.t
+
+        if type(self.name)==str:
+
+            if self.show_graph:
+                dis.color_fitness_and_draw_graph(G, pos, None, num_of_trial, 0)
+                #print(nx.get_node_attributes(G, 'strategy'))
+                #print("-----------------------------------------------")
+            
+            time_data=[]
+            strat_data_dict, concentrations= get_histogram_and_concentration_dict(G, strat_list)
+            # strat_data_dict maps      strategy ---> freq(strat)
+            # concentrations maps       strategy ---> matrix 
+            #                                         entry n,t : freq(strat)/number(nodes)
+            #                                         at trial n, time t
+            props=[]
+            for i in range(t):
+                #print("Running time ", t)
+                #----------------------
+                #PROPORTIONS PER CLIQUE
+                #---------------------- 
+                props.append(get_props_cliques(graph))
+                #------------
+                #REPRODUCTION
+                #------------ 
+                birth_death_results = names_to_functions[update_name](G, strat_list, u, num_rep)
+                #naming the results from rep
+                new_graph = birth_death_results[0]
+                new_strategies=birth_death_results[1]
+                old_strategies = birth_death_results[2]
+                reproducing_nodes = birth_death_results[3]
+
+                #------------
+                #INTERACTION
+                #------------
+                payoff_mtx = [ [(b-c, b-c), (-c, b)] , [(b, -c), (0,0)] ]
+                coop_index={'Cooperate':0, 'Defect':1}
+                new_graph = inter.interaction_BD(new_graph, payoff_mtx, delta, noise=0.1)
+                #print(nx.get_node_attributes(G, 'fitness'))
+                #print(nx.get_node_attributes(G, 'strategy'))
+                #print('\n')
+
+                if self.show_graph:
+                    if i%1 == 0:
+                        if self.color_fitness:
+                            dis.color_fitness_and_draw_graph(new_graph, pos, reproducing_nodes, num_of_trial, i+1)
+                        else:
+                            # Creates picture of graph 
+                            dis.color_and_draw_graph(new_graph)
+
+                for index in range(len(old_strategies)):
+                    new=new_strategies[index]
+                    old=old_strategies[index]
+                    strat_data_dict[new]+=1
+                    strat_data_dict[old]-=1
+
+                # if new_strategy != None:
+                #     # update tallies for each strategy
+                #     strat_data_dict[new_strategy] += 1
+                #     strat_data_dict[old_strategy] -= 1
+
+                # update strategy proportions for each strategy
+                for strat in strat_data_dict:
+                    concentrations[strat].append(strat_data_dict[strat]/nx.number_of_nodes(G))
+
+                #print("Current time data is", time_data)
+                time_data.append(i+1)
+
+                #print(time_data)
+                #print(final_data)
+                #print("Plotting data at time ", t)
+                #plot_proportion_data(time_data, final_data)
+
+                graph = new_graph
+
+            #if self.plotting:
+            #    plot_proportion_data(time_data, final_data, saving, graph_type,t, update_name, n, u, d, data_iteration)
+
+            return new_graph, concentrations, self.plotting, props
 
     def lattice_density_and_payoff_trial(self, pos, num_rep, graph_type = 'random'):
         '''
@@ -724,6 +846,39 @@ def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n
 
     return None
 
+
+
+'''
+def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, d, i):
+    
+    Like plot proportional data, but handles many dictionaries
+    from the data of many graphs
+    Plots each data a different color/style on the same plot
+    
+    for strat in strat_dict:
+        # IMPORTANT -- UNDO THIS IF STATEMENT WHEN EXAMINING MORE STRATEGIES
+        if strat == 'Cooperate':
+            #scatter plot
+            X = time
+            Y = strat_dict[strat]
+            plt.plot(X, Y, color='blue', marker='^', linestyle = '-')
+            #change axes ranges
+            plt.xlim(0,max(time))
+            plt.ylim(0,1)
+            #add title
+            plt.title('Relationship between time and proportion of nodes with strategy ' + strat)
+            #add x and y labels
+            plt.ylabel('Proportion of nodes with strategy ' + strat)
+            plt.xlabel('Time')
+            #show plot
+            plt.ion()        
+            if saving:
+                print("Attempting to save plot ", i)
+                plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + \
+                '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
+            plt.close()
+    return None
+
 def plot_trial_until_stable(parameters, graph_type, u, t, the_strat, num_rep, \
     update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False, rho=None):
     #matrix in which entry n,t is the concentration 
@@ -825,38 +980,6 @@ def plot_trial_until_stable(parameters, graph_type, u, t, the_strat, num_rep, \
     
     return Yavg[-1]
 
-
-
-'''
-def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, d, i):
-    
-    Like plot proportional data, but handles many dictionaries
-    from the data of many graphs
-    Plots each data a different color/style on the same plot
-    
-    for strat in strat_dict:
-        # IMPORTANT -- UNDO THIS IF STATEMENT WHEN EXAMINING MORE STRATEGIES
-        if strat == 'Cooperate':
-            #scatter plot
-            X = time
-            Y = strat_dict[strat]
-            plt.plot(X, Y, color='blue', marker='^', linestyle = '-')
-            #change axes ranges
-            plt.xlim(0,max(time))
-            plt.ylim(0,1)
-            #add title
-            plt.title('Relationship between time and proportion of nodes with strategy ' + strat)
-            #add x and y labels
-            plt.ylabel('Proportion of nodes with strategy ' + strat)
-            plt.xlabel('Time')
-            #show plot
-            plt.ion()        
-            if saving:
-                print("Attempting to save plot ", i)
-                plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + \
-                '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
-            plt.close()
-    return None
 '''
 
 '''--------------------------------------------
@@ -979,8 +1102,6 @@ CODE FOR LATTICES
 #    plotting = True, show_graph = False, saving = True, color_fitness = True)
 
 
-
-
 '''------------------------
 CODE FOR MULTIPLE DUMBELLS
 -------------------------'''
@@ -997,5 +1118,8 @@ for start_prop_cooperators in prop_increments:
 #plot_trial_until_stable(parameters, graph_type, u, t, 'Cooperate', num_rep, \
 #    update_name = 'BD', plotting = True, show_graph = True, saving = False, color_fitness=False)
 
-
-
+graph=init.generate_graph([[5,7,9],2], 'dumbell_multiple_sized')
+init.label_dumbell_multiple_cliques(graph, strat_list, {0:0.2, 1:0.9, 2:0.9})
+dis.color_and_draw_graph(graph)
+dis.color_fitness_and_draw_graph(graph, nx.spring_layout(graph))
+print(get_props_cliques(graph))
