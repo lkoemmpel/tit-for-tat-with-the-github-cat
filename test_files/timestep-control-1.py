@@ -602,7 +602,7 @@ update_name = 'BD'
 parameters = [n,m]
 
 
-t = 10
+t = 100
 
 
 number_trials=5
@@ -683,7 +683,7 @@ max_b = 2
 
 
 parameters=[30,2,4]
-plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=True, saving=True, color_fitness=True)
 
 
 
