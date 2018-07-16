@@ -2,6 +2,7 @@
         PACKAGES
 -------------------'''
 import random
+from random import randint 
 import networkx as nx
 import matplotlib.pyplot as plt
 import math 
@@ -95,7 +96,7 @@ class game():
         #do we want to use a heat map for fitness?
         self.color_fitness=color_fitness
 
-    def trial(self, pos, num_rep, graph_type = 'random', num_of_trial=None):
+    def trial(self, pos, num_rep, noise=0, graph_type = 'random', num_of_trial=None):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -142,7 +143,9 @@ class game():
                 #------------
                 payoff_mtx = [ [(b-c, b-c), (-c, b)] , [(b, -c), (0,0)] ]
                 coop_index={'Cooperate':0, 'Defect':1}
-                new_graph = inter.interaction_BD(new_graph, payoff_mtx, delta, noise=0.1)
+
+                new_graph = inter.interaction_BD(new_graph, payoff_mtx, delta, noise)
+
                 #print(nx.get_node_attributes(G, 'fitness'))
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print('\n')
@@ -153,6 +156,7 @@ class game():
                             dis.color_fitness_and_draw_graph(new_graph, pos, reproducing_nodes, num_of_trial, i+1)
                         else:
                             # Creates picture of graph 
+                            print('------------------------Fitness variable was false')
                             dis.color_and_draw_graph(new_graph)
 
                 for index in range(len(old_strategies)):
@@ -337,6 +341,7 @@ class game():
                             dis.color_fitness_and_draw_graph(new_graph, pos, reproducing_nodes)
                         else:
                             # Creates picture of graph 
+                            print("-----------------fitness is not going to be colored")
                             dis.color_and_draw_graph(new_graph)
 
                 if self.plotting:
@@ -478,7 +483,7 @@ def get_histogram_and_concentration_dict(G, strat_list):
         conc_dict[strat].append(histo_dict[strat]/nx.number_of_nodes(G))
     return histo_dict, conc_dict
 
-def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num_rep, \
+def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, the_strat, num_rep, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
 
     #matrix in which entry n,t is the concentration 
@@ -509,7 +514,8 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
         #LABEL MULTIPLE CLIQUES 
         init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.2, 1:0.9, 2:0, 3:0.1, 4:1})       
 
-        this_game=game(graph, update_name, t, u, d, plotting, show_graph, saving, color_fitness)
+
+        this_game=game(graph, update_name, t, u, delta, plotting, show_graph, saving, color_fitness)
 
 
         if graph_type == 'triangular_lattice':
@@ -517,7 +523,11 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
         else:
             pos = nx.spring_layout(graph)
 
-        trial_outcome = this_game.trial(pos, num_rep, graph_type, each+1)
+        trial_outcome = this_game.trial(pos, num_rep, noise, graph_type, each+1)
+        
+
+        #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
+        #    graph_type, update_name, plotting, show_graph, saving, color_fitness)
         #append record for this trial of the concentrations of the_strat
         
         result_matrix.append(trial_outcome[1][the_strat])
@@ -553,15 +563,88 @@ def plot_many_trials(parameters, graph_type, u, t, number_trials, the_strat, num
 
         #show plot
         plt.show()   
-        print("Attempting to show plot -----------------")
-        pause(60)
+        #print("Attempting to show plot -----------------")
+        #pause(60)
     #plt.close()     
 
     if saving:
-    #    print("Attempting to save plot ", t)+1
-        plt.savefig(graph_type + '_t=' + str(t) + '_' + update_name + '_n=' + str(len(list(nx.nodes(graph)))) + '_u=' + \
-            str(u) + '_d=' + str(d) + '_' + '.png')
-    #plt.close()
+        file_id = 0
+        #randint(10**5, 10**6 - 1)
+    #   print("Attempting to save plot ", data_iteration)+1
+        if graph_type=='dumbell_multiple':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'size_dumbell=' + str(parameters[0]) + '_' + \
+                'num_dumbell=' + str(parameters[1]) + '_' + \
+                'size_path=' + str(parameters[2]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='dumbell':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'n=' + str(parameters[0]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type == 'rich_club':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'size_club=' + str(parameters[0]) + '_' + \
+                'size_periphery=' + str(parameters[1]) + '_' + \
+                'prob_rp=' + str(parameters[2]) + '_' + \
+                'prob_rr=' + str(parameters[3]) + '_' + \
+                'prob_pp=' + str(parameters[4]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='complete' or 'hypercube':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'num_nodes=' + str(parameters[0]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + \
+                str(file_id) + '.png')
+        elif graph_type=='triangular_lattice':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'n_dim=' + str(parameters[0]) + '_' + \
+                'm_dim=' + str(parameters[1]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='random':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'num_nodes=' + str(parameters[0]) + '_' + \
+                'ave_degree=' + str(parameters[1]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + \
+                str(file_id) + '.png')
+
+
+    #last_5=Yavg[-5:]
+    #return sum(last_5)/len(last_5)
     return Yavg[-1]
 
 def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_strat, \
@@ -802,40 +885,56 @@ def plot_trial_until_stable(parameters, graph_type, u, t, the_strat, num_rep, \
 '''--------------------------
         IMPORTANT VARS
 --------------------------'''
-#strat_list = ['Cooperate', 'Defect', 'Tit_for_tat']
-strat_list = ['Cooperate', 'Defect']
-u = .2
 
-b = 3
-c = 1
-delta = .2
-
-n = 5
-m = 5
-
-d = 6
-graph_type = 'dumbell_multiple'
-
+'''--------------VARIABLES ALWAYS USED ----------------'''
+strat_list  = ['Cooperate', 'Defect']
+graph_type  = 'dumbell_multiple'
 update_name = 'BD'
-#list of parameters that will be used to build graph
-parameters = [n,m]
 
-
-t = 30
-
-
-
-number_trials = 4
-
-
-
-n_lattice = 50
-m_lattice = 50
-
-start_prop_cooperators = .2
-
+u       = .2
+delta   = .2
+noise   = .2
+b       = 2
+max_b   = 2
+c       = 1
+t       = 100
+start_prop_cooperators  = .2
+number_trials           = 20
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
+
+
+#To run a particular graph simulation, uncomment the parameters line
+
+
+'''-----------Lattice Variables----------------'''
+n_lattice = 50
+m_lattice = 50
+#list of parameters that will be used to build graph
+#parameters = [n_lattice,m_lattice]
+
+
+
+'''-----------Multiple Dumbell Variables----------------'''
+size_dumbell= 10
+num_dumbell = 2
+size_path   = 4
+#list of parameters that will be used to build graph
+parameters = [size_dumbell, num_dumbell, size_path]
+
+
+'''-----------Rich Club Variables----------------'''
+size_club       = 10
+size_periphery  = 20
+prob_rp         = .2
+prob_rr         = .2
+prob_pp         = .2
+#list of parameters that will be used to build graph
+#parameters = [size_club, size_periphery, prob_rp, prob_rr, prob_pp]
+
+
+
+
 
 '''------------
 TYPES OF GRAPHS
@@ -890,21 +989,25 @@ TIMESTEP
 
 
 #2                      Test for plot_many_trials
-c=1
-b=1
-max_b = 2
 
-#prop_increments = np.arange(.3, 1.1, 0.1)
-
-#start_prop_cooperators=.1
-
+'''------------------------
+CODE FOR LATTICES
+-------------------------'''
 #for start_prop_cooperators in prop_increments:
 #plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, 'Cooperate', update_name = 'BD', \
 #    plotting = True, show_graph = False, saving = True, color_fitness = True)
 
 
-#parameters=[10,2,4]
-#plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=False, show_graph=True, saving=True, color_fitness=True)
+'''------------------------
+CODE FOR MULTIPLE DUMBELLS
+-------------------------'''
+
+prop_increments = np.arange(.1, 1.1, 0.1)
+for start_prop_cooperators in prop_increments:
+    start_prop_cooperators = round(start_prop_cooperators, 3)
+    plt.gcf().clear()
+    plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=False, saving=True, color_fitness=True)
+
 
 
 
