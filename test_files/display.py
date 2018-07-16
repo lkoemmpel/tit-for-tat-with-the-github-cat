@@ -96,7 +96,7 @@ def color_and_draw_graph(G):
     #plt.ion()
     nx.draw(G,node_color = color_map, with_labels = True)
     plt.show()
-    pause(10)
+    pause(.1)
 
     return G
 
@@ -160,7 +160,7 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None, num_of_trial=No
     nx.draw_networkx_edges(G, pos)
 
     #Display node labels
-    nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_color='darkgreen', font_family='sans-serif', font_weight='normal')
+    #nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_color='darkgreen', font_family='sans-serif', font_weight='normal')
 
     plt.title('Cooperators-> Blue     Defectors -> Red \n Number of trial: '+str(num_of_trial)+ '   Timestep: '+str(timestep))
     plt.axis('off')
@@ -177,7 +177,7 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None, num_of_trial=No
 
 
     plt.show()
-    pause(20)
+    pause(.1)
 
 
     plt.gcf().clear()

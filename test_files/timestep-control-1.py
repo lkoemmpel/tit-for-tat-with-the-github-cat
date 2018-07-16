@@ -189,7 +189,7 @@ class game():
 
             return new_graph, concentrations, self.plotting
 
-    def trial_multidumbell(self, pos, num_rep, graph_type = 'random', num_of_trial=None):
+    def trial_multidumbell(self, pos, num_rep, noise, graph_type = 'random', num_of_trial=None):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -205,12 +205,12 @@ class game():
         if type(self.name)==str:
 
             if self.show_graph:
-                dis.color_fitness_and_draw_graph(G, pos, None, num_of_trial, 0)
+                dis.color_fitness_and_draw_graph(graph, pos, None, num_of_trial, 0)
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print("-----------------------------------------------")
             
             time_data=[]
-            strat_data_dict, concentrations= get_histogram_and_concentration_dict(G, strat_list)
+            strat_data_dict, concentrations= get_histogram_and_concentration_dict(graph, strat_list)
             # strat_data_dict maps      strategy ---> freq(strat)
             # concentrations maps       strategy ---> matrix 
             #                                         entry n,t : freq(strat)/number(nodes)
@@ -225,7 +225,7 @@ class game():
                 #------------
                 #REPRODUCTION
                 #------------ 
-                birth_death_results = names_to_functions[update_name](G, strat_list, u, num_rep)
+                birth_death_results = names_to_functions[update_name](graph, strat_list, u, num_rep)
                 #naming the results from rep
                 new_graph = birth_death_results[0]
                 new_strategies=birth_death_results[1]
@@ -237,7 +237,7 @@ class game():
                 #------------
                 payoff_mtx = [ [(b-c, b-c), (-c, b)] , [(b, -c), (0,0)] ]
                 coop_index={'Cooperate':0, 'Defect':1}
-                new_graph = inter.interaction_BD(new_graph, payoff_mtx, delta, noise=0.1)
+                new_graph = inter.interaction_BD(new_graph, payoff_mtx, delta, noise)
                 #print(nx.get_node_attributes(G, 'fitness'))
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print('\n')
@@ -263,7 +263,7 @@ class game():
 
                 # update strategy proportions for each strategy
                 for strat in strat_data_dict:
-                    concentrations[strat].append(strat_data_dict[strat]/nx.number_of_nodes(G))
+                    concentrations[strat].append(strat_data_dict[strat]/nx.number_of_nodes(graph))
 
                 #print("Current time data is", time_data)
                 time_data.append(i+1)
@@ -676,18 +676,15 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, delta, noise, t
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
         #LABEL MULTIPLE CLIQUES 
-        init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.2, 1:0.9, 2:0, 3:0.1, 4:1})       
+        cliques_to_proportions = parameters[3]
+        init.label_dumbell_multiple_cliques(graph, strat_list, cliques_to_proportions)       
 
 
         this_game=game(graph, update_name, t, u, delta, plotting, show_graph, saving, color_fitness)
 
+        pos = nx.spring_layout(graph)
 
-        if graph_type == 'triangular_lattice':
-            pos = dict( (n, n) for n in graph.nodes() )
-        else:
-            pos = nx.spring_layout(graph)
-
-        trial_outcome = this_game.trial(pos, num_rep, noise, graph_type, each+1)
+        trial_outcome = this_game.trial_multidumbell(pos, num_rep, noise, graph_type, each+1)
         
 
         #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
@@ -696,40 +693,40 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, delta, noise, t
         
         result_matrix.append(trial_outcome[1][the_strat])
 
-
-    #scatter plot X axis! 
+    # create plot where each line shows prop cooperators over time
+    # for a single clique 
     X=[tictoc for tictoc in range(t)]
-    #three lines to plot: average, and pm stdev
-    Yavg, Yplus, Yminus=[], [], []
-    for tictoc in range(t):
-        at_time_t=[trial[tictoc] for trial in result_matrix]
-        #average at time t over all the trials
-        average=sum(at_time_t)/len(at_time_t)
-        stdev=np.std(at_time_t)
-        Yavg.append(average)
-        Yplus.append(average+stdev)
-        Yminus.append(average-stdev)
+    props = trial_outcome[3]
+    #Currently there are 148 possible colors
+    remaining_colors = list(mcolors.CSS4_COLORS.keys())
 
-    if plotting:
-        #plot the 3 lines
-        plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
-        plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
-        plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
-        
-        #change axes ranges
-        plt.xlim(0,t-1)
-        plt.ylim(0,1)
-        #add title
-        plt.title('Relationship between time and proportion of nodes with \n strategy ' + the_strat + ' in '+str(number_trials)+ ' trials')
-        #add x and y labels
-        plt.ylabel('Proportion of nodes with strategy ' + the_strat)
-        plt.xlabel('Time')
+    # draw lines for each clique
+    num_cliques = len(props[0])
+    for clique in range(num_cliques):
+        Y = []
+        for tictoc in range(t):
+            # point to plot for this clique at time t
+            Y.append(props[tictoc][clique])
 
-        #show plot
-        plt.show()   
-        #print("Attempting to show plot -----------------")
-        #pause(60)
-    #plt.close()     
+        if plotting:
+            this_color=remaining_colors.pop()
+            plt.plot(X, Y, color=this_color, marker='', linestyle = '-', label= 'Clique '+str(clique))
+
+            pylab.legend(loc='lower left')
+
+            
+            #change axes ranges
+            plt.xlim(0,t-1)
+            plt.ylim(0,1)
+            #add title
+            plt.title('Relationship between time and proportion of nodes with \n strategy ' + the_strat + ' in '+str(number_trials)+ ' trials')
+            #add x and y labels
+            plt.ylabel('Proportion of nodes with strategy ' + the_strat)
+            plt.xlabel('Time')
+
+            #show plot
+            plt.show()   
+    
 
     if saving:
         file_id = 0
@@ -747,9 +744,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, delta, noise, t
             str(t) + 'timesteps' + '_' + \
             'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
         
-    #last_5=Yavg[-5:]
-    #return sum(last_5)/len(last_5)
-    return Yavg[-1]
+    return None
 
 def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_strat, \
     update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness = True):    
@@ -1003,7 +998,7 @@ max_b   = 2
 c       = 1
 t       = 100
 start_prop_cooperators  = .2
-number_trials           = 20
+number_trials           = 1
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
 
@@ -1025,6 +1020,17 @@ num_dumbell = 2
 size_path   = 4
 #list of parameters that will be used to build graph
 parameters = [size_dumbell, num_dumbell, size_path]
+
+
+'''-----------Multiple Dumbell, Multiple Proportions Variables----------------'''
+size_dumbell= 6
+num_dumbell = 10
+size_path   = 1
+cliques_to_proportions = {0: 0.2, 1:0.9, 2:0, 3:0.1, 4:1, 5:.5, 6:.4, 7:.5, 8:.2, 9:.6}
+#list of parameters that will be used to build graph
+parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
+
+        
 
 
 '''-----------Rich Club Variables----------------'''
@@ -1105,21 +1111,30 @@ CODE FOR LATTICES
 '''------------------------
 CODE FOR MULTIPLE DUMBELLS
 -------------------------'''
-
+'''
 prop_increments = np.arange(.1, 1.1, 0.1)
 for start_prop_cooperators in prop_increments:
     start_prop_cooperators = round(start_prop_cooperators, 3)
     plt.gcf().clear()
-    plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=False, saving=True, color_fitness=True)
+    plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, None, 'BD', \
+    plotting=True, show_graph=False, saving=True, color_fitness=True)
+'''
 
+'''------------------------
+CODE FOR MULTIPLE DUMBELLS
+AND MULTIPLE PROPORTIONS
+-------------------------'''
+plot_multiple_dumbell_each_clique(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, None, \
+    'BD', plotting=True, show_graph=True, saving=True, color_fitness=True)
 
 
 
 #plot_trial_until_stable(parameters, graph_type, u, t, 'Cooperate', num_rep, \
 #    update_name = 'BD', plotting = True, show_graph = True, saving = False, color_fitness=False)
-
+'''
 graph=init.generate_graph([[5,7,9],2], 'dumbell_multiple_sized')
 init.label_dumbell_multiple_cliques(graph, strat_list, {0:0.2, 1:0.9, 2:0.9})
 dis.color_and_draw_graph(graph)
 dis.color_fitness_and_draw_graph(graph, nx.spring_layout(graph))
 print(get_props_cliques(graph))
+'''
