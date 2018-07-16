@@ -708,7 +708,9 @@ parameters = [n,m]
 t = 30
 
 
-number_trials = 10
+
+number_trials = 4
+
 
 
 n_lattice = 50
@@ -785,10 +787,13 @@ max_b = 2
 #    plotting = True, show_graph = False, saving = True, color_fitness = True)
 
 
-parameters=[15,2,4]
-plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+parameters=[10,2,4]
+plot_many_trials(parameters, graph_type, u, t, number_trials, 'Cooperate', num_rep, None, 'BD', plotting=False, show_graph=True, saving=True, color_fitness=True)
+
+
 
 #plot_trial_until_stable(parameters, graph_type, u, t, 'Cooperate', num_rep, \
 #    update_name = 'BD', plotting = True, show_graph = True, saving = False, color_fitness=False)
+
 
 
