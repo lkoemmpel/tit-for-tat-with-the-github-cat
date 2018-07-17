@@ -22,9 +22,10 @@ import display as dis
 from matplotlib.pyplot import pause
 
 light_colors = ['whitesmoke','bisque','floralwhite','lightgoldenrodyellow','aliceblue','ghostwhite',\
-                'ivory','lemonchiffon','seashell','lightgray','w','lightgrey','white','beige','honeydew',\
+                'ivory','lemonchiffon','seashell','lightgray','lightgrey','white','beige','honeydew',\
                 'azure','lavender','gainsboro','snow','linen','antiquewhite','papayawhip','oldlace','cornsilk',\
-                'lightyellow','mintcream','lightcyan','lavenderblush']
+                'lightyellow','mintcream','lightcyan','lavenderblush', 'moccasin', 'peachpuff', 'navajowhite', \
+                'blanchedalmond', 'wheat', 'khaki', 'palegoldenrod', 'yellow']
 
 '''--------------------------
         HELPERS
@@ -194,7 +195,7 @@ class game():
 
             return new_graph, concentrations, self.plotting
 
-    def trial_multidumbell(self, pos, num_rep, noise, graph_type = 'random', num_of_trial=None):
+    def trial_multidumbell(self, pos, num_rep, noise, b, c, graph_type = 'random', num_of_trial=None):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -652,7 +653,7 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
     #return sum(last_5)/len(last_5)
     return Yavg[-1]
 
-def plot_multiple_dumbell_each_clique(parameters, graph_type, u, delta, noise, t, number_trials, the_strat, num_rep, \
+def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, the_strat, num_rep, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
 
     #matrix in which entry n,t is the concentration 
@@ -690,7 +691,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, delta, noise, t
 
         pos = nx.spring_layout(graph)
 
-        trial_outcome = this_game.trial_multidumbell(pos, num_rep, noise, graph_type, each+1)
+        trial_outcome = this_game.trial_multidumbell(pos, num_rep, noise, b, c, graph_type, each+1)
         
 
         #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
@@ -707,13 +708,18 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, delta, noise, t
 
     #Currently there are 148 possible colors
     remaining_colors = list(mcolors.CSS4_COLORS.keys())
-    #for color in light_colors:
-    #    remaining_colors.remove(color)
+    for color in light_colors:
+        #print("Trying to remove ", color)
+        remaining_colors.remove(color)
 
     Y_data = {}
+    Yplus_data = {}
+    Yminus_data = {}
     num_cliques = len(props[0])
     for clique in range(num_cliques):
         Yavg = []
+        Yplus = []
+        Yminus = []
         for tictoc in range(t):
             at_time_t=[trial[tictoc][clique] for trial in result_matrix]
             #average at time t and given clique over all the trials
@@ -721,13 +727,21 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, delta, noise, t
             average=sum(at_time_t)/len(at_time_t)
             Yavg.append(average)
 
+            stdev=np.std(at_time_t)
+            Yplus.append(average+stdev)
+            Yminus.append(average-stdev)
+
         Y_data[clique] = Yavg
+        Yplus_data[clique] = Yplus
+        Yminus_data[clique] = Yminus
 
     if plotting:
         #plot the 3 lines
         for clique in Y_data:
             this_color=remaining_colors.pop()
             plt.plot(X, Y_data[clique], color=this_color, marker='', linestyle = '-', label='clique '+str(clique))
+            plt.plot(X, Yplus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
+            plt.plot(X, Yminus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
 
         pylab.legend(loc='lower left')
 
@@ -745,12 +759,14 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, delta, noise, t
         plt.show()   
 
     if saving:
-        file_id = 0
-        #randint(10**5, 10**6 - 1)
+        file_id = randint(10**5, 10**6 - 1)
     #   print("Attempting to save plot ", data_iteration)+1
         plt.savefig(graph_type + '_' + \
             update_name + '_' + \
             'u=' + str(u) + '_' + \
+            'delta=' + str(delta) + '_' + \
+            'b=' + str(b) + '_' + \
+            'c=' + str(c) + '_' + \
             'noise=' + str(noise) + '_' + \
             'size_dumbell=' + str(parameters[0]) + '_' + \
             'num_dumbell=' + str(parameters[1]) + '_' + \
@@ -758,7 +774,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, delta, noise, t
             'prop_coop=' + str(start_prop_cooperators) + '_' + \
             str(number_trials) + 'trials' + '_' + \
             str(t) + 'timesteps' + '_' + \
-            'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+            str(file_id) + '.png')
         
     return None
 
@@ -1012,9 +1028,9 @@ noise   = .2
 b       = 2
 max_b   = 2
 c       = 1
-t       = 100
+t       = 200
 start_prop_cooperators  = .2
-number_trials           = 10
+number_trials           = 1
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
 
@@ -1039,13 +1055,14 @@ parameters = [size_dumbell, num_dumbell, size_path]
 
 
 '''-----------Multiple Dumbell, Multiple Proportions Variables----------------'''
-size_dumbell= 5
-num_dumbell = 4
-size_path   = 1
-cliques_to_proportions = {}
-for i in range(30):
-    cliques_to_proportions[i] = .5
-#cliques_to_proportions = {0: 0.1, 1:0.9, 2:0, 3:0.1, 4:1, 5:.5, 6:.4, 7:.5, 8:.2, 9:.6}
+size_dumbell= 15
+num_dumbell = 2
+size_path   = 3
+
+start_prop_cooperators=1
+cliques_to_proportions = {0: start_prop_cooperators, 1:1}
+# 2:0, 3:0.1, 4:1, 5:.5}
+#6:.4, 7:.5, 8:.2, 9:.6}
 #list of parameters that will be used to build graph
 parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
 
@@ -1144,7 +1161,8 @@ CODE FOR MULTIPLE DUMBELLS
 AND MULTIPLE PROPORTIONS
 -------------------------'''
 
-plot_multiple_dumbell_each_clique(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, None, \
+
+plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, None, \
     'BD', plotting=True, show_graph=False, saving=True, color_fitness=True)
 
 
