@@ -98,6 +98,7 @@ def color_and_draw_graph(G):
     plt.show()
     pause(.1)
 
+    plt.gcf().clear()
     return G
 
 def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None, num_of_trial=None, timestep=None):
