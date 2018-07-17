@@ -274,6 +274,7 @@ def Theta(val):
     return 1/V
 
 def q(val, K, d):
+    val=round(val, 6)
     V = 1+ math.exp(val/(K*d))
     return 1/V 
 

@@ -55,15 +55,31 @@ def intention(G, v):
     return 'Defect'
 
 def normalization(val):
-    V=1+math.exp(-val)
+    #V=1+math.exp(-val)
     #return 1/V
-    return val
+    return math.erf(val)
 
 def f1(x):
   return x**2
 
 def Theta_paper1(val, delta):
   return math.exp(delta*val)
+
+def max_min_payoffs(matrix):
+  list_outcomes=[matrix[0][0][0], matrix[0][1][0], matrix[1][0][0], matrix[1][1][0]]
+  return max(list_outcomes), min(list_outcomes)
+
+def normalization2(payoff, delta, max_p, min_p, degree):
+  print('-----------------------')
+  print('payoff is '+ str(payoff))
+  print('delta is ' + str(delta))
+  print('max_matrix is '+ str(max_p))
+  print('min_matrix is '+ str(min_p))
+  print('max degree is '+ str(degree))
+  print('-----------------------')
+
+  val=payoff/(degree*(max_p-min_p))+(-min_p/(max_p-min_p))
+  return val
 
 '''-------------------
 KINDS OF INTERACTION PROCESSES
@@ -121,12 +137,15 @@ def general_reciprocity_bernoulli(self, set_nodes, b, c, f, asynchronous=False):
 def interaction_BD(G, payoff_mtx, delta=0, noise=0):
   #Simulation of the process where every edge interacts with
   #some randomly chosen set of its neighbors
+  max_p = max_min_payoffs(payoff_mtx)[0]
+  min_p = max_min_payoffs(payoff_mtx)[1]
   print('INTERACTION')
   print('---------')
   record=set()
   for v in nx.nodes(G):
     for w in G.neighbors(v):
-      occurs=random.choice([True,False])
+      #occurs=random.choice([True,False])
+      occurs=random.choice([True])
       #does interaction occur?
       if occurs:
         #they haven't interacted yet
@@ -142,7 +161,9 @@ def interaction_BD(G, payoff_mtx, delta=0, noise=0):
     if len(G.node[v]['payoffs']) != 0:
       old=G.node[v]['fitness']
       avg_payoff=sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs'])
-      G.node[v]['fitness']=normalization(Theta_paper1(avg_payoff, delta))
+
+      max_deg=max([G.degree[n] for n in G.nodes()])
+      G.node[v]['fitness']=normalization2(sum(G.node[v]['payoffs']), delta, max_p, min_p, max_deg)
       print('Fitness changed from ' +str(old)+ ' to '+ str(G.node[v]['fitness']))
       print('')
       #restart payoff list for next round
