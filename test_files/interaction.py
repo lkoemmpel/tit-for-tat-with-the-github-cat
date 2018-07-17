@@ -144,13 +144,14 @@ def interaction_BD(G, payoff_mtx, delta=0, noise=0):
   record=set()
   for v in nx.nodes(G):
     for w in G.neighbors(v):
-      #occurs=random.choice([True,False])
+      print("Examining node ", v, " and it's neighbor ", w)
       occurs=random.choice([True])
       #does interaction occur?
       if occurs:
+        print(v, " and ", w, " were chosen to interact!")
         #they haven't interacted yet
         if (w,v) not in record:
-          print(str(v) + ' interacts with ' + str(w))
+          print("They have not interacted before")
           action_v=action(G, intention(G,v), noise)
           action_w=action(G, intention(G,w), noise)
           print('action of v is: ' + strat_index[action_v])
