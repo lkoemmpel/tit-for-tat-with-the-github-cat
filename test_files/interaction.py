@@ -20,6 +20,7 @@ this_lambda=0.5
 kappa=0.5
 val0=0.5
 coop_index={'Cooperate':0, 'Defect':1}
+strat_index={0:'Cooperate', 1:'Defect'}
 
 '''-------------------
 HELPER FUNCTIONS
@@ -53,12 +54,16 @@ def intention(G, v):
   elif G.node[v]['strategy'] == 'Defect':
     return 'Defect'
 
-def Theta(val):
+def normalization(val):
     V=1+math.exp(-val)
-    return 1/V
+    #return 1/V
+    return val
 
 def f1(x):
   return x**2
+
+def Theta_paper1(val, delta):
+  return math.exp(delta*val)
 
 '''-------------------
 KINDS OF INTERACTION PROCESSES
@@ -116,6 +121,8 @@ def general_reciprocity_bernoulli(self, set_nodes, b, c, f, asynchronous=False):
 def interaction_BD(G, payoff_mtx, delta=0, noise=0):
   #Simulation of the process where every edge interacts with
   #some randomly chosen set of its neighbors
+  print('INTERACTION')
+  print('---------')
   record=set()
   for v in nx.nodes(G):
     for w in G.neighbors(v):
@@ -129,14 +136,17 @@ def interaction_BD(G, payoff_mtx, delta=0, noise=0):
           print("They have not interacted before")
           action_v=action(G, intention(G,v), noise)
           action_w=action(G, intention(G,w), noise)
+          print('action of v is: ' + strat_index[action_v])
+          print('action of w is: ' + strat_index[action_w])
           record.add((v,w))
           G.node[v]['payoffs'].append(payoff_mtx[action_v][action_w][0])
           G.node[w]['payoffs'].append(payoff_mtx[action_v][action_w][1])
     if len(G.node[v]['payoffs']) != 0:
-      print("Node v had at least one interaction")
-      print("The payoffs of node ", v,  "are ", G.node[v]['payoffs'])
-      G.node[v]['fitness']=Theta(sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']))
-      print("The fitness of node ", v, " is now ", G.node[v]['fitness'])
+      old=G.node[v]['fitness']
+      avg_payoff=sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs'])
+      G.node[v]['fitness']=normalization(Theta_paper1(avg_payoff, delta))
+      print('Fitness changed from ' +str(old)+ ' to '+ str(G.node[v]['fitness']))
+      print('')
       #restart payoff list for next round
       G.node[v]['payoffs']=[]
   return G
@@ -158,7 +168,7 @@ def interaction_depends_fitness(G, payoff_mtx, delta=0, noise=0, function=f1):
       G.node[b]['payoffs'].append(payoff_mtx[action_a][action_b][1])
   for v in nx.nodes(G):
     if len(G.node[v]['payoffs']) != 0:
-      G.node[v]['fitness']=Theta(1+delta*sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']))
+      G.node[v]['fitness']=normalization(Theta_paper1(sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']), delta))
       G.node[v]['payoffs']=[]
   return G
 
@@ -175,7 +185,7 @@ def interaction_some_edges_strat(G,k, num_interactions, matrices, delta=0, noise
     G.node[w]['payoffs'].append(payoff_mtx[action_v][action_w][1])
   for v in nx.nodes(G):
     if len(G.node[v]['payoffs']) != 0:
-      G.node[v]['fitness']=Theta(1+delta*sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']))
+      G.node[v]['fitness']=normalization(Theta_paper1(sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']), delta))
     #restart payoff list for next round
     G.node[v]['payoffs']=[]
   return
@@ -203,7 +213,7 @@ def interaction_some_edges_fitness(G,k, num_interactions, matrices, delta=0, noi
       G.node[b]['payoffs'].append(payoff_mtx[action_a][action_b][1])
   for v in nx.nodes(G):
     if len(G.node[v]['payoffs']) != 0:
-      G.node[v]['fitness']=Theta(1+delta*sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']))
+      G.node[v]['fitness']=normalization(Theta_paper1(sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']), delta))
       G.node[v]['payoffs']=[]
   return G
 
@@ -211,10 +221,10 @@ def interaction_some_edges_fitness(G,k, num_interactions, matrices, delta=0, noi
 GRAPH FOR TESTING
 -------------------'''
 
-strat_list=['Cooperate', 'Defect']
-G=init.generate_graph([3,4], 'triangular_lattice')
-init.label_birth_death(G, strat_list)
-init.label_utkovski(G)
+#strat_list=['Cooperate', 'Defect']
+#G=init.generate_graph([3,4], 'triangular_lattice')
+#init.label_birth_death(G, strat_list)
+#init.label_utkovski(G)
 
 
 '''-------------------

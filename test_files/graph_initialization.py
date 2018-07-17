@@ -58,6 +58,11 @@ def generate_graph(parameters, type = 'random'):
       n=parameters[0]
       graph=nx.barbell_graph(n//2-1, n-2*(n//2-1))
 
+    elif type == 'complete_bipartite':
+      m=parameters[0]
+      n=parameters[1]
+      graph=nx.complete_bipartite_graph(m,n)
+
     elif type == 'dumbell_multiple':
       size_dumbell=parameters[0]
       num_dumbell=parameters[1]

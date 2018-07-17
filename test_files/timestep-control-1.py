@@ -75,6 +75,13 @@ def get_props_cliques (G):
     props = [ counts[k]/sizes[k] for k in range(num_cliques) ]
     return props
 
+def info(G):
+    fits={}
+    for n in G.nodes():
+        fits[n]=G.node[n]['fitness']
+    return fits
+
+
 '''----------------------------------
         THE ONE AND ONLY (code)
 ----------------------------------'''
@@ -133,6 +140,9 @@ class game():
             #                                         at trial n, time t
 
             for i in range(t):
+                print('********')
+                print('TIME '+ str(i))
+                print('********')
                 #print("Running time ", t)
                 #------------
                 #REPRODUCTION
@@ -223,6 +233,10 @@ class game():
             #                                         at trial n, time t
             props=[]
             for i in range(t):
+                dictio=info(graph)
+                print('********')
+                print('TIME '+ str(i))
+                print('********')
                 #print("Running time ", t)
                 #----------------------
                 #PROPORTIONS PER CLIQUE
@@ -514,11 +528,11 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
             graph = sparse_graph
 
         #LABEL BIRTH DEATH
-        #init.label_birth_death_precise_prop(graph, strat_list, start_prop_cooperators)
+        init.label_birth_death_precise_prop(graph, strat_list, start_prop_cooperators)
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
         #LABEL MULTIPLE CLIQUES 
-        init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.2, 1:0.9, 2:0, 3:0.1, 4:1})       
+        #init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.2, 1:0.9, 2:0, 3:0.1, 4:1})       
 
 
         this_game=game(graph, update_name, t, u, delta, plotting, show_graph, saving, color_fitness)
@@ -552,12 +566,16 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
         Yplus.append(average+stdev)
         Yminus.append(average-stdev)
 
+    the_avg = sum(Yavg)/len(Yavg)
+    AVG=[the_avg for tictoc in range(t)]
+
     if plotting:
         #plot the 3 lines
         plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
         plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
         plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
-        
+        plt.plot(X, AVG, color='orange', marker='', linestyle= '-')
+
         #change axes ranges
         plt.xlim(0,t-1)
         plt.ylim(0,1)
@@ -568,7 +586,8 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
         plt.xlabel('Time')
 
         #show plot
-        plt.show()   
+        plt.show()
+        pause(20)   
         #print("Attempting to show plot -----------------")
         #pause(60)
     #plt.close()     
@@ -648,9 +667,6 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
                 'b_over_c=' + str(b) + '_' + \
                 str(file_id) + '.png')
 
-
-    #last_5=Yavg[-5:]
-    #return sum(last_5)/len(last_5)
     return Yavg[-1]
 
 def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, the_strat, num_rep, \
@@ -756,7 +772,8 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
         plt.xlabel('Time')
 
         #show plot
-        plt.show()   
+        plt.show() 
+        pause(10)  
 
     if saving:
         file_id = randint(10**5, 10**6 - 1)
@@ -1022,15 +1039,16 @@ strat_list  = ['Cooperate', 'Defect']
 graph_type  = 'dumbell_multiple'
 update_name = 'BD'
 
-u       = .01
-delta   = .05
-noise   = .001
-b       = .6
+
+u       = 0.01
+delta   = 0.0005
+noise   = 0.001
+b       = .2
 max_b   = 2
-c       = .2
-t       = 200
-start_prop_cooperators  = .2
-number_trials           = 1
+c       = .1
+t       = 300
+start_prop_cooperators  = 0.9
+number_trials           = 5
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
 
@@ -1039,35 +1057,38 @@ num_rep = 5
 
 
 '''-----------Lattice Variables----------------'''
-n_lattice = 50
+n_lattice = 20
 m_lattice = 50
 #list of parameters that will be used to build graph
 #parameters = [n_lattice,m_lattice]
 
 
-
 '''-----------Multiple Dumbell Variables----------------'''
-size_dumbell= 10
+size_dumbell= 15
 num_dumbell = 2
 size_path   = 4
 #list of parameters that will be used to build graph
-parameters = [size_dumbell, num_dumbell, size_path]
+#parameters = [size_dumbell, num_dumbell, size_path]
 
 
 '''-----------Multiple Dumbell, Multiple Proportions Variables----------------'''
-size_dumbell= 12
+size_dumbell= 20
 num_dumbell = 2
-size_path   = 3
+size_path   = 4
 
-start_prop_cooperators=0
-cliques_to_proportions = {0: start_prop_cooperators, 1:1}
+
+cliques_to_proportions = {0 : 0.9, 1 : 0.1}
 # 2:0, 3:0.1, 4:1, 5:.5}
 #6:.4, 7:.5, 8:.2, 9:.6}
 #list of parameters that will be used to build graph
 parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
 
-        
 
+'''-----------Complete Bipartite Graph Variables----------------'''
+
+side_1 = 30
+side_2 = 30
+#parameters = [side_1, side_2]
 
 '''-----------Rich Club Variables----------------'''
 size_club       = 10
@@ -1162,14 +1183,14 @@ AND MULTIPLE PROPORTIONS
 -------------------------'''
 
 plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, None, \
-    'BD', plotting=True, show_graph=True, saving=True, color_fitness=True)
-
+    'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
 
 
 
 
 #plot_trial_until_stable(parameters, graph_type, u, t, 'Cooperate', num_rep, \
 #    update_name = 'BD', plotting = True, show_graph = True, saving = False, color_fitness=False)
+
 '''
 graph=init.generate_graph([[5,7,9],2], 'dumbell_multiple_sized')
 init.label_dumbell_multiple_cliques_precise(graph, strat_list, {0:0.2, 1:0.9, 2:0.9})
@@ -1178,4 +1199,6 @@ dis.color_fitness_and_draw_graph(graph, nx.spring_layout(graph))
 print(get_props_cliques(graph))
 '''
 
+#plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
+#    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=True)
 
