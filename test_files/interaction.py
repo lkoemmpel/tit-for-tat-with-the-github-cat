@@ -55,9 +55,9 @@ def intention(G, v):
     return 'Defect'
 
 def normalization(val):
-    #V=1+math.exp(-val)
-    #return 1/V
-    return math.erf(val)
+    V=1+math.exp(-val)
+    return 1/V
+    #return math.erf(val)
 
 def f1(x):
   return x**2
