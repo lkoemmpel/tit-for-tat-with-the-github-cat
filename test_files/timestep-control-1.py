@@ -1022,12 +1022,12 @@ strat_list  = ['Cooperate', 'Defect']
 graph_type  = 'dumbell_multiple'
 update_name = 'BD'
 
-u       = .2
-delta   = .2
-noise   = .2
-b       = 2
+u       = .01
+delta   = .05
+noise   = .001
+b       = .6
 max_b   = 2
-c       = 1
+c       = .2
 t       = 200
 start_prop_cooperators  = .2
 number_trials           = 1
@@ -1055,11 +1055,11 @@ parameters = [size_dumbell, num_dumbell, size_path]
 
 
 '''-----------Multiple Dumbell, Multiple Proportions Variables----------------'''
-size_dumbell= 15
+size_dumbell= 12
 num_dumbell = 2
 size_path   = 3
 
-start_prop_cooperators=1
+start_prop_cooperators=0
 cliques_to_proportions = {0: start_prop_cooperators, 1:1}
 # 2:0, 3:0.1, 4:1, 5:.5}
 #6:.4, 7:.5, 8:.2, 9:.6}
@@ -1161,9 +1161,9 @@ CODE FOR MULTIPLE DUMBELLS
 AND MULTIPLE PROPORTIONS
 -------------------------'''
 
-
 plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, None, \
-    'BD', plotting=True, show_graph=False, saving=True, color_fitness=True)
+    'BD', plotting=True, show_graph=True, saving=True, color_fitness=True)
+
 
 
 

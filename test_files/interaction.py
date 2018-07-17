@@ -119,20 +119,26 @@ def interaction_BD(G, payoff_mtx, delta=0, noise=0):
   record=set()
   for v in nx.nodes(G):
     for w in G.neighbors(v):
+      print("Examining node ", v, " and it's neighbor ", w)
       occurs=random.choice([True,False])
       #does interaction occur?
       if occurs:
+        print(v, " and ", w, " were chosen to interact!")
         #they haven't interacted yet
         if (w,v) not in record:
+          print("They have not interacted before")
           action_v=action(G, intention(G,v), noise)
           action_w=action(G, intention(G,w), noise)
           record.add((v,w))
           G.node[v]['payoffs'].append(payoff_mtx[action_v][action_w][0])
           G.node[w]['payoffs'].append(payoff_mtx[action_v][action_w][1])
-      if len(G.node[v]['payoffs']) != 0:
-        G.node[v]['fitness']=Theta(1+delta*sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']))
-        #restart payoff list for next round
-        G.node[v]['payoffs']=[]
+    if len(G.node[v]['payoffs']) != 0:
+      print("Node v had at least one interaction")
+      print("The payoffs of node ", v,  "are ", G.node[v]['payoffs'])
+      G.node[v]['fitness']=Theta(sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']))
+      print("The fitness of node ", v, " is now ", G.node[v]['fitness'])
+      #restart payoff list for next round
+      G.node[v]['payoffs']=[]
   return G
 
 def interaction_depends_fitness(G, payoff_mtx, delta=0, noise=0, function=f1):
