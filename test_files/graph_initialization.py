@@ -82,6 +82,11 @@ def generate_graph(parameters, type = 'random'):
       path_length=parameters[1]
       graph=generate_dumbell_multiple_sizes(size_list, path_length)
 
+    elif type == 'dumbell_string':
+      sizes=parameters[0]
+      lengths=parameters[1]
+      graph=generate_dumbell_string(sizes,lengths)
+
     return graph 
 
   except ValueError:
@@ -198,6 +203,48 @@ def generate_dumbell_multiple_sizes(sizes, path_length):
   for pair in itertools.combinations(range(len(sizes)),2):
     a = pair[0]
     b = pair[1]
+    if path_length>1:
+      edges.append( (((a,a),sums[a]+1),(pair,1)) )
+      edges.append( ((pair,path_length), ((b,b),sums[b]+1)) )
+      for k in range(1,path_length):
+        edges.append( ((pair,k),(pair,k+1)) )
+    elif path_length==1:
+      edges.append( (((a,a),sums[a]+1),(pair,1)) )
+      edges.append( ((pair,1),((b,b),sums[b]+1)) )
+    else:
+      edges.append(((a,a),sums[a]+1), ((b,b),sums[b]+1))
+  G.add_edges_from(edges)
+
+  for n in G.nodes():
+    G.node[n]['coord']=n
+  G=nx.convert_node_labels_to_integers(G)
+
+  #for n in G.nodes():
+  #  print(G.node[n]['coord'])
+  return G
+
+def generate_dumbell_string(sizes, lengths):
+  nodes_so_far=0
+  sums={}
+  edges=[]
+  G=nx.Graph()
+  for clique_index in range(len(sizes)):
+    prev=nodes_so_far
+    nodes_so_far+=sizes[clique_index]
+    #later going to be used for the paths
+    sums[clique_index]=prev
+
+    range_clique=range(prev+1, nodes_so_far+1)
+    for pair in itertools.combinations(range_clique,2):
+      a,b = pair[0], pair[1]
+      edges.append( (( (clique_index,clique_index) ,a),( (clique_index,clique_index) ,b)) )
+  #NOW PATH EDGES!
+  list_adjs=[(i,i+1) for i in range(len(sizes)-1)]
+  for index in range(len(list_adjs)):
+    a = list_adjs[index][0]
+    b = list_adjs[index][1]
+    pair=(a,b)
+    path_length=lengths[index]
     if path_length>1:
       edges.append( (((a,a),sums[a]+1),(pair,1)) )
       edges.append( ((pair,path_length), ((b,b),sums[b]+1)) )
@@ -549,7 +596,7 @@ def color_and_draw_graph(G):
     TESTING GRAPHS
 ---------------------'''
 
-#graph={}
+graph={}
 
 # graph[1]=generate_graph([10], 'hypercube')
 # graph[2]=generate_graph([10, 5], 'random')
@@ -560,6 +607,10 @@ def color_and_draw_graph(G):
 # graph[7]=generate_graph([10,30, .8,.999, .001],'rich_club')
 # graph[8]=generate_graph([[5,7,9],2], 'dumbell_multiple_sized')
 
+#sizes=[11,11,11,11]
+#lengths=[2,2,5]
+#graph[9]=generate_graph([sizes, lengths], 'dumbell_string')
+#print(len(graph[9].nodes()))
 
 #label_birth_death(graph[5], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[5])
@@ -573,7 +624,7 @@ def color_and_draw_graph(G):
 #label_birth_death(graph[7], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[7])
 
-#label_birth_death(graph[8], ['Cooperate','Defect'], 0.5)
-#color_and_draw_graph(graph[8])
+label_birth_death(graph[9], ['Cooperate','Defect'], 0.5)
+color_and_draw_graph(graph[9])
 
 

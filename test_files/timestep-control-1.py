@@ -1199,6 +1199,6 @@ dis.color_fitness_and_draw_graph(graph, nx.spring_layout(graph))
 print(get_props_cliques(graph))
 '''
 
-plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
-    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=True)
+#plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
+#    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=True)
 
