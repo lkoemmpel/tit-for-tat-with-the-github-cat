@@ -300,6 +300,64 @@ class game():
 
             return new_graph, concentrations, self.plotting, props
 
+    def trial_utkovski(self, pos, noise, b, c, num_of_trial=None):
+        '''
+        INPUTS:     G: networkx graph object with fitness and strategy attributes
+                    u: rate of mutation for reproduction
+                    t: number of times to have stratgies update
+        OUTPUTS:    new_graph: updated networkx graph object where coop states have been updated
+        Prints graph at every stage of utkovski game
+        Plots how many helping actions occured over time
+        '''
+
+        G=self.graph
+        u=self.u
+        t=self.t
+
+        if type(self.name)==str:
+
+            time_data=[]
+            helpers=[]
+            help_accross_time=[]
+
+            if self.show_graph:
+                dis.heat_map_utkovski(G, pos, helpers, num_of_trial, 0)
+
+            for i in range(t):
+                print('********')
+                print('TIME '+ str(i))
+                print('********')
+                #print("Running time ", i)
+                #------------
+                #INTERACTION UTKOVSKI TYPE
+                #------------ 
+                set_nodes = set(G.nodes())
+                outcome = inter.general_reciprocity_simple(G, set_nodes, b, c, False)
+                new_graph = outcome[0]
+                helpers = outcome[1]
+                num_help_actions = outcome[2]
+                help_accross_time.append(num_help_actions)
+
+                if self.show_graph:
+                    if i%1 == 0:
+                        if self.color_fitness:
+                            dis.heat_map_utkovski(new_graph, pos, helpers, num_of_trial+1, i+1)
+                        else:
+                            # Creates picture of graph C/D 
+                            print('------------------------Fitness variable was false')
+                            dis.color_and_draw_graph(new_graph)
+
+                #print("Current time data is", time_data)
+                time_data.append(i+1)
+
+                #print(time_data)
+                G = new_graph
+
+            #if self.plotting:
+            #    plot_proportion_data(time_data, final_data, saving, graph_type,t, update_name, n, u, d, data_iteration)
+
+            return G, help_accross_time
+
     def lattice_density_and_payoff_trial(self, pos, num_rep, graph_type = 'random'):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
@@ -699,7 +757,10 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
         #LABEL MULTIPLE CLIQUES 
-        cliques_to_proportions = parameters[3]
+        try:
+            cliques_to_proportions = parameters[3]
+        except:
+            cliques_to_proportions = parameters[2]
         init.label_dumbell_multiple_cliques(graph, strat_list, cliques_to_proportions)       
 
 
@@ -890,6 +951,159 @@ def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n
 
     return None
 
+def plot_many_trials_utkovski(parameters, graph_type, u, this_lambda, kappa, noise, t, number_trials, \
+    rho=None, plotting = True, show_graph = False, saving = False, color_fitness=False):    
+
+    #matrix in which entry n,t is the concentration 
+    #of the_strat at time t in trial n
+    help_matrix=[]
+    #run the game for each trial
+    for each in range(number_trials):
+        print('\n')
+        print("Running trial ", each)
+        #print("Evaluating trial ", each)
+        graph=init.generate_graph(parameters, graph_type)
+
+        if rho != None:
+            # Remove lattice nodes until only rho percent remain
+            sparse_graph = graph.copy()
+            for n in graph.nodes():
+                #indicator is random.uniform(0,1)
+                if random.uniform(0,1) > rho:
+                    if nx.number_of_nodes(sparse_graph) != 1:
+                        #this node should be deleted
+                        sparse_graph.remove_node(n)
+            graph = sparse_graph
+
+        #LABEL UTKOVSKI
+        init.label_utkovski(graph)
+
+        this_game=game(graph, update_name, t, u, delta, plotting, show_graph, saving, color_fitness)
+        
+        if graph_type == 'triangular_lattice':
+            pos = dict( (n, n) for n in graph.nodes() )
+        else:
+            pos = nx.spring_layout(graph)
+
+        trial_outcome = this_game.trial_utkovski(pos, noise, b, c, each)
+        help_matrix.append(trial_outcome[1])
+
+
+    #scatter plot X axis! 
+    X=[tictoc for tictoc in range(t)]
+    #three lines to plot: average, and pm stdev
+    Yavg, Yplus, Yminus=[], [], []
+    for tictoc in range(t):
+        at_time_t=[trial[tictoc] for trial in help_matrix]
+        #average at time t over all the trials
+        average=sum(at_time_t)/len(at_time_t)
+        stdev=np.std(at_time_t)
+        Yavg.append(average)
+        Yplus.append(average+stdev)
+        Yminus.append(average-stdev)
+
+    the_avg = sum(Yavg)/len(Yavg)
+    AVG=[the_avg for tictoc in range(t)]
+
+    if plotting:
+        #plot the 3 lines
+        plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
+        plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
+        plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
+        plt.plot(X, AVG, color='orange', marker='', linestyle= '-')
+
+        #change axes ranges
+        plt.xlim(0,t-1)
+        plt.ylim(0,len(graph.nodes()))
+        #add title
+        plt.title('Relationship between time and number of helping nodes in \n Utkovski Model, in '+str(number_trials)+ ' trials')
+        #add x and y labels
+        plt.ylabel('Averaged number of helps accross trials')
+        plt.xlabel('Time')
+
+        #show plot
+        plt.show()
+        pause(20)   
+        #print("Attempting to show plot -----------------")
+        #pause(60)
+    #plt.close()     
+
+    if saving:
+        file_id = 0
+        #randint(10**5, 10**6 - 1)
+    #   print("Attempting to save plot ", data_iteration)+1
+        if graph_type=='dumbell_multiple':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'size_dumbell=' + str(parameters[0]) + '_' + \
+                'num_dumbell=' + str(parameters[1]) + '_' + \
+                'size_path=' + str(parameters[2]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='dumbell':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'n=' + str(parameters[0]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type == 'rich_club':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'size_club=' + str(parameters[0]) + '_' + \
+                'size_periphery=' + str(parameters[1]) + '_' + \
+                'prob_rp=' + str(parameters[2]) + '_' + \
+                'prob_rr=' + str(parameters[3]) + '_' + \
+                'prob_pp=' + str(parameters[4]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='complete' or 'hypercube':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'num_nodes=' + str(parameters[0]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + \
+                str(file_id) + '.png')
+        elif graph_type=='triangular_lattice':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'n_dim=' + str(parameters[0]) + '_' + \
+                'm_dim=' + str(parameters[1]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='random':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'num_nodes=' + str(parameters[0]) + '_' + \
+                'ave_degree=' + str(parameters[1]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + \
+                str(file_id) + '.png')
+
+    return Yavg[-1]
 
 
 '''
@@ -1036,7 +1250,7 @@ def plot_trial_until_stable(parameters, graph_type, u, t, the_strat, num_rep, \
 
 '''--------------VARIABLES ALWAYS USED ----------------'''
 strat_list  = ['Cooperate', 'Defect']
-graph_type  = 'dumbell_multiple'
+graph_type  = 'dumbell_string'
 update_name = 'BD'
 
 
@@ -1046,7 +1260,7 @@ noise   = 0.00001
 b       = 2
 max_b   = 2
 c       = 1
-t       = 80
+t       = 20
 start_prop_cooperators  = 0.9
 number_trials           = 5
 #Number of nodes to reproduce at each timestep 
@@ -1081,7 +1295,7 @@ cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
 # 2:0, 3:0.1, 4:1, 5:.5}
 #6:.4, 7:.5, 8:.2, 9:.6}
 #list of parameters that will be used to build graph
-parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
+#parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
 
 
 '''-----------Complete Bipartite Graph Variables----------------'''
@@ -1098,6 +1312,14 @@ prob_rr         = .2
 prob_pp         = .2
 #list of parameters that will be used to build graph
 #parameters = [size_club, size_periphery, prob_rp, prob_rr, prob_pp]
+
+'''-----------String Dumbell Variables----------------'''
+#size of each dumbell in the string
+sizes=[40,40,40]
+#lengths of the uniting paths
+lengths=[3,3,3,3]
+cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
+parameters=[sizes,lengths, cliques_to_proportions]
 
 
 
@@ -1182,10 +1404,8 @@ CODE FOR MULTIPLE DUMBELLS
 AND MULTIPLE PROPORTIONS
 -------------------------'''
 
-plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, None, \
-    'BD', plotting=True, show_graph=False, saving=False, color_fitness=True)
-
-
+#plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, None, \
+#    'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
 
 
 #plot_trial_until_stable(parameters, graph_type, u, t, 'Cooperate', num_rep, \
@@ -1201,4 +1421,13 @@ print(get_props_cliques(graph))
 
 #plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
 #    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=True)
+
+'''------------------------
+UTKOVSKI TRIALS
+-------------------------'''
+this_lambda=0.5
+kappa=0.5
+
+plot_many_trials_utkovski(parameters, graph_type, u, this_lambda, kappa, noise, t, number_trials, \
+    rho=None, plotting = True, show_graph = True, saving = False, color_fitness=True)
 

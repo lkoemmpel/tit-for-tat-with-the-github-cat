@@ -534,10 +534,10 @@ def label_utkovski(G):
         assigns a random number from 0 to 1 as 'fitness'
   '''
   for n in nx.nodes(G):
-    G.node[n]['turn-payoff']=0
-    G.node[n]['total-payoff']=0
+    G.node[n]['turn_payoff']=0
+    G.node[n]['total_payoff']=0
     #cooperative_state = probability of helping another node
-    G.node[n]['coop-state'] = random.uniform(0,1)
+    G.node[n]['coop_state'] = random.uniform(0,1)
 
 def label_more_strategies(G, strat_list, dist_prob_strats=None):
   for n in nx.nodes(G):
@@ -624,7 +624,7 @@ graph={}
 #label_birth_death(graph[7], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[7])
 
-label_birth_death(graph[9], ['Cooperate','Defect'], 0.5)
-color_and_draw_graph(graph[9])
+#label_birth_death(graph[9], ['Cooperate','Defect'], 0.5)
+#color_and_draw_graph(graph[9])
 
 
