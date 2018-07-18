@@ -163,8 +163,10 @@ def interaction_BD(G, payoff_mtx, delta=0, noise=0):
       old=G.node[v]['fitness']
       avg_payoff=sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs'])
 
-      max_deg=max([G.degree[n] for n in G.nodes()])
-      G.node[v]['fitness']=normalization2(sum(G.node[v]['payoffs']), delta, max_p, min_p, max_deg)
+      #max_deg=max([G.degree[n] for n in G.nodes()])
+      #G.node[v]['fitness']=normalization2(sum(G.node[v]['payoffs']), delta, max_p, min_p, max_deg)
+      new=normalization(Theta_paper1(avg_payoff, delta))
+      G.node[v]['fitness']=(old+new)/2
       print('Fitness changed from ' +str(old)+ ' to '+ str(G.node[v]['fitness']))
       print('')
       #restart payoff list for next round

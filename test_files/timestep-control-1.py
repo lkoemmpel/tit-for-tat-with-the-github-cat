@@ -1040,13 +1040,13 @@ graph_type  = 'dumbell_multiple'
 update_name = 'BD'
 
 
-u       = 0.01
-delta   = 0.0005
-noise   = 0.001
-b       = .2
+u       = 0.001
+delta   = 0.005
+noise   = 0.00001
+b       = 2
 max_b   = 2
-c       = .1
-t       = 300
+c       = 1
+t       = 80
 start_prop_cooperators  = 0.9
 number_trials           = 5
 #Number of nodes to reproduce at each timestep 
@@ -1073,11 +1073,11 @@ size_path   = 4
 
 '''-----------Multiple Dumbell, Multiple Proportions Variables----------------'''
 size_dumbell= 20
-num_dumbell = 2
+num_dumbell = 5
 size_path   = 4
 
 
-cliques_to_proportions = {0 : 0.9, 1 : 0.1}
+cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
 # 2:0, 3:0.1, 4:1, 5:.5}
 #6:.4, 7:.5, 8:.2, 9:.6}
 #list of parameters that will be used to build graph
@@ -1183,7 +1183,7 @@ AND MULTIPLE PROPORTIONS
 -------------------------'''
 
 plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, None, \
-    'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+    'BD', plotting=True, show_graph=False, saving=False, color_fitness=True)
 
 
 
@@ -1199,6 +1199,6 @@ dis.color_fitness_and_draw_graph(graph, nx.spring_layout(graph))
 print(get_props_cliques(graph))
 '''
 
-#plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
-#    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=True)
+plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
+    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=True)
 
