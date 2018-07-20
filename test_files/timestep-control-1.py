@@ -1103,7 +1103,60 @@ def plot_many_trials_utkovski(parameters, graph_type, u, this_lambda, kappa, noi
                 'b_over_c=' + str(b) + '_' + \
                 str(file_id) + '.png')
 
-    return Yavg[-1]
+    return Yavg[-1], graph
+
+
+def prob_n_step_walk(graph, i, n):
+    w_i = sum(graph.node[i]['weight'].values())
+    for j in G.nodes():
+        p_ij_sum = 0
+        if n == 2:
+            for k in G.nodes:
+                #want to determine if there is a path from i to k to j
+                if k in graph.node[i]['weight']:
+                    #there is a path from i to k
+                    if j in graph.node[k]['weight']:
+                        #there is a path from k to j
+                        p_ik = graph.node[i]['weight'][k]/w_i
+                        p_kj = graph.node[k]['weight'][j]/w_i
+                        p_ij_sum += p_ik * p_kj
+        else:
+            p_ij_sum = graph.node[i]['weight'][j] / w_i 
+    return p_ij_sum
+
+def reproductive_value(graph, i):
+    i_weights = graph.node[i]['weight'].values()
+    w_i = sum(i_weights)
+
+    W_sum = 0
+    for k in graph.nodes():
+        for j in graph.nodes():
+            W_sum += graph.node[i]['weight'][j]
+    return w_i/W_sum
+
+def s_indicator(graph, i):
+    if graph.node[i]['strategy'] == 'Cooperate':
+        s_i = 1
+    else:
+        s_i = 0
+
+def edge_weighted_payoff(graph, i, n):
+    s_i = s_indicator(graph, i)
+    expectation = 0
+
+    for j in graph.nodes():
+        expectation += graph.node[i]['weight'][j] * s_indicator(graph, j)
+
+    f = -c * s_i + b expectation
+
+
+def D(graph, delta, b, c):
+    for i in graph.nodes():
+        f_0i = edge_weighted_payoff(graph, i, 0)
+        f_2i = edge_weighted_payoff(graph, i, 2)
+        sum += reproductive_value(graph, i) * (f_0i - f_2i)
+    return delta * sum
+
 
 
 '''
@@ -1428,6 +1481,8 @@ UTKOVSKI TRIALS
 this_lambda=0.5
 kappa=0.5
 
-plot_many_trials_utkovski(parameters, graph_type, u, this_lambda, kappa, noise, t, number_trials, \
-    rho=None, plotting = True, show_graph = True, saving = False, color_fitness=True)
+graph = plot_many_trials_utkovski(parameters, graph_type, u, this_lambda, kappa, noise, t, number_trials, \
+    rho=None, plotting = True, show_graph = True, saving = False, color_fitness=True)[1]
+
+print(D(graph, delta))
 
