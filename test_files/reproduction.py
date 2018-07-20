@@ -135,7 +135,8 @@ def death_birth(G, strat_list, u, num_rep):
     for replaced in replaced_nodes:
         old_strategies.append(G.node[replaced]['strategy'])  
     #competition dictionary through which neighbors will compete
-    weights=nx.get_edge_attributes(G, 'weight')
+    
+    #weights=nx.get_edge_attributes(G, 'weight')
     fits=nx.get_node_attributes(G, 'fitness')
     #initialize reproduced nodes and strategies
     reproduced_nodes = []

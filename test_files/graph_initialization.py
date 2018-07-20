@@ -92,6 +92,91 @@ def generate_graph(parameters, type = 'random'):
   except ValueError:
     print("The specified graph type was invalid.")
 
+def generate_weighted(parameters, type = 'random'):
+
+  #n, type='random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None
+  '''
+
+    INPUTS: 
+    
+    type              Type of graph
+    parameters        List of parameters specific to the type of graph
+
+    OUTPUTS:
+    Graph satisfying the specified parameters and of the specified type
+  '''
+  try:
+    if type == 'triangular_lattice':
+      n_dim = parameters[0]
+      m_dim = parameters[1]
+      graph = nx.triangular_lattice_graph(n_dim, m_dim)
+      return graph
+
+    if type == 'hypercube':
+      num_nodes=parameters[0]
+      graph = nx.hypercube_graph(num_nodes)
+      return graph
+
+    elif type == 'random':
+      num_nodes=parameters[0]
+      av_deg=parameters[1]
+      graph = nx.random_regular_graph(av_deg, num_nodes)
+      return graph
+
+    elif type == 'erdos_renyi':
+        num_nodes=parameters[0]
+        edges=parameters[1]
+        graph=nx.erdos_renyi_graph(num_nodes, edges)
+
+    elif type == 'complete':
+      num_nodes=parameters[0]
+      graph = nx.complete_graph(num_nodes)
+
+    elif type == 'dumbell':
+      n=parameters[0]
+      graph=nx.barbell_graph(n//2-1, n-2*(n//2-1))
+
+    elif type == 'complete_bipartite':
+      m=parameters[0]
+      n=parameters[1]
+      graph=nx.complete_bipartite_graph(m,n)
+
+    elif type == 'dumbell_multiple':
+      size_dumbell=parameters[0]
+      num_dumbell=parameters[1]
+      size_path=parameters[2]
+      graph=generate_dumbell_multiple_cliques(size_dumbell, num_dumbell, size_path)
+
+    elif type == 'rich_club':
+      size_club = parameters[0]
+      size_periphery = parameters[1]
+      prob_rp = parameters[2]
+      prob_rr = parameters[3]
+      prob_pp = parameters[4]
+      graph=generate_rich_club(size_club, size_periphery, prob_rp, prob_rr, prob_pp)
+
+    elif type == 'dumbell_multiple_sized':
+      size_list=parameters[0]
+      path_length=parameters[1]
+      graph=generate_dumbell_multiple_sizes(size_list, path_length)
+
+    elif type == 'dumbell_string':
+      sizes=parameters[0]
+      lengths=parameters[1]
+      graph=generate_dumbell_string(sizes,lengths)
+
+    if graph:
+      weights={}
+      for edge in graph.edges():
+        weights[edge]=1
+      nx.set_edge_attributes(graph, weights, 'weight')
+      return graph
+
+    return graph 
+
+  except ValueError:
+    print("The specified graph type was invalid.")
+
 def generate_graph_original(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None):
   '''
     INPUTS: 
@@ -264,49 +349,6 @@ def generate_dumbell_string(sizes, lengths):
   #for n in G.nodes():
   #  print(G.node[n]['coord'])
   return G
-
-def generate_weighted(n, type= 'random', d=0, m=0, periodic=False, with_positions=True, create_using=None):
-  '''
-    INPUTS: 
-    n               Number of nodes 
-    d               Average degree of the graph
-    m               Number of total edges in the graph
-    type            Type of graph
-    periodic        Bool: is the graph periodic?
-    with_positions
-    create_using
-
-    OUTPUTS:
-    Graph with the specified parameters and of the specified type, 
-    and with randomly (0 to 1) assigned edge weights
-  '''
-  try:
-    graph=None
-    if type == 'hypercube':
-      graph = nx.hypercube_graph(n)
-      return graph
-    elif type == 'random':
-      graph = nx.random_regular_graph(d, n)
-    elif type == 'erdos_renyi':
-      graph=nx.erdos_renyi_graph(n, m)
-    elif type == 'complete':
-      graph = nx.complete_graph(n)
-    elif type == 'dumbell':
-      graph=nx.barbell_graph(n//2-1, n-2*(n//2-1))
-    elif type == 'dumbell_multiple':
-      m=10
-      N=5
-      L=2
-      graph=generate_dumbell_multiple_cliques(m, N, L)
-    if graph:
-      weights={}
-      for edge in graph.edges():
-        weights[edge]=random.random()
-      nx.set_edge_attributes(graph, weights, 'weight')
-      return graph
-
-  except ValueError:
-    print("The specified graph type was invalid.")
 
 def generate_rich_club(size_club, size_periphery, prob_rp=1, prob_rr=1, prob_pp=0):
   graph=nx.complete_graph(size_club)
@@ -596,7 +638,7 @@ def color_and_draw_graph(G):
     TESTING GRAPHS
 ---------------------'''
 
-graph={}
+#graph={}
 
 # graph[1]=generate_graph([10], 'hypercube')
 # graph[2]=generate_graph([10, 5], 'random')

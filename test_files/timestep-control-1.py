@@ -1315,9 +1315,9 @@ prob_pp         = .2
 
 '''-----------String Dumbell Variables----------------'''
 #size of each dumbell in the string
-sizes=[40,40,40]
+sizes=[15,15]
 #lengths of the uniting paths
-lengths=[3,3,3,3]
+lengths=[3]
 cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
 parameters=[sizes,lengths, cliques_to_proportions]
 

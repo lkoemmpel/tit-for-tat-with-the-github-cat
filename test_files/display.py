@@ -248,7 +248,7 @@ def heat_map_utkovski(G, pos, helpers, num_of_trial=None, timestep=None):
     nx.draw_networkx_edges(G, pos)
 
     #Display node labels
-    nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_color='darkgreen', font_family='sans-serif', font_weight='normal')
+    #nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_color='darkgreen', font_family='sans-serif', font_weight='normal')
 
     plt.title('Labels represent internal coop state \n Number of trial: '+str(num_of_trial)+ '   Timestep: '+str(timestep))
     plt.axis('off')
