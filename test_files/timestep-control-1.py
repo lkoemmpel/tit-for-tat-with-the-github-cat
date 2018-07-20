@@ -1147,7 +1147,7 @@ def edge_weighted_payoff(graph, i, n):
     for j in graph.nodes():
         expectation += graph.node[i]['weight'][j] * s_indicator(graph, j)
 
-    f = -c * s_i + b expectation
+    f = -c * s_i + b * expectation
 
 
 def D(graph, delta, b, c):
@@ -1484,5 +1484,5 @@ kappa=0.5
 graph = plot_many_trials_utkovski(parameters, graph_type, u, this_lambda, kappa, noise, t, number_trials, \
     rho=None, plotting = True, show_graph = True, saving = False, color_fitness=True)[1]
 
-print(D(graph, delta))
+print(D(graph, delta, b, c))
 
