@@ -421,20 +421,20 @@ def label_allen(G,b,c,strat_list, start_prop_coop=None):
   #SET f_i VALUES
   for i in G.nodes():
 
-    G.node[i]['w'] = w_i(graph, i)
+    G.node[i]['w'] = w_i(G, i)
 
-    G.node[i]['f0'] = -c*G.node[n]['s']
-    for j in G.neighbors(n):
+    G.node[i]['f0'] = -c*G.node[i]['s']
+    for j in G.neighbors(i):
       G.node[i]['f0'] += b*prob_n_step_walk(G,i,j,1)*G.node[j]['s']
 
-    G.node[i]['f2'] = -c*G.node[n]['s']
-    for j in G.neighbors(n):
+    G.node[i]['f2'] = -c*G.node[i]['s']
+    for j in G.neighbors(i):
       G.node[i]['f2'] += b*prob_n_step_walk(G,i,j,2)*G.node[j]['s']
 
-    G.node[i]['F'] = 1+delta*G.node[i]['f']
+    G.node[i]['F'] = 1+delta*G.node[i]['f0']
     G.node[i]['pi'] = reproductive_value(G,i)
-    G.node[n]['payoffs'] = []
-    G.node[n]['fitness'] = random.uniform(0,1)
+    G.node[i]['payoffs'] = []
+    G.node[i]['fitness'] = random.uniform(0,1)
 
 def label_birth_death_precise_prop(G,strat_list, start_prop_coop=None):
   num_nodes=len(G.nodes())
@@ -692,10 +692,19 @@ def prob_n_step_walk(graph, i, j, n):
             #there is a path from i to k
             if j in graph.neighbors(k):
                 #there is a path from k to j
+                print('****')
+                print('the edge i is ',i)
+                print('k ',k)
+                print('j', j)
+                print('*********')
                 p_ik = graph[i][k]['weight']/w_i
                 p_kj = graph[k][j]['weight']/w_i
                 p_ij_sum += p_ik * p_kj
     else:
+        print('***')
+        print('i is ',i)
+        print('j is ',j)
+        print('******')
         p_ij_sum = graph[i][j]['weight'] / w_i 
     return p_ij_sum
 
@@ -713,10 +722,10 @@ def reproductive_value(graph, i):
     TESTING GRAPHS
 ---------------------'''
 
-#graph={}
+graph={}
 
 # graph[1]=generate_graph([10], 'hypercube')
-# graph[2]=generate_graph([10, 5], 'random')
+graph[2]=generate_graph([10, 5], 'random')
 # graph[3]=generate_graph([10,30], 'erdos_renyi')
 # graph[4]=generate_graph([20], 'complete')
 # graph[5]=generate_graph([30],'dumbell')
@@ -744,4 +753,5 @@ def reproductive_value(graph, i):
 #label_birth_death(graph[9], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[9])
 
-
+#for edge in graph[2].edges():
+#  print(edge)

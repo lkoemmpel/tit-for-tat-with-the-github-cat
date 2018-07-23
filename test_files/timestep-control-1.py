@@ -139,7 +139,10 @@ class game():
             #                                         entry n,t : freq(strat)/number(nodes)
             #                                         at trial n, time t
 
+            D_list=[]
             for i in range(t):
+                D_list.append(D(G,delta,b,c))
+
                 print('********')
                 print('TIME '+ str(i))
                 print('********')
@@ -198,12 +201,13 @@ class game():
                 #print("Plotting data at time ", t)
                 #plot_proportion_data(time_data, final_data)
 
-                graph = new_graph
+                G = new_graph
+
 
             #if self.plotting:
             #    plot_proportion_data(time_data, final_data, saving, graph_type,t, update_name, n, u, d, data_iteration)
 
-            return new_graph, concentrations, self.plotting
+            return new_graph, concentrations, self.plotting, D_list
 
     def trial_multidumbell(self, pos, num_rep, noise, b, c, graph_type = 'random', num_of_trial=None):
         '''
@@ -586,7 +590,7 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
             graph = sparse_graph
 
         #LABEL BIRTH DEATH
-        init.label_birth_death_precise_prop(graph, strat_list, start_prop_cooperators)
+        init.label_allen(graph, strat_list, start_prop_cooperators)
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
         #LABEL MULTIPLE CLIQUES 
@@ -1118,7 +1122,7 @@ def plot_D(parameters, graph_type, u, delta, noise, t, number_trials, num_rep, \
         print('\n')
         print("Running trial ", each)
         #print("Evaluating trial ", each)
-        graph=init.generate_graph(parameters, graph_type)
+        graph=init.generate_weighted(parameters, graph_type)
 
         if rho != None:
             # Remove lattice nodes until only rho percent remain
@@ -1132,7 +1136,7 @@ def plot_D(parameters, graph_type, u, delta, noise, t, number_trials, num_rep, \
             graph = sparse_graph
 
         #LABEL BIRTH DEATH
-        init.label_birth_death_precise_prop(graph, strat_list, start_prop_cooperators)
+        init.label_allen(graph,b,c,strat_list, start_prop_cooperators)
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
         #LABEL MULTIPLE CLIQUES 
@@ -1154,8 +1158,12 @@ def plot_D(parameters, graph_type, u, delta, noise, t, number_trials, num_rep, \
         #    graph_type, update_name, plotting, show_graph, saving, color_fitness)
         #append record for this trial of the concentrations of the_strat
         
-        result_matrix.append(D(trial_outcome[0],delta,b,c))
+        result_matrix.append(trial_outcome[3])
 
+
+    print('~~~~~~~~~~~~~')
+    print(result_matrix)
+    print('~~~~~~~~~~~~~')
 
     #scatter plot X axis! 
     X=[tictoc for tictoc in range(t)]
