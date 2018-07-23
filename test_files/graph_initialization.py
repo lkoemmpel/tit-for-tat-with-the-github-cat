@@ -421,20 +421,20 @@ def label_allen(G,b,c,strat_list, start_prop_coop=None):
   #SET f_i VALUES
   for i in G.nodes():
 
-    G.node[i]['w'] = w_i(graph, i)
+    G.node[i]['w'] = w_i(G, i)
 
-    G.node[i]['f0'] = -c*G.node[n]['s']
-    for j in G.neighbors(n):
-      G.node[i]['f0'] += b*prob_n_step_walk(G,i,j,1)*G.node[j]['s']
+    G.node[i]['f0'] = -c*G.node[i]['s']
+    for j in G.neighbors(i):
+      G.node[i]['f0'] += b * prob_n_step_walk(G,i,j,1)*G.node[j]['s']
 
-    G.node[i]['f2'] = -c*G.node[n]['s']
-    for j in G.neighbors(n):
-      G.node[i]['f2'] += b*prob_n_step_walk(G,i,j,2)*G.node[j]['s']
+    G.node[i]['f2'] = -c*G.node[i]['s']
+    for j in G.neighbors(i):
+      G.node[i]['f2'] += b * prob_n_step_walk(G,i,j,2)*G.node[j]['s']
 
-    G.node[i]['F'] = 1+delta*G.node[i]['f']
+    G.node[i]['F'] = 1+delta*G.node[i]['f0']
     G.node[i]['pi'] = reproductive_value(G,i)
-    G.node[n]['payoffs'] = []
-    G.node[n]['fitness'] = random.uniform(0,1)
+    G.node[i]['payoffs'] = []
+    G.node[i]['fitness'] = random.uniform(0,1)
 
 def label_birth_death_precise_prop(G,strat_list, start_prop_coop=None):
   num_nodes=len(G.nodes())
