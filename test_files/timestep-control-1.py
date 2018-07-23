@@ -1105,6 +1105,8 @@ def plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_coo
 
     return Yavg[-1], graph
 
+
+
 def plot_D(parameters, graph_type, u, delta, noise, t, number_trials, num_rep, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
 
@@ -1275,7 +1277,6 @@ def plot_D(parameters, graph_type, u, delta, noise, t, number_trials, num_rep, \
 '''---------------------------------------------------
     CALCULATIONS FROM THE PAPER 'ANY POP STRUCTURE'
 ----------------------------------------------------'''
-
 def prob_n_step_walk(graph, i, j, n):
     w_i = 0
     for neighbor in graph.neighbors(i):
