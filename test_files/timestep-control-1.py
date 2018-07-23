@@ -1125,13 +1125,14 @@ def prob_n_step_walk(graph, i, n):
     return p_ij_sum
 
 def reproductive_value(graph, i):
-    i_weights = graph.node[i]['weight'].values()
-    w_i = sum(i_weights)
+    w_i = 0
+    for neighbor in graph.neighbors(i):
+        w_i += graph[i][neighbor]['weight']
 
     W_sum = 0
     for k in graph.nodes():
         for j in graph.nodes():
-            W_sum += graph.node[i]['weight'][j]
+            W_sum += graph[i][j]['weight']
     return w_i/W_sum
 
 def s_indicator(graph, i):

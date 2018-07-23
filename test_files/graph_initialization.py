@@ -168,8 +168,6 @@ def generate_weighted(parameters, type = 'random'):
     if graph:
       weights={}
       for edge in graph.edges():
-        pr
-        print()
         weights[edge]=1
       nx.set_edge_attributes(graph, weights, 'weight')
       return graph
