@@ -1105,14 +1105,6 @@ def plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_coo
 
     return Yavg[-1], graph
 
-'''
-def neighbor_weights(graph, k):
-    k_weights = {}
-    for neighbor in graph.neighbors(k):
-        k_weights[neighbor] = (graph[k][neighbor]['weight'])
-    return k_weights
-'''
-
 def prob_n_step_walk(graph, i, j, n):
     w_i = 0
     for neighbor in graph.neighbors(i):
