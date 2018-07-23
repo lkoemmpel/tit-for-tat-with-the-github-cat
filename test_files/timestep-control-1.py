@@ -1106,7 +1106,8 @@ def plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_coo
     return Yavg[-1], graph
 
 
-def plot_D(parameters, graph_type, u, delta, noise, t, number_trials, the_strat, num_rep, \
+
+def plot_D(parameters, graph_type, u, delta, noise, t, number_trials, num_rep, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
 
     #matrix in which entry n,t is the concentration 
@@ -1516,8 +1517,8 @@ dis.color_fitness_and_draw_graph(graph, nx.spring_layout(graph))
 print(get_props_cliques(graph))
 '''
 
-graph = plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
-    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=True)[1]
+#graph = plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
+#    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=True)[1]
 
 '''------------------------
 UTKOVSKI TRIALS
@@ -1528,7 +1529,10 @@ kappa=0.5
 #graph = plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_cooperators, u, this_lambda, kappa, noise, t, number_trials, \
 #    rho=None, plotting = True, show_graph = True, saving = False, color_fitness=True)[1]
 
-print("The nodes of the graph are ", graph.nodes())
+#print("The nodes of the graph are ", graph.nodes())
 
-print(D(graph, delta, b, c))
+#print(D(graph, delta, b, c))
+
+plot_D(parameters, graph_type, u, delta, noise, t, number_trials, num_rep, \
+    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)
 
