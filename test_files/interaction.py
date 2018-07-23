@@ -131,19 +131,19 @@ def interaction_BD(G, payoff_mtx, delta=0, noise=0):
   record=set()
   for v in nx.nodes(G):
     for w in G.neighbors(v):
-      print("Examining node ", v, " and it's neighbor ", w)
+      #print("Examining node ", v, " and it's neighbor ", w)
       #occurs=random.choice([True,False])
       occurs=random.choice([True])
       #does interaction occur?
       if occurs:
-        print(v, " and ", w, " were chosen to interact!")
+        #print(v, " and ", w, " were chosen to interact!")
         #they haven't interacted yet
         if (w,v) not in record:
-          print("They have not interacted before")
+          #print("They have not interacted before")
           action_v=action(G, intention(G,v), noise)
           action_w=action(G, intention(G,w), noise)
-          print('action of v is: ' + strat_index[action_v])
-          print('action of w is: ' + strat_index[action_w])
+          #print('action of v is: ' + strat_index[action_v])
+          #print('action of w is: ' + strat_index[action_w])
           record.add((v,w))
           G.node[v]['payoffs'].append(payoff_mtx[action_v][action_w][0])
           G.node[w]['payoffs'].append(payoff_mtx[action_v][action_w][1])
@@ -154,7 +154,7 @@ def interaction_BD(G, payoff_mtx, delta=0, noise=0):
       #G.node[v]['fitness']=normalization2(sum(G.node[v]['payoffs']), delta, max_p, min_p, max_deg)
       new=normalization(Theta_paper1(avg_payoff, delta))
       G.node[v]['fitness']=(old+new)/2
-      print('Fitness changed from ' +str(old)+ ' to '+ str(G.node[v]['fitness']))
+      #print('Fitness changed from ' +str(old)+ ' to '+ str(G.node[v]['fitness']))
       #restart payoff list for next round
       G.node[v]['payoffs']=[]
   return G

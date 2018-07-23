@@ -572,7 +572,7 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
         print('\n')
         print("Running trial ", each)
         #print("Evaluating trial ", each)
-        graph=init.generate_graph(parameters, graph_type)
+        graph=init.generate_weighted(parameters, graph_type)
 
         if rho != None:
             # Remove lattice nodes until only rho percent remain
@@ -645,7 +645,7 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
 
         #show plot
         plt.show()
-        pause(20)   
+        pause(4)   
         #print("Attempting to show plot -----------------")
         #pause(60)
     #plt.close()     
@@ -725,7 +725,7 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
                 'b_over_c=' + str(b) + '_' + \
                 str(file_id) + '.png')
 
-    return Yavg[-1]
+    return Yavg[-1], graph 
 
 def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, the_strat, num_rep, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
@@ -1106,22 +1106,28 @@ def plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_coo
     return Yavg[-1], graph
 
 
-def prob_n_step_walk(graph, i, n):
-    w_i = sum(graph.node[i]['weight'].values())
-    for j in G.nodes():
-        p_ij_sum = 0
-        if n == 2:
-            for k in G.nodes:
-                #want to determine if there is a path from i to k to j
-                if k in graph.node[i]['weight']:
-                    #there is a path from i to k
-                    if j in graph.node[k]['weight']:
-                        #there is a path from k to j
-                        p_ik = graph.node[i]['weight'][k]/w_i
-                        p_kj = graph.node[k]['weight'][j]/w_i
-                        p_ij_sum += p_ik * p_kj
-        else:
-            p_ij_sum = graph.node[i]['weight'][j] / w_i 
+def neighbor_weights(graph, k):
+    k_weights = {}
+    for neighbor in graph.neighbors(k):
+        k_weights[neighbor] = (graph[k][neighbor]['weight'])
+    return k_weights
+
+def prob_n_step_walk(graph, i, j, n):
+    w_i = 0
+    for neighbor in graph.neighbors(i):
+        w_i += graph[i][neighbor]['weight']
+    p_ij_sum = 0
+    if n == 2:
+        #want to determine if there is a path from i to k to j
+        if k in G.neighbors(i):
+            #there is a path from i to k
+            if j in k_weights:
+                #there is a path from k to j
+                p_ik = graph[i][k]['weight']/w_i
+                p_kj = graph[k][j]['weight']/w_i
+                p_ij_sum += p_ik * p_kj
+    else:
+        p_ij_sum = graph[i][j]['weight'] / w_i 
     return p_ij_sum
 
 def reproductive_value(graph, i):
@@ -1140,13 +1146,17 @@ def s_indicator(graph, i):
         s_i = 1
     else:
         s_i = 0
+    return s_i
 
 def edge_weighted_payoff(graph, i, n):
     s_i = s_indicator(graph, i)
     expectation = 0
 
     for j in graph.nodes():
-        expectation += graph.node[i]['weight'][j] * s_indicator(graph, j)
+        print("Node i is ", i)
+        print("Node j is ", j)
+        if j != i:
+            expectation += prob_n_step_walk(graph, i, j, n) * s_indicator(graph, j)
 
     f = -c * s_i + b * expectation
 
@@ -1154,9 +1164,9 @@ def edge_weighted_payoff(graph, i, n):
 def D(graph, delta, b, c):
     for i in graph.nodes():
         f_0i = edge_weighted_payoff(graph, i, 0)
-        f_2i = edge_weighted_payoff(graph, i, 2)
-        sum += reproductive_value(graph, i) * (f_0i - f_2i)
-    return delta * sum
+        f_2i = edge_weighted_payoff(graph, i, 2) 
+        d_sum += reproductive_value(graph, i) * s_indicator(graph, i) * (f_0i - f_2i)
+    return delta * d_sum
 
 
 
@@ -1304,7 +1314,7 @@ def plot_trial_until_stable(parameters, graph_type, u, t, the_strat, num_rep, \
 
 '''--------------VARIABLES ALWAYS USED ----------------'''
 strat_list  = ['Cooperate', 'Defect']
-graph_type  = 'dumbell_string'
+graph_type  = 'dumbell_multiple'
 update_name = 'BD'
 
 
@@ -1314,9 +1324,9 @@ noise   = 0.00001
 b       = 2
 max_b   = 2
 c       = 1
-t       = 20
+t       = 30
 start_prop_cooperators  = 0.9
-number_trials           = 5
+number_trials           = 2
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
 
@@ -1349,7 +1359,7 @@ cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
 # 2:0, 3:0.1, 4:1, 5:.5}
 #6:.4, 7:.5, 8:.2, 9:.6}
 #list of parameters that will be used to build graph
-#parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
+parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
 
 
 '''-----------Complete Bipartite Graph Variables----------------'''
@@ -1373,7 +1383,7 @@ sizes=[15,15]
 #lengths of the uniting paths
 lengths=[3]
 cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
-parameters=[sizes,lengths, cliques_to_proportions]
+#parameters=[sizes,lengths, cliques_to_proportions]
 
 
 
@@ -1473,8 +1483,8 @@ dis.color_fitness_and_draw_graph(graph, nx.spring_layout(graph))
 print(get_props_cliques(graph))
 '''
 
-#plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
-#    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=True)
+graph = plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
+    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=True)[1]
 
 '''------------------------
 UTKOVSKI TRIALS
@@ -1482,8 +1492,10 @@ UTKOVSKI TRIALS
 this_lambda=0.5
 kappa=0.5
 
-graph = plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_cooperators, u, this_lambda, kappa, noise, t, number_trials, \
-    rho=None, plotting = True, show_graph = True, saving = False, color_fitness=True)[1]
+#graph = plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_cooperators, u, this_lambda, kappa, noise, t, number_trials, \
+#    rho=None, plotting = True, show_graph = True, saving = False, color_fitness=True)[1]
+
+print("The nodes of the graph are ", graph.nodes())
 
 print(D(graph, delta, b, c))
 
