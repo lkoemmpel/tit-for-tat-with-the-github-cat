@@ -168,6 +168,8 @@ def generate_weighted(parameters, type = 'random'):
     if graph:
       weights={}
       for edge in graph.edges():
+        pr
+        print()
         weights[edge]=1
       nx.set_edge_attributes(graph, weights, 'weight')
       return graph
@@ -580,6 +582,7 @@ def label_utkovski(G):
     G.node[n]['total_payoff']=0
     #cooperative_state = probability of helping another node
     G.node[n]['coop_state'] = random.uniform(0,1)
+    G.node[n]['strategy']=G.node[n]['coop_state']
 
 def label_more_strategies(G, strat_list, dist_prob_strats=None):
   for n in nx.nodes(G):
