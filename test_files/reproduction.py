@@ -107,14 +107,14 @@ def birth_death(G, strat_list, u, num_rep):
                 mutation_list = [x for x in strat_list if x != reproduced_strategy]
                 if mutation_list == []:
                     #print("There cannot be mutations in this population.")
-                    inheritance[j] = reproduced_strategy
+                    inheritance[j][0] = reproduced_strategy
                 else:
-                    inheritance[j] = np.random.choice(mutation_list)
-                    reproduced_strategy = inheritance[j]
+                    inheritance[j][0] = np.random.choice(mutation_list)
+                    reproduced_strategy = inheritance[j][0]
                 #print("Node ", j, " now has strategy ", G.node[j]['strategy'])        
             else:
                 # there is not a mutation
-                inheritance[j] = reproduced_strategy
+                inheritance[j][0] = reproduced_strategy
             # Node j has now just been born, so we set its fitness to 0
             G.node[j]['fitness'] = random.uniform(0,1)
             reproduced_strategies.append(reproduced_strategy)
@@ -124,7 +124,11 @@ def birth_death(G, strat_list, u, num_rep):
     print()
     print(inheritance)
     for j in inheritance.keys():
-        G.node[j]['strategy'] = inheritance[j]
+        G.node[j]['strategy'] = inheritance[j][0]
+        if inheritance[j][0] = 'Cooperate':
+            G.node[j]['s'] = 1
+        else:
+            G.node[j]['s'] = 0
 
     return [G, reproduced_strategies, old_strategies, reproduced_nodes]
 

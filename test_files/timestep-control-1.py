@@ -590,6 +590,10 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
             graph = sparse_graph
 
         #LABEL BIRTH DEATH
+<<<<<<< HEAD
+=======
+        print("We are labelling allen")
+>>>>>>> f8a237d30c106076c168edebaf7a74325ffaab38
         init.label_allen(graph, strat_list, start_prop_cooperators)
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
@@ -1111,7 +1115,7 @@ def plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_coo
 
 
 
-def plot_D(parameters, graph_type, u, delta, noise, t, number_trials, num_rep, \
+def plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
 
     #matrix in which entry n,t is the concentration 
@@ -1136,7 +1140,11 @@ def plot_D(parameters, graph_type, u, delta, noise, t, number_trials, num_rep, \
             graph = sparse_graph
 
         #LABEL BIRTH DEATH
+<<<<<<< HEAD
         init.label_allen(graph,b,c,strat_list, start_prop_cooperators)
+=======
+        init.label_allen(graph, b, c, strat_list, start_prop_cooperators)
+>>>>>>> f8a237d30c106076c168edebaf7a74325ffaab38
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
         #LABEL MULTIPLE CLIQUES 
@@ -1541,6 +1549,6 @@ kappa=0.5
 
 #print(D(graph, delta, b, c))
 
-plot_D(parameters, graph_type, u, delta, noise, t, number_trials, num_rep, \
+plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)
 
