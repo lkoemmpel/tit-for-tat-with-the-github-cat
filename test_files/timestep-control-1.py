@@ -1105,12 +1105,13 @@ def plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_coo
 
     return Yavg[-1], graph
 
-
+'''
 def neighbor_weights(graph, k):
     k_weights = {}
     for neighbor in graph.neighbors(k):
         k_weights[neighbor] = (graph[k][neighbor]['weight'])
     return k_weights
+'''
 
 def prob_n_step_walk(graph, i, j, n):
     w_i = 0
@@ -1118,11 +1119,11 @@ def prob_n_step_walk(graph, i, j, n):
         w_i += graph[i][neighbor]['weight']
     p_ij_sum = 0
     if n == 2:
-        print("We've gotten to the n=2 code")
+        print("We've gotten to the n=2")
         #want to determine if there is a path from i to k to j
-        if k in G.neighbors(i):
+        for k in graph.neighbors(i):
             #there is a path from i to k
-            if j in k_weights:
+            if j in graph.neighbors(k):
                 #there is a path from k to j
                 p_ik = graph[i][k]['weight']/w_i
                 p_kj = graph[k][j]['weight']/w_i
@@ -1137,9 +1138,8 @@ def reproductive_value(graph, i):
         w_i += graph[i][neighbor]['weight']
 
     W_sum = 0
-    for k in graph.nodes():
-        for j in graph.nodes():
-            W_sum += graph[i][j]['weight']
+    for j in graph.neighbors(i):
+        W_sum += graph[i][j]['weight']
     return w_i/W_sum
 
 def s_indicator(graph, i):
@@ -1153,16 +1153,17 @@ def edge_weighted_payoff(graph, i, n):
     s_i = s_indicator(graph, i)
     expectation = 0
 
-    for j in graph.nodes():
+    for j in graph.neighbors(i):
         print("Node i is ", i)
         print("Node j is ", j)
-        if j != i:
-            expectation += prob_n_step_walk(graph, i, j, n) * s_indicator(graph, j)
+        expectation += prob_n_step_walk(graph, i, j, n) * s_indicator(graph, j)
 
     f = -c * s_i + b * expectation
+    return f
 
 
 def D(graph, delta, b, c):
+    d_sum = 0
     for i in graph.nodes():
         f_0i = edge_weighted_payoff(graph, i, 0)
         print("f_0i code worked")
