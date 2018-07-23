@@ -581,6 +581,7 @@ def label_utkovski(G):
     #cooperative_state = probability of helping another node
     G.node[n]['coop_state'] = random.uniform(0,1)
 
+
 def label_more_strategies(G, strat_list, dist_prob_strats=None):
   for n in nx.nodes(G):
     #-----------------

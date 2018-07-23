@@ -951,7 +951,7 @@ def plot_proportion_data(time, strat_dict, saving, graph_type, t, update_name, n
 
     return None
 
-def plot_many_trials_utkovski(parameters, graph_type, u, this_lambda, kappa, noise, t, number_trials, \
+def plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_cooperators, u, this_lambda, kappa, noise, t, number_trials, \
     rho=None, plotting = True, show_graph = False, saving = False, color_fitness=False):    
 
     #matrix in which entry n,t is the concentration 
@@ -976,7 +976,7 @@ def plot_many_trials_utkovski(parameters, graph_type, u, this_lambda, kappa, noi
             graph = sparse_graph
 
         #LABEL UTKOVSKI
-        init.label_utkovski(graph)
+        init.label_utkovski(graph, strat_list, start_prop_cooperators)
 
         this_game=game(graph, update_name, t, u, delta, plotting, show_graph, saving, color_fitness)
         
@@ -1481,7 +1481,7 @@ UTKOVSKI TRIALS
 this_lambda=0.5
 kappa=0.5
 
-graph = plot_many_trials_utkovski(parameters, graph_type, u, this_lambda, kappa, noise, t, number_trials, \
+graph = plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_cooperators, u, this_lambda, kappa, noise, t, number_trials, \
     rho=None, plotting = True, show_graph = True, saving = False, color_fitness=True)[1]
 
 print(D(graph, delta, b, c))
