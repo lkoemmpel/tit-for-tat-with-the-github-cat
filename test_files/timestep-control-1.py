@@ -1118,6 +1118,7 @@ def prob_n_step_walk(graph, i, j, n):
         w_i += graph[i][neighbor]['weight']
     p_ij_sum = 0
     if n == 2:
+        print("We've gotten to the n=2 code")
         #want to determine if there is a path from i to k to j
         if k in G.neighbors(i):
             #there is a path from i to k
@@ -1164,6 +1165,7 @@ def edge_weighted_payoff(graph, i, n):
 def D(graph, delta, b, c):
     for i in graph.nodes():
         f_0i = edge_weighted_payoff(graph, i, 0)
+        print("f_0i code worked")
         f_2i = edge_weighted_payoff(graph, i, 2) 
         d_sum += reproductive_value(graph, i) * s_indicator(graph, i) * (f_0i - f_2i)
     return delta * d_sum
