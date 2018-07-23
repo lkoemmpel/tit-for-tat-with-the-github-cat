@@ -10,6 +10,7 @@ import sys
 import math
 import itertools
 
+
 '''---------------------
     GRAPH GENERATORS
 ---------------------'''
@@ -402,6 +403,28 @@ def label_birth_death(G, strat_list, start_prop_coop=None):
     G.node[n]['fitness'] = random.uniform(0,1)
     G.node[n]['payoffs'] = []
 
+def label_allen(G,b,c,strat_list, start_prop_coop=None):
+  #SET STRATEGIES and s_i
+  num_nodes=len(G.nodes())
+  num_coops=int(round(num_nodes*start_prop_coop))
+  selected_coops=random.sample(list(G.nodes()), num_coops)
+  selected_coops=set(selected_coops)
+  for n in G.nodes():
+    if n in selected_coops:
+      G.node[n]['strategy'] = 'Cooperate'
+      G.node[n]['s']=1
+    else:
+      G.node[n]['strategy'] = 'Defect'
+      G.node[n]['s']=0
+  #SET f_i VALUES
+  for i in G.nodes():
+    G.node[i]['f'] = -c*G.node[n]['s']
+    for j in G.neighbors(n):
+      G.node[i]['f'] += b*prob_n_step_walk(G,i,j,1)*G.node[j]['s']
+    G.node[i]['F'] = 1+delta*G.node[i]['f']
+    G.node[i]['pi'] = reproductive_value(G,i)
+    G.node[n]['payoffs'] = []
+
 def label_birth_death_precise_prop(G,strat_list, start_prop_coop=None):
   num_nodes=len(G.nodes())
   num_coops=int(round(num_nodes*start_prop_coop))
@@ -635,6 +658,79 @@ def color_and_draw_graph(G):
     #plt.pause(2.0)
 
     return G
+
+
+'''---------------------------------------------------
+    CALCULATIONS FROM THE PAPER 'ANY POP STRUCTURE'
+----------------------------------------------------'''
+
+delta=0.0005
+
+def neighbor_weights(graph, k):
+    k_weights = {}
+    for neighbor in graph.neighbors(k):
+        k_weights[neighbor] = (graph[k][neighbor]['weight'])
+    return k_weights
+
+def prob_n_step_walk(graph, i, j, n):
+    w_i = 0
+    for neighbor in graph.neighbors(i):
+        w_i += graph[i][neighbor]['weight']
+    p_ij_sum = 0
+    if n == 2:
+        print("We've gotten to the n=2 code")
+        #want to determine if there is a path from i to k to j
+        if k in G.neighbors(i):
+            #there is a path from i to k
+            if j in k_weights:
+                #there is a path from k to j
+                p_ik = graph[i][k]['weight']/w_i
+                p_kj = graph[k][j]['weight']/w_i
+                p_ij_sum += p_ik * p_kj
+    else:
+        p_ij_sum = graph[i][j]['weight'] / w_i 
+    return p_ij_sum
+
+def reproductive_value(graph, i):
+    w_i = 0
+    for neighbor in graph.neighbors(i):
+        w_i += graph[i][neighbor]['weight']
+
+    W_sum = 0
+    for k in graph.nodes():
+        for j in graph.nodes():
+            W_sum += graph[i][j]['weight']
+    return w_i/W_sum
+
+def s_indicator(graph, i):
+    if graph.node[i]['strategy'] == 'Cooperate':
+        s_i = 1
+    else:
+        s_i = 0
+    return s_i
+
+def edge_weighted_payoff(graph, i, n):
+    s_i = s_indicator(graph, i)
+    expectation = 0
+
+    for j in graph.nodes():
+        print("Node i is ", i)
+        print("Node j is ", j)
+        if j != i:
+            expectation += prob_n_step_walk(graph, i, j, n) * s_indicator(graph, j)
+
+    f = -c * s_i + b * expectation
+
+def D(graph, delta, b, c):
+    for i in graph.nodes():
+        f_0i = edge_weighted_payoff(graph, i, 0)
+        print("f_0i code worked")
+        f_2i = edge_weighted_payoff(graph, i, 2) 
+        d_sum += reproductive_value(graph, i) * s_indicator(graph, i) * (f_0i - f_2i)
+    return delta * d_sum
+
+
+
 
 '''---------------------
     TESTING GRAPHS

@@ -1105,6 +1105,176 @@ def plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_coo
 
     return Yavg[-1], graph
 
+def plot_D(parameters, graph_type, u, delta, noise, t, number_trials, the_strat, num_rep, \
+    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
+
+    #matrix in which entry n,t is the concentration 
+    #of the_strat at time t in trial n
+    result_matrix=[]
+    #run the game for each trial
+    for each in range(number_trials):
+        print('\n')
+        print("Running trial ", each)
+        #print("Evaluating trial ", each)
+        graph=init.generate_graph(parameters, graph_type)
+
+        if rho != None:
+            # Remove lattice nodes until only rho percent remain
+            sparse_graph = graph.copy()
+            for n in graph.nodes():
+                #indicator is random.uniform(0,1)
+                if random.uniform(0,1) > rho:
+                    if nx.number_of_nodes(sparse_graph) != 1:
+                        #this node should be deleted
+                        sparse_graph.remove_node(n)
+            graph = sparse_graph
+
+        #LABEL BIRTH DEATH
+        init.label_birth_death_precise_prop(graph, strat_list, start_prop_cooperators)
+        #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
+        #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
+        #LABEL MULTIPLE CLIQUES 
+        #init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.2, 1:0.9, 2:0, 3:0.1, 4:1})       
+
+
+        this_game=game(graph, update_name, t, u, delta, plotting, show_graph, saving, color_fitness)
+
+
+        if graph_type == 'triangular_lattice':
+            pos = dict( (n, n) for n in graph.nodes() )
+        else:
+            pos = nx.spring_layout(graph)
+
+        trial_outcome = this_game.trial(pos, num_rep, noise, graph_type, each+1)
+        
+
+        #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
+        #    graph_type, update_name, plotting, show_graph, saving, color_fitness)
+        #append record for this trial of the concentrations of the_strat
+        
+        result_matrix.append(D(trial_outcome[0],delta,b,c))
+
+
+    #scatter plot X axis! 
+    X=[tictoc for tictoc in range(t)]
+    #three lines to plot: average, and pm stdev
+    Yavg, Yplus, Yminus=[], [], []
+    for tictoc in range(t):
+        at_time_t=[trial[tictoc] for trial in result_matrix]
+        #average at time t over all the trials
+        average=sum(at_time_t)/len(at_time_t)
+        stdev=np.std(at_time_t)
+        Yavg.append(average)
+        Yplus.append(average+stdev)
+        Yminus.append(average-stdev)
+
+    the_avg = sum(Yavg)/len(Yavg)
+    AVG=[the_avg for tictoc in range(t)]
+
+    if plotting:
+        #plot the 3 lines
+        plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
+        plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
+        plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
+        plt.plot(X, AVG, color='orange', marker='', linestyle= '-')
+
+        #change axes ranges
+        plt.xlim(0,t-1)
+        plt.ylim(-1,1)
+        #add title
+        plt.title('Relationship between time and D(s) in '+str(number_trials)+ ' trials')
+        #add x and y labels
+        plt.ylabel('D(s)')
+        plt.xlabel('Time')
+
+        #show plot
+        plt.show()
+        pause(20)   
+        #print("Attempting to show plot -----------------")
+        #pause(60)
+    #plt.close()     
+
+    if saving:
+        file_id = 0
+        #randint(10**5, 10**6 - 1)
+    #   print("Attempting to save plot ", data_iteration)+1
+        if graph_type=='dumbell_multiple':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'size_dumbell=' + str(parameters[0]) + '_' + \
+                'num_dumbell=' + str(parameters[1]) + '_' + \
+                'size_path=' + str(parameters[2]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='dumbell':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'n=' + str(parameters[0]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type == 'rich_club':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'size_club=' + str(parameters[0]) + '_' + \
+                'size_periphery=' + str(parameters[1]) + '_' + \
+                'prob_rp=' + str(parameters[2]) + '_' + \
+                'prob_rr=' + str(parameters[3]) + '_' + \
+                'prob_pp=' + str(parameters[4]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='complete' or 'hypercube':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'num_nodes=' + str(parameters[0]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + \
+                str(file_id) + '.png')
+        elif graph_type=='triangular_lattice':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'n_dim=' + str(parameters[0]) + '_' + \
+                'm_dim=' + str(parameters[1]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='random':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'num_nodes=' + str(parameters[0]) + '_' + \
+                'ave_degree=' + str(parameters[1]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + \
+                str(file_id) + '.png')
+
+    return Yavg[-1]
+
+
+'''---------------------------------------------------
+    CALCULATIONS FROM THE PAPER 'ANY POP STRUCTURE'
+----------------------------------------------------'''
 
 def neighbor_weights(graph, k):
     k_weights = {}
@@ -1161,7 +1331,6 @@ def edge_weighted_payoff(graph, i, n):
 
     f = -c * s_i + b * expectation
 
-
 def D(graph, delta, b, c):
     for i in graph.nodes():
         f_0i = edge_weighted_payoff(graph, i, 0)
@@ -1171,140 +1340,6 @@ def D(graph, delta, b, c):
     return delta * d_sum
 
 
-
-'''
-def plot_many_tests(time, strat_dict, saving, graph_type, t, update_name, n, u, d, i):
-    
-    Like plot proportional data, but handles many dictionaries
-    from the data of many graphs
-    Plots each data a different color/style on the same plot
-    
-    for strat in strat_dict:
-        # IMPORTANT -- UNDO THIS IF STATEMENT WHEN EXAMINING MORE STRATEGIES
-        if strat == 'Cooperate':
-            #scatter plot
-            X = time
-            Y = strat_dict[strat]
-            plt.plot(X, Y, color='blue', marker='^', linestyle = '-')
-            #change axes ranges
-            plt.xlim(0,max(time))
-            plt.ylim(0,1)
-            #add title
-            plt.title('Relationship between time and proportion of nodes with strategy ' + strat)
-            #add x and y labels
-            plt.ylabel('Proportion of nodes with strategy ' + strat)
-            plt.xlabel('Time')
-            #show plot
-            plt.ion()        
-            if saving:
-                print("Attempting to save plot ", i)
-                plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + \
-                '_u=' + str(u) + '_d=' + str(d) + '_' + 'trial' + str(i) + '.png')
-            plt.close()
-    return None
-
-def plot_trial_until_stable(parameters, graph_type, u, t, the_strat, num_rep, \
-    update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False, rho=None):
-    #matrix in which entry n,t is the concentration 
-    #of the_strat at time t in trial n
-    result_matrix=[]
-    #run the game for each trial
-    std_dev=2
-    timestep=0
-    #GENERATE GRAPH
-    graph=init.generate_graph(parameters, graph_type)
-    #given density
-    if rho != None:
-        # Remove lattice nodes until only rho percent remain
-        sparse_graph = graph.copy()
-        for n in graph.nodes():
-            #indicator is random.uniform(0,1)
-            if random.uniform(0,1) > rho:
-                if nx.number_of_nodes(sparse_graph) != 1:
-                    #this node should be deleted
-                    sparse_graph.remove_node(n)
-        graph = sparse_graph
-
-    #LABEL BIRTH DEATH
-    init.label_birth_death(graph, strat_list, start_prop_cooperators)
-    #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
-    #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
-    #LABEL MULTIPLE CLIQUES 
-    #init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.5, 1:1})
-
-    #MAKE GAME
-    this_game=game(graph, update_name, 1, u, d, plotting, show_graph, saving, color_fitness)
-
-    while std_dev>0.1:
-        timestep+=1
-        print('\n')
-        print("Running step ", str(timestep))
-
-        if graph_type == 'triangular_lattice':
-            pos = dict( (n, n) for n in graph.nodes() )
-        else:
-            pos = nx.spring_layout(graph)
-
-        trial_outcome = this_game.trial(pos, num_rep, graph_type, 1)
-        result_matrix.append(trial_outcome[1][the_strat])
-        try:
-            last_ten=result_matrix[-9:]
-        except:
-            last_ten=result_matrix
-        averages=[]
-        for obj in range(len(last_ten)):
-            to_avg=[trial[obj] for trial in last_ten]
-            averages.append(sum(to_avg)/len(to_avg))
-        std_dev=np.std(averages)
-
-
-    
-    #scatter plot X axis! 
-    X=[tictoc for tictoc in range(timestep)]
-    #three lines to plot: average, and pm stdev
-    Yavg, Yplus, Yminus=[], [], []
-    for tictoc in range(timestep):
-        at_time_t=[trial[tictoc] for trial in result_matrix]
-        #average at time t over all the trials
-        average=sum(at_time_t)/len(at_time_t)
-        stdev=np.std(at_time_t)
-        Yavg.append(average)
-        Yplus.append(average+stdev)
-        Yminus.append(average-stdev)
-
-    if plotting:
-        #plot the 3 lines
-        plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
-        plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
-        plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
-        
-        #change axes ranges
-        plt.xlim(0,t-1)
-        plt.ylim(0,1)
-        #add title
-        plt.title('Relationship between time and proportion of nodes with \n strategy ' + the_strat + ' in '+str(timestep)+ ' timesteps')
-        #add x and y labels
-        plt.ylabel('Proportion of nodes with strategy ' + the_strat)
-        plt.xlabel('Time')
-
-        #show plot
-        plt.show()   
-        print("Attempting to show plot -----------------")
-        pause(60)
-    #plt.close()     
-
-    #if saving:
-    #    print("Attempting to save plot ", data_iteration)+1
-    #    plt.savefig(graph_type + '_' + str(t) + '_' + update_name + '_n=' + str(n) + '_u=' + \
-    #        str(u) + '_d=' + str(d) + '_' + 'trial' + str(data_iteration) + '.png')
-    #plt.close()
-
-    #last_5=Yavg[-5:]
-    #return sum(last_5)/len(last_5)
-    
-    return Yavg[-1]
-
-'''
 
 '''--------------------------------------------
                         TESTS
