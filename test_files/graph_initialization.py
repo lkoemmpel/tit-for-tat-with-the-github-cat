@@ -424,6 +424,7 @@ def label_allen(G,b,c,strat_list, start_prop_coop=None):
     G.node[i]['F'] = 1+delta*G.node[i]['f']
     G.node[i]['pi'] = reproductive_value(G,i)
     G.node[n]['payoffs'] = []
+    G.node[n]['fitness'] = random.uniform(0,1)
 
 def label_birth_death_precise_prop(G,strat_list, start_prop_coop=None):
   num_nodes=len(G.nodes())
