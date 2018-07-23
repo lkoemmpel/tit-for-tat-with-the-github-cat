@@ -1276,6 +1276,7 @@ def plot_D(parameters, graph_type, u, delta, noise, t, number_trials, the_strat,
 '''---------------------------------------------------
     CALCULATIONS FROM THE PAPER 'ANY POP STRUCTURE'
 ----------------------------------------------------'''
+'''
 def prob_n_step_walk(graph, i, j, n):
     w_i = 0
     for neighbor in graph.neighbors(i):
@@ -1313,7 +1314,7 @@ def s_indicator(graph, i):
     return s_i
 
 def edge_weighted_payoff(graph, i, n):
-    s_i = s_indicator(graph, i)
+    s_i = graph.node[i]['s']
     expectation = 0
 
     for j in graph.neighbors(i):
@@ -1323,14 +1324,15 @@ def edge_weighted_payoff(graph, i, n):
 
     f = -c * s_i + b * expectation
     return f
+'''
 
 def D(graph, delta, b, c):
     d_sum = 0
     for i in graph.nodes():
-        f_0i = edge_weighted_payoff(graph, i, 0)
+        f_0i = graph.node[i]['f0']
         print("f_0i code worked")
-        f_2i = edge_weighted_payoff(graph, i, 2) 
-        d_sum += reproductive_value(graph, i) * s_indicator(graph, i) * (f_0i - f_2i)
+        f_2i = graph.node[i]['f2']
+        d_sum += graph.node[i]['pi'] * graph.node[i]['s'] * (f_0i - f_2i)
     return delta * d_sum
 
 

@@ -416,11 +416,21 @@ def label_allen(G,b,c,strat_list, start_prop_coop=None):
     else:
       G.node[n]['strategy'] = 'Defect'
       G.node[n]['s']=0
+
+
   #SET f_i VALUES
   for i in G.nodes():
-    G.node[i]['f'] = -c*G.node[n]['s']
+
+    G.node[i]['w'] = w_i(graph, i)
+
+    G.node[i]['f0'] = -c*G.node[n]['s']
     for j in G.neighbors(n):
-      G.node[i]['f'] += b*prob_n_step_walk(G,i,j,1)*G.node[j]['s']
+      G.node[i]['f0'] += b*prob_n_step_walk(G,i,j,1)*G.node[j]['s']
+
+    G.node[i]['f2'] = -c*G.node[n]['s']
+    for j in G.neighbors(n):
+      G.node[i]['f2'] += b*prob_n_step_walk(G,i,j,2)*G.node[j]['s']
+
     G.node[i]['F'] = 1+delta*G.node[i]['f']
     G.node[i]['pi'] = reproductive_value(G,i)
     G.node[n]['payoffs'] = []
@@ -666,23 +676,21 @@ def color_and_draw_graph(G):
 
 delta=0.0005
 
-def neighbor_weights(graph, k):
-    k_weights = {}
-    for neighbor in graph.neighbors(k):
-        k_weights[neighbor] = (graph[k][neighbor]['weight'])
-    return k_weights
+def w_i(graph, i):
+  w_i = 0
+  for neighbor in graph.neighbors(i):
+      w_i += graph[i][neighbor]['weight']
+  return w_i
 
 def prob_n_step_walk(graph, i, j, n):
-    w_i = 0
-    for neighbor in graph.neighbors(i):
-        w_i += graph[i][neighbor]['weight']
+    w_i = graph.node[i]['w']
     p_ij_sum = 0
     if n == 2:
-        print("We've gotten to the n=2 code")
+        print("We've gotten to the n=2")
         #want to determine if there is a path from i to k to j
-        if k in G.neighbors(i):
+        for k in graph.neighbors(i):
             #there is a path from i to k
-            if j in k_weights:
+            if j in graph.neighbors(k):
                 #there is a path from k to j
                 p_ik = graph[i][k]['weight']/w_i
                 p_kj = graph[k][j]['weight']/w_i
@@ -691,44 +699,13 @@ def prob_n_step_walk(graph, i, j, n):
         p_ij_sum = graph[i][j]['weight'] / w_i 
     return p_ij_sum
 
+
 def reproductive_value(graph, i):
-    w_i = 0
-    for neighbor in graph.neighbors(i):
-        w_i += graph[i][neighbor]['weight']
-
-    W_sum = 0
-    for k in graph.nodes():
-        for j in graph.nodes():
-            W_sum += graph[i][j]['weight']
-    return w_i/W_sum
-
-def s_indicator(graph, i):
-    if graph.node[i]['strategy'] == 'Cooperate':
-        s_i = 1
-    else:
-        s_i = 0
-    return s_i
-
-def edge_weighted_payoff(graph, i, n):
-    s_i = s_indicator(graph, i)
-    expectation = 0
-
-    for j in graph.nodes():
-        print("Node i is ", i)
-        print("Node j is ", j)
-        if j != i:
-            expectation += prob_n_step_walk(graph, i, j, n) * s_indicator(graph, j)
-
-    f = -c * s_i + b * expectation
-
-def D(graph, delta, b, c):
-    for i in graph.nodes():
-        f_0i = edge_weighted_payoff(graph, i, 0)
-        print("f_0i code worked")
-        f_2i = edge_weighted_payoff(graph, i, 2) 
-        d_sum += reproductive_value(graph, i) * s_indicator(graph, i) * (f_0i - f_2i)
-    return delta * d_sum
-
+  w_i = graph.node[i]['w']
+  W_sum = 0
+  for j in graph.neighbors(i):
+      W_sum += graph[i][j]['weight']
+  return w_i/W_sum
 
 
 
