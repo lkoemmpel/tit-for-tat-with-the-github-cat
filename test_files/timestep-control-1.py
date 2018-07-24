@@ -1309,7 +1309,7 @@ def plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_tr
             graph = sparse_graph
 
         #LABEL ALLEN
-        init.label_allen(graph, b, c, strat_list, start_prop_cooperators)
+        init.label_dumbell_multiple_cliques_allen(graph, b, c, strat_list, parameters[3])
 
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
@@ -1365,7 +1365,7 @@ def plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_tr
 
         #change axes ranges
         plt.xlim(0,t-1)
-        plt.ylim(-1,1)
+        plt.ylim(-0.1,0.1)
         #add title
         plt.title('Relationship between time and D(s) in '+str(number_trials)+ ' trials')
         #add x and y labels
@@ -1491,9 +1491,9 @@ def plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_tr
         plt.xlim(0,t-1)
         plt.ylim(0,1)
         #add title
-        plt.title('Relationship between time and D(s) in '+str(number_trials)+ ' trials')
+        plt.title('Relationship between time and proportion of nodes with \n strategy Cooperate in '+str(number_trials)+ ' trials')
         #add x and y labels
-        plt.ylabel('D(s)')
+        plt.ylabel('Proportion of Cooperators')
         plt.xlabel('Time')
 
         #show plot
@@ -1705,7 +1705,7 @@ size_path   = 4
 
 
 #cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
-cliques_to_proportions = {0 : 0.5, 1 : 0.5}
+cliques_to_proportions = {0 : 1, 1 : 1}
 # 2:0, 3:0.1, 4:1, 5:.5}
 #6:.4, 7:.5, 8:.2, 9:.6}
 #list of parameters that will be used to build graph
@@ -1732,7 +1732,7 @@ prob_pp         = .2
 sizes=[15,15]
 #lengths of the uniting paths
 lengths=[3]
-cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
+#cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
 #parameters=[sizes,lengths, cliques_to_proportions]
 
 
