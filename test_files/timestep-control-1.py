@@ -1673,7 +1673,7 @@ noise   = 0.00001
 b       = 2
 max_b   = 2
 c       = 1
-t       = 100
+t       = 500
 start_prop_cooperators  = 0.9
 number_trials           = 2
 #Number of nodes to reproduce at each timestep 
@@ -1700,12 +1700,12 @@ size_path   = 4
 
 '''-----------Multiple Dumbell, Multiple Proportions Variables----------------'''
 size_dumbell= 40
-num_dumbell = 2
+num_dumbell = 4
 size_path   = 4
 
 
 #cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
-cliques_to_proportions = {0 : 1, 1 : 1}
+cliques_to_proportions = {0 : 1, 1 : 1, 2:0.5, 3:0.5}
 # 2:0, 3:0.1, 4:1, 5:.5}
 #6:.4, 7:.5, 8:.2, 9:.6}
 #list of parameters that will be used to build graph

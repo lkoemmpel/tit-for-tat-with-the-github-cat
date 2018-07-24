@@ -178,7 +178,6 @@ def generate_weighted(parameters, type = 'random'):
   except ValueError:
     print("The specified graph type was invalid.")
 
-
 def generate_graph_original(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None):
   '''
     INPUTS: 
@@ -216,7 +215,6 @@ def generate_graph_original(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=Fa
 
   except ValueError:
     print("The specified graph type was invalid.")
-
 
 def generate_dumbell_multiple_cliques(m, N, L):
   '''
@@ -374,6 +372,54 @@ def generate_rich_club(size_club, size_periphery, prob_rp=1, prob_rr=1, prob_pp=
         graph.add_edge(m,M)
   return graph
 
+def generate_dumbell_indicator(indicator):
+  nodes_so_far=0
+  sums={}
+  edges=[]
+  G=nx.Graph()
+  index_to_range={}
+  for clique_index in range(len(nx.nodes(indicator))):
+    prev=nodes_so_far
+    nodes_so_far += indicator.node[clique_index]['size']
+    #later going to be used for the paths
+    sums[clique_index]=prev
+
+    range_clique=range(prev+1, nodes_so_far+1)
+    index_to_range[clique_index]=list(range_clique)
+    for pair in itertools.combinations(range_clique,2):
+      a,b = pair[0], pair[1]
+      edges.append( (( (clique_index,clique_index) ,a),( (clique_index,clique_index) ,b)) )
+  #print(index_to_range)
+  #NOW PATH EDGES!
+  lengths=nx.get_edge_attributes(indicator, 'length')
+  for pair in nx.edges(indicator):
+    #for index in range(len(list_adjs)):
+    a = pair[0]
+    b = pair[1]
+    #path_length=indicator.edge[pair]['length']
+    path_length=lengths[pair]
+    #CONNECTORS:
+    connector_a=random.choice(index_to_range[a])
+    connector_b=random.choice(index_to_range[b])
+    if path_length>1:
+      edges.append( (((a,a),connector_a),(pair,1)) )
+      edges.append( ((pair,path_length), ((b,b),connector_b)) )
+      for k in range(1,path_length):
+        edges.append( ((pair,k),(pair,k+1)) )
+    elif path_length==1:
+      edges.append( (((a,a),connector_a),(pair,1)) )
+      edges.append( ((pair,1),((b,b),connector_b)) )
+    else:
+      edges.append(((a,a),connector_a), ((b,b),connector_b))
+  G.add_edges_from(edges)
+
+  for n in G.nodes():
+    G.node[n]['coord']=n
+  G=nx.convert_node_labels_to_integers(G)
+
+  #for n in G.nodes():
+  #  print(G.node[n]['coord'])
+  return G
 
 '''---------------------
     GRAPH LABELING
@@ -548,7 +594,6 @@ def label_dumbell_multiple_cliques(G, strat_list, clique_to_prop):
     G.node[n]['fitness'] = random.uniform(0,1)
     G.node[n]['payoffs'] = []
 
-
 def label_dumbell_multiple_cliques_allen(G, b, c, strat_list, clique_to_prop):
   '''
   G                   A multiple dumbell graph
@@ -586,8 +631,7 @@ def label_dumbell_multiple_cliques_allen(G, b, c, strat_list, clique_to_prop):
     G.node[i]['F'] = 1+delta*G.node[i]['f0']
     G.node[i]['pi'] = reproductive_value(G,i)
     G.node[i]['payoffs'] = []
-    G.node[i]['fitness'] = random.uniform(0,1)
-    
+    G.node[i]['fitness'] = random.uniform(0,1)  
 
 def label_dumbell_multiple_cliques_precise(G, strat_list, clique_to_prop):
   '''
@@ -697,6 +741,7 @@ def label_more_strategies(G, strat_list, dist_prob_strats=None):
     G.node[n]['fitness']=random.random()
     G.node[n]['payoffs']=[]
 
+
 '''---------------------
     FROM DISPLAY.PY
 ---------------------'''
@@ -755,7 +800,6 @@ def prob_n_step_walk(graph, i, j, n):
         p_ij_sum = graph[i][j]['weight'] / w_i 
     return p_ij_sum
 
-
 def reproductive_value(graph, i):
   w_i = graph.node[i]['w']
   W_sum = 0
@@ -769,16 +813,37 @@ def reproductive_value(graph, i):
     TESTING GRAPHS
 ---------------------'''
 
+indicator=nx.Graph()
+
+#sizes=[3,4,5,6]
+sizes={0:7,
+        1:7,
+        2:7,
+        3:7}
+
+lengths={(0,1):2,
+        (0,2):2,
+        (0,3):2,
+        (1,2):2,
+        #(1,3):2,
+        (2,3):2}
+
+indicator.add_edges_from(lengths.keys())
+nx.set_node_attributes(indicator, name='size', values=sizes)
+nx.set_edge_attributes(indicator, name='length', values=lengths)
+
 graph={}
 
 # graph[1]=generate_graph([10], 'hypercube')
-graph[2]=generate_graph([10, 5], 'random')
+# graph[2]=generate_graph([10, 5], 'random')
 # graph[3]=generate_graph([10,30], 'erdos_renyi')
 # graph[4]=generate_graph([20], 'complete')
 # graph[5]=generate_graph([30],'dumbell')
 # graph[6]=generate_graph([5,4,2], 'dumbell_multiple')
 # graph[7]=generate_graph([10,30, .8,.999, .001],'rich_club')
 # graph[8]=generate_graph([[5,7,9],2], 'dumbell_multiple_sized')
+graph[9]=generate_dumbell_indicator(indicator)
+
 
 #sizes=[11,11,11,11]
 #lengths=[2,2,5]
@@ -797,8 +862,8 @@ graph[2]=generate_graph([10, 5], 'random')
 #label_birth_death(graph[7], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[7])
 
-#label_birth_death(graph[9], ['Cooperate','Defect'], 0.5)
-#color_and_draw_graph(graph[9])
+label_birth_death(graph[9], ['Cooperate','Defect'], 0.5)
+color_and_draw_graph(graph[9])
 
 #for edge in graph[2].edges():
 #  print(edge)
