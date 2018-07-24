@@ -427,7 +427,6 @@ def label_allen(G,b,c,strat_list, start_prop_coop=None):
 
     G.node[i]['f0'] = -c*G.node[i]['s']
     for j in G.neighbors(i):
-
       G.node[i]['f0'] += b*prob_n_step_walk(G,i,j,1)*G.node[j]['s']
 
     G.node[i]['f2'] = -c*G.node[i]['s']
