@@ -1548,5 +1548,5 @@ kappa=0.5
 #print(D(graph, delta, b, c))
 
 plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
-    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)
+    rho = None, update_name = 'DB', plotting = True, show_graph = False, saving = False, color_fitness=False)
 
