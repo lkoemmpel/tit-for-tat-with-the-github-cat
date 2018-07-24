@@ -124,7 +124,7 @@ def birth_death(G, strat_list, u, num_rep):
     print()
     print(inheritance)
     for j in inheritance.keys():
-        G.node[j]['strategy'] = inheritance[j][0]
+        G.node[j]['strategy'] = inheritance[j]
         if inheritance[j] == 'Cooperate':
             G.node[j]['s'] = 1
         else:

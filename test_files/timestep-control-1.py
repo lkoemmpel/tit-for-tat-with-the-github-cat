@@ -590,6 +590,7 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
             graph = sparse_graph
 
         #LABEL BIRTH DEATH
+
         print("We are labelling allen")
         init.label_allen(graph, strat_list, start_prop_cooperators)
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
@@ -1136,8 +1137,9 @@ def plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_
                         sparse_graph.remove_node(n)
             graph = sparse_graph
 
-        #LABEL BIRTH DEATH
+        #LABEL ALLEN
         init.label_allen(graph, b, c, strat_list, start_prop_cooperators)
+
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
         #LABEL MULTIPLE CLIQUES 
@@ -1367,9 +1369,9 @@ noise   = 0.00001
 b       = 2
 max_b   = 2
 c       = 1
-t       = 30
+t       = 600
 start_prop_cooperators  = 0.9
-number_trials           = 2
+number_trials           = 1
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
 
