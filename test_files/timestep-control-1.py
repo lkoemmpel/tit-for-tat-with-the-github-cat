@@ -1112,8 +1112,6 @@ def plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_coo
 
     return Yavg[-1], graph
 
-
-
 def plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
 
@@ -1285,6 +1283,309 @@ def plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_
 
     return Yavg[-1]
 
+def plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
+    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
+
+    #matrix in which entry n,t is the concentration 
+    #of the_strat at time t in trial n
+    result_matrix_D = []
+    result_matrix_coop = []
+    #run the game for each trial
+    for each in range(number_trials):
+        print('\n')
+        print("Running trial ", each)
+        #print("Evaluating trial ", each)
+        graph=init.generate_weighted(parameters, graph_type)
+
+        if rho != None:
+            # Remove lattice nodes until only rho percent remain
+            sparse_graph = graph.copy()
+            for n in graph.nodes():
+                #indicator is random.uniform(0,1)
+                if random.uniform(0,1) > rho:
+                    if nx.number_of_nodes(sparse_graph) != 1:
+                        #this node should be deleted
+                        sparse_graph.remove_node(n)
+            graph = sparse_graph
+
+        #LABEL ALLEN
+        init.label_allen(graph, b, c, strat_list, start_prop_cooperators)
+
+        #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
+        #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
+        #LABEL MULTIPLE CLIQUES 
+        #init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.2, 1:0.9, 2:0, 3:0.1, 4:1})       
+
+
+        this_game=game(graph, update_name, t, u, delta, plotting, show_graph, saving, color_fitness)
+
+
+        if graph_type == 'triangular_lattice':
+            pos = dict( (n, n) for n in graph.nodes() )
+        else:
+            pos = nx.spring_layout(graph)
+
+        trial_outcome = this_game.trial(pos, num_rep, noise, graph_type, each+1)
+        
+
+        #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
+        #    graph_type, update_name, plotting, show_graph, saving, color_fitness)
+        #append record for this trial of the concentrations of the_strat
+        
+        result_matrix_D.append(trial_outcome[3])
+        result_matrix_coop.append(trial_outcome[1]['Cooperate'])
+
+    ########################################################
+    #################### P L O T - D #######################
+    ########################################################
+
+    #---------------------X AXIS FOR BOTH-------------------
+    X=[tictoc for tictoc in range(t)]
+    #-------------D PLOT: average, and pm stdev-------------
+    Yavg, Yplus, Yminus=[], [], []
+    for tictoc in range(t):
+        at_time_t=[trial[tictoc] for trial in result_matrix_D]
+        #average at time t over all the trials
+        average=sum(at_time_t)/len(at_time_t)
+        stdev=np.std(at_time_t)
+        Yavg.append(average)
+        Yplus.append(average+stdev)
+        Yminus.append(average-stdev)
+
+    the_avg = sum(Yavg)/len(Yavg)
+    AVG=[the_avg for tictoc in range(t)]
+
+    if plotting:
+        plt.figure(1)
+        #plot the 3 lines
+        plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
+        plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
+        plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
+        plt.plot(X, AVG, color='orange', marker='', linestyle= '-')
+
+        #change axes ranges
+        plt.xlim(0,t-1)
+        plt.ylim(-1,1)
+        #add title
+        plt.title('Relationship between time and D(s) in '+str(number_trials)+ ' trials')
+        #add x and y labels
+        plt.ylabel('D(s)')
+        plt.xlabel('Time')
+
+        #show plot
+        plt.show()
+        pause(20)   
+        #print("Attempting to show plot -----------------")
+        #pause(60)
+    #plt.close()     
+
+    if saving:
+        file_id = 0
+        #randint(10**5, 10**6 - 1)
+        #print("Attempting to save plot ", data_iteration)+1
+        if graph_type=='dumbell_multiple':
+            plt.savefig('DPLOT' + \
+                graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'size_dumbell=' + str(parameters[0]) + '_' + \
+                'num_dumbell=' + str(parameters[1]) + '_' + \
+                'size_path=' + str(parameters[2]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='dumbell':
+            plt.savefig('DPLOT' + \
+                graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'n=' + str(parameters[0]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type == 'rich_club':
+            plt.savefig('DPLOT' + \
+                graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'size_club=' + str(parameters[0]) + '_' + \
+                'size_periphery=' + str(parameters[1]) + '_' + \
+                'prob_rp=' + str(parameters[2]) + '_' + \
+                'prob_rr=' + str(parameters[3]) + '_' + \
+                'prob_pp=' + str(parameters[4]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='complete' or 'hypercube':
+            plt.savefig('DPLOT' + \
+                graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'num_nodes=' + str(parameters[0]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + \
+                str(file_id) + '.png')
+        elif graph_type=='triangular_lattice':
+            plt.savefig('DPLOT' + \
+                graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'n_dim=' + str(parameters[0]) + '_' + \
+                'm_dim=' + str(parameters[1]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='random':
+            plt.savefig('DPLOT' + \
+                graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'num_nodes=' + str(parameters[0]) + '_' + \
+                'ave_degree=' + str(parameters[1]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + \
+                str(file_id) + '.png')
+
+    ########################################################
+    ############ P L O T - C O O P - P R O P ###############
+    ########################################################
+    #---------------------X AXIS FOR BOTH-------------------
+    X=[tictoc for tictoc in range(t)]
+    #-------------D PLOT: average, and pm stdev-------------
+    Yavg, Yplus, Yminus=[], [], []
+    for tictoc in range(t):
+        at_time_t=[trial[tictoc] for trial in result_matrix_coop]
+        #average at time t over all the trials
+        average=sum(at_time_t)/len(at_time_t)
+        stdev=np.std(at_time_t)
+        Yavg.append(average)
+        Yplus.append(average+stdev)
+        Yminus.append(average-stdev)
+
+    the_avg = sum(Yavg)/len(Yavg)
+    AVG=[the_avg for tictoc in range(t)]
+
+    if plotting:
+        plt.figure(2)
+        #plot the 3 lines
+        plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
+        plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
+        plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
+        plt.plot(X, AVG, color='orange', marker='', linestyle= '-')
+
+        #change axes ranges
+        plt.xlim(0,t-1)
+        plt.ylim(0,1)
+        #add title
+        plt.title('Relationship between time and D(s) in '+str(number_trials)+ ' trials')
+        #add x and y labels
+        plt.ylabel('D(s)')
+        plt.xlabel('Time')
+
+        #show plot
+        plt.show()
+        pause(20)   
+        #print("Attempting to show plot -----------------")
+        #pause(60)
+    #plt.close()     
+
+    if saving:
+        file_id = 0
+        #randint(10**5, 10**6 - 1)
+        #print("Attempting to save plot ", data_iteration)+1
+        if graph_type=='dumbell_multiple':
+            plt.savefig('PROPCOOPPLOT' + \
+                graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'size_dumbell=' + str(parameters[0]) + '_' + \
+                'num_dumbell=' + str(parameters[1]) + '_' + \
+                'size_path=' + str(parameters[2]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='dumbell':
+            plt.savefig('PROPCOOPPLOT' + \
+                graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'n=' + str(parameters[0]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type == 'rich_club':
+            plt.savefig('PROPCOOPPLOT' + \
+                graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'size_club=' + str(parameters[0]) + '_' + \
+                'size_periphery=' + str(parameters[1]) + '_' + \
+                'prob_rp=' + str(parameters[2]) + '_' + \
+                'prob_rr=' + str(parameters[3]) + '_' + \
+                'prob_pp=' + str(parameters[4]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='complete' or 'hypercube':
+            plt.savefig('PROPCOOPPLOT' + \
+                graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'num_nodes=' + str(parameters[0]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + \
+                str(file_id) + '.png')
+        elif graph_type=='triangular_lattice':
+            plt.savefig('PROPCOOPPLOT' + \
+                graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'n_dim=' + str(parameters[0]) + '_' + \
+                'm_dim=' + str(parameters[1]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='random':
+            plt.savefig('PROPCOOPPLOT' + \
+                graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'num_nodes=' + str(parameters[0]) + '_' + \
+                'ave_degree=' + str(parameters[1]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + \
+                str(file_id) + '.png')
+
+
+    return Yavg[-1]
 
 '''---------------------------------------------------
     CALCULATIONS FROM THE PAPER 'ANY POP STRUCTURE'
@@ -1372,9 +1673,9 @@ noise   = 0.00001
 b       = 2
 max_b   = 2
 c       = 1
-t       = 600
+t       = 100
 start_prop_cooperators  = 0.9
-number_trials           = 1
+number_trials           = 2
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
 
@@ -1403,7 +1704,8 @@ num_dumbell = 2
 size_path   = 4
 
 
-cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
+#cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
+cliques_to_proportions = {0 : 0.5, 1 : 0.5}
 # 2:0, 3:0.1, 4:1, 5:.5}
 #6:.4, 7:.5, 8:.2, 9:.6}
 #list of parameters that will be used to build graph
@@ -1547,6 +1849,6 @@ kappa=0.5
 
 #print(D(graph, delta, b, c))
 
-plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
+plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
     rho = None, update_name = 'DB', plotting = True, show_graph = False, saving = False, color_fitness=False)
 
