@@ -1398,8 +1398,8 @@ size_path   = 4
 
 
 '''-----------Multiple Dumbell, Multiple Proportions Variables----------------'''
-size_dumbell= 20
-num_dumbell = 5
+size_dumbell= 40
+num_dumbell = 2
 size_path   = 4
 
 
@@ -1430,7 +1430,7 @@ prob_pp         = .2
 sizes=[15,15]
 #lengths of the uniting paths
 lengths=[3]
-cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
+cliques_to_proportions = {0 : 1, 1 : 1}
 #parameters=[sizes,lengths, cliques_to_proportions]
 
 
