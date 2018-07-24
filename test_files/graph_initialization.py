@@ -548,6 +548,47 @@ def label_dumbell_multiple_cliques(G, strat_list, clique_to_prop):
     G.node[n]['fitness'] = random.uniform(0,1)
     G.node[n]['payoffs'] = []
 
+
+def label_dumbell_multiple_cliques_allen(G, b, c, strat_list, clique_to_prop):
+  '''
+  G                   A multiple dumbell graph
+  clique_to_prop      dictionary maps clique_index---->prop of cooperators    
+  '''
+  for n in G.nodes():
+    #if this is a clique node
+    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
+      clique_num = G.node[n]['coord'][0][0]
+      if random.uniform(0,1)<clique_to_prop[clique_num]:
+        G.node[n]['strategy'] = 'Cooperate'
+        G.node[n]['s']=1
+      else:
+        G.node[n]['strategy'] = 'Defect'
+        G.node[n]['s']=0
+    else:
+      G.node[n]['strategy'] = random.choice(strat_list)
+      if G.node[n]['strategy']== 'Cooperate':
+        G.node[n]['s']=1
+      elif G.node[n]['strategy']== 'Defect':
+        G.node[n]['s']=0
+  #SET f_i VALUES
+  for i in G.nodes():
+
+    G.node[i]['w'] = w_i(G, i)
+
+    G.node[i]['f0'] = -c*G.node[i]['s']
+    for j in G.neighbors(i):
+      G.node[i]['f0'] += b*prob_n_step_walk(G,i,j,1)*G.node[j]['s']
+
+    G.node[i]['f2'] = -c*G.node[i]['s']
+    for j in G.neighbors(i):
+      G.node[i]['f2'] += b*prob_n_step_walk(G,i,j,2)*G.node[j]['s']
+
+    G.node[i]['F'] = 1+delta*G.node[i]['f0']
+    G.node[i]['pi'] = reproductive_value(G,i)
+    G.node[i]['payoffs'] = []
+    G.node[i]['fitness'] = random.uniform(0,1)
+    
+
 def label_dumbell_multiple_cliques_precise(G, strat_list, clique_to_prop):
   '''
   G                   A multiple dumbell graph
