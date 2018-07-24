@@ -1342,7 +1342,7 @@ def D(graph, delta, b, c):
     d_sum = 0
     for i in graph.nodes():
         f_0i = graph.node[i]['f0']
-        print("f_0i code worked")
+        #print("f_0i code worked")
         f_2i = graph.node[i]['f2']
         d_sum += graph.node[i]['pi'] * graph.node[i]['s'] * (f_0i - f_2i)
     return delta * d_sum
@@ -1545,5 +1545,5 @@ kappa=0.5
 #print(D(graph, delta, b, c))
 
 plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
-    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)
+    rho = None, update_name = 'DB', plotting = True, show_graph = False, saving = False, color_fitness=False)
 
