@@ -142,10 +142,11 @@ class game():
             D_list=[]
             for i in range(t):
                 D_list.append(D(G,delta,b,c))
-
+                '''
                 print('********')
                 print('TIME '+ str(i))
                 print('********')
+                '''
                 #print("Running time ", t)
                 #------------
                 #REPRODUCTION
@@ -1342,7 +1343,9 @@ def D(graph, delta, b, c):
     d_sum = 0
     for i in graph.nodes():
         f_0i = graph.node[i]['f0']
+        '''
         print("f_0i code worked")
+        '''
         f_2i = graph.node[i]['f2']
         d_sum += graph.node[i]['pi'] * graph.node[i]['s'] * (f_0i - f_2i)
     return delta * d_sum
@@ -1363,7 +1366,7 @@ graph_type  = 'dumbell_multiple'
 update_name = 'BD'
 
 
-u       = 0.001
+u       = 0.00001
 delta   = 0.005
 noise   = 0.00001
 b       = 2

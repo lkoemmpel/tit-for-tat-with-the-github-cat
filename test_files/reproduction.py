@@ -57,9 +57,11 @@ make all of the reproduction process based on the fitness, weight and mutation p
 --------'''
 
 def birth_death(G, strat_list, u, num_rep):
+    '''
     print('REPRODUCTION')
     print('---------')
     print('-> number of reproducing nodes: '+str(num_rep))
+    '''
 
     #CHOOSE REPRODUCING NODES
     fitness_dict = nx.get_node_attributes(G, 'fitness')
@@ -85,10 +87,11 @@ def birth_death(G, strat_list, u, num_rep):
     reproduced_strategies=[]
     #print(reproduced_nodes)
     inheritance = {}
-
+    '''
     print('-> Reproduced nodes: ')
     print('')
     print(reproduced_nodes)
+    '''
     for i in reproduced_nodes:
         reproduced_strategy=G.node[i]['strategy']
         #set rep strat
@@ -98,7 +101,9 @@ def birth_death(G, strat_list, u, num_rep):
         difference=G.node[i]['fitness']-G.node[j]['fitness']
         if random.random()<=q(difference, .1, 6):
             #i will replace j
+            '''
             print(str(i) + ' replaced '+ str(j))
+            '''
             #now decide which strategy will be inherited!
             mistake_indicator = random.uniform(0, 1)
             mistake_indicator=0
@@ -120,9 +125,11 @@ def birth_death(G, strat_list, u, num_rep):
             reproduced_strategies.append(reproduced_strategy)
             old_strategies.append(old_strategy)
     #now we do all the accordingly replacements
+    '''
     print('inheritance dictionary: ')
     print()
     print(inheritance)
+    '''
     for j in inheritance.keys():
         G.node[j]['strategy'] = inheritance[j]
         if inheritance[j] == 'Cooperate':

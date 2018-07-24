@@ -178,6 +178,7 @@ def generate_weighted(parameters, type = 'random'):
   except ValueError:
     print("The specified graph type was invalid.")
 
+
 def generate_graph_original(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=False, with_positions=True, create_using=None):
   '''
     INPUTS: 
@@ -215,6 +216,7 @@ def generate_graph_original(n, type = 'random', d=0, m=0, k=5, p=.5, periodic=Fa
 
   except ValueError:
     print("The specified graph type was invalid.")
+
 
 def generate_dumbell_multiple_cliques(m, N, L):
   '''
@@ -466,11 +468,15 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
   connecting_nodes = []
   for n in nx.nodes(G):
     if G.degree[n] > 2:
+      
       print("\n")
       print("We have found a node in a clique labeled ", n)
+      
       #this is a node in one of the cliques
       if first_node:
+        
         print("This node is the first clique node; we assign strategy cooperate.")
+        
         G.node[n]['strategy'] = 'Cooperate'
         first_node = False
       else:
@@ -480,15 +486,19 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
           try:
             if G.node[neighbor]['strategy'] == 'Cooperate':
               #We're on the cooperate end of the dumbbell
+              
               print("------We found a neighbor ", neighbor, " with a cooperative strategy")
               print("Assigning strategy cooperate to node ", n)
+              
               G.node[n]['strategy'] = 'Cooperate'
               labeled = True
               break
             if G.node[neighbor]['strategy'] == 'Defect':
               #We're on the defect end of the dumbbell
+              
               print("------We found a neighbor ", neighbor, " with a defect strategy")
               print("Assigning strategy defect to node ", n)
+              
               G.node[n]['strategy'] = 'Defect'
               labeled = True
               break
@@ -507,15 +517,18 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
       # We're at one of the connecting nodes
       print("We found a connecting node labeled ", n)
       connecting_nodes.append(n)
-
+    
     print("Assigning fitness and payoffs")
+    
     G.node[n]['fitness'] = 1
     G.node[n]['payoffs'] = []
 
 
   #Now we go back and label the connecting nodes
   for c in connecting_nodes:
+    
     print("Labeling connecting node ", c)
+    
     G.node[c]['strategy'] = random.choice(strat_list)   
 
 def label_dumbell_multiple_cliques(G, strat_list, clique_to_prop):
@@ -687,25 +700,18 @@ def prob_n_step_walk(graph, i, j, n):
     w_i = graph.node[i]['w']
     p_ij_sum = 0
     if n == 2:
+        '''
         print("We've gotten to the n=2")
+        '''
         #want to determine if there is a path from i to k to j
         for k in graph.neighbors(i):
             #there is a path from i to k
             if j in graph.neighbors(k):
                 #there is a path from k to j
-                print('****')
-                print('the edge i is ',i)
-                print('k ',k)
-                print('j', j)
-                print('*********')
                 p_ik = graph[i][k]['weight']/w_i
                 p_kj = graph[k][j]['weight']/w_i
                 p_ij_sum += p_ik * p_kj
     else:
-        print('***')
-        print('i is ',i)
-        print('j is ',j)
-        print('******')
         p_ij_sum = graph[i][j]['weight'] / w_i 
     return p_ij_sum
 

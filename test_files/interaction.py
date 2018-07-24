@@ -126,8 +126,11 @@ def general_reciprocity_bernoulli(self, set_nodes, b, c, asynchronous=False):
 def interaction_BD(G, payoff_mtx, delta=0, noise=0):
   #Simulation of the process where every edge interacts with
   #some randomly chosen set of its neighbors
+
+  '''
   print('INTERACTION')
   print('---------')
+  '''
   record=set()
   for v in nx.nodes(G):
     for w in G.neighbors(v):
