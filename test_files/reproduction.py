@@ -181,6 +181,10 @@ def death_birth(G, strat_list, u, num_rep):
         for index in len(replaced_nodes):
             i = replaced_nodes[index]
             G.node[i]['strategy'] = reproduced_strategies[index]
+            if G.node[i]['strategy'] == 'Cooperate':
+                G.node[i]['s'] = 1
+            else:
+                G.node[i]['s'] = 0
 
     return [G, reproduced_strategies, old_strategies, reproduced_nodes]
 

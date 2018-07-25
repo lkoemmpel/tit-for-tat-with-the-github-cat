@@ -823,9 +823,9 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
         #plot the 3 lines
         for clique in Y_data:
             this_color=remaining_colors.pop()
-            plt.plot(X, Y_data[clique], color=this_color, marker='', linestyle = '-', label='clique '+str(clique))
-            plt.plot(X, Yplus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
-            plt.plot(X, Yminus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
+            plt.plot(X, Y_data[clique], color='blue', marker='', linestyle = '-', label='clique '+str(clique))
+            plt.plot(X, Yplus_data[clique], color='red', marker='', linestyle = ':', label='clique '+str(clique))
+            plt.plot(X, Yminus_data[clique], color='green', marker='', linestyle = ':', label='clique '+str(clique))
 
         pylab.legend(loc='lower left')
 
@@ -841,7 +841,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
         #show plot
         plt.show() 
-        pause(10)  
+        pause(3)  
 
     if saving:
         file_id = randint(10**5, 10**6 - 1)
@@ -1374,14 +1374,13 @@ def plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_tr
 
         #show plot
         plt.show()
-        pause(20)   
+        pause(5)   
         #print("Attempting to show plot -----------------")
         #pause(60)
     #plt.close()     
 
     if saving:
-        file_id = 0
-        #randint(10**5, 10**6 - 1)
+        file_id = randint(10**5, 10**6 - 1)
         #print("Attempting to save plot ", data_iteration)+1
         if graph_type=='dumbell_multiple':
             plt.savefig('DPLOT' + \
@@ -1498,14 +1497,15 @@ def plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_tr
 
         #show plot
         plt.show()
-        pause(20)   
+        pause(5)   
         #print("Attempting to show plot -----------------")
         #pause(60)
     #plt.close()     
 
     if saving:
         file_id = 0
-        #randint(10**5, 10**6 - 1)
+        print("File id is ", file_id)
+        print("Attempting to save plot for prop coops")
         #print("Attempting to save plot ", data_iteration)+1
         if graph_type=='dumbell_multiple':
             plt.savefig('PROPCOOPPLOT' + \
@@ -1667,13 +1667,14 @@ graph_type  = 'dumbell_multiple'
 update_name = 'BD'
 
 
-u       = 0.00000
+u       = 0.0001
 delta   = 0.005
-noise   = 0.00000
+noise   = 0
 b       = 2
 max_b   = 2
 c       = 1
-t       = 100
+t       = 500
+
 start_prop_cooperators  = 0.9
 number_trials           = 4
 #Number of nodes to reproduce at each timestep 
@@ -1684,16 +1685,16 @@ num_rep = 5
 
 
 '''-----------Lattice Variables----------------'''
-n_lattice = 20
-m_lattice = 50
+#n_lattice = 20
+#m_lattice = 50
 #list of parameters that will be used to build graph
 #parameters = [n_lattice,m_lattice]
 
 
 '''-----------Multiple Dumbell Variables----------------'''
-size_dumbell= 15
-num_dumbell = 2
-size_path   = 4
+#size_dumbell= 15
+#num_dumbell = 2
+#size_path   = 4
 #list of parameters that will be used to build graph
 #parameters = [size_dumbell, num_dumbell, size_path]
 
@@ -1705,33 +1706,34 @@ size_path   = 10
 
 
 #cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
-cliques_to_proportions = {0 : 0.9, 1 : 0.9, 2: 0.9, 3:0.9}
+cliques_to_proportions = {0 : 1, 1 : 1, 2:0.5, 3:0.5}
+
 # 2:0, 3:0.1, 4:1, 5:.5}
 #6:.4, 7:.5, 8:.2, 9:.6}
 #list of parameters that will be used to build graph
-parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
+#parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
 
 
 '''-----------Complete Bipartite Graph Variables----------------'''
 
-side_1 = 30
-side_2 = 30
+#side_1 = 30
+#side_2 = 30
 #parameters = [side_1, side_2]
 
 '''-----------Rich Club Variables----------------'''
-size_club       = 10
-size_periphery  = 20
-prob_rp         = .2
-prob_rr         = .2
-prob_pp         = .2
+#size_club       = 10
+#size_periphery  = 20
+#prob_rp         = .2
+#prob_rr         = .2
+#prob_pp         = .2
 #list of parameters that will be used to build graph
 #parameters = [size_club, size_periphery, prob_rp, prob_rr, prob_pp]
 
 '''-----------String Dumbell Variables----------------'''
 #size of each dumbell in the string
-sizes=[15,15]
+#sizes=[15,15]
 #lengths of the uniting paths
-lengths=[3]
+#lengths=[3]
 #cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
 
 #parameters=[sizes,lengths, cliques_to_proportions]
@@ -1840,8 +1842,34 @@ print(get_props_cliques(graph))
 '''------------------------
 UTKOVSKI TRIALS
 -------------------------'''
-this_lambda=0.5
-kappa=0.5
+#this_lambda=0.5
+#kappa=0.5
+
+
+
+
+
+
+num_dumbell = 2
+size_path   = 4
+
+#cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
+cliques_to_proportions = {0 : .9, 1 : .1}
+# 2:0, 3:0.1, 4:1, 5:.5}
+#6:.4, 7:.5, 8:.2, 9:.6}
+#list of parameters that will be used to build graph
+num_rep = 5
+
+number_trials = 10
+
+size_dumbell = 30
+#for size_dumbell in range(2, 50):
+parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
+
+plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, \
+    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = True, color_fitness=True)
+#plt.gcf().clear()
+
 
 #graph = plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_cooperators, u, this_lambda, kappa, noise, t, number_trials, \
 #    rho=None, plotting = True, show_graph = True, saving = False, color_fitness=True)[1]
@@ -1849,7 +1877,7 @@ kappa=0.5
 #print("The nodes of the graph are ", graph.nodes())
 
 #print(D(graph, delta, b, c))
-
 plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
     rho = None, update_name = 'DB', plotting = True, show_graph = False, saving = True, color_fitness=False)
+
 
