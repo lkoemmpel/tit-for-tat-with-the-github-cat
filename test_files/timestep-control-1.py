@@ -1667,15 +1667,15 @@ graph_type  = 'dumbell_multiple'
 update_name = 'BD'
 
 
-u       = 0.00001
+u       = 0.00000
 delta   = 0.005
-noise   = 0.00001
+noise   = 0.00000
 b       = 2
 max_b   = 2
 c       = 1
-t       = 500
+t       = 100
 start_prop_cooperators  = 0.9
-number_trials           = 2
+number_trials           = 4
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
 
@@ -1699,13 +1699,13 @@ size_path   = 4
 
 
 '''-----------Multiple Dumbell, Multiple Proportions Variables----------------'''
-size_dumbell= 40
-num_dumbell = 4
-size_path   = 4
+size_dumbell= 60
+num_dumbell = 2
+size_path   = 10
 
 
 #cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
-cliques_to_proportions = {0 : 1, 1 : 1, 2:0.5, 3:0.5}
+cliques_to_proportions = {0 : 0.9, 1 : 0.9, 2: 0.9, 3:0.9}
 # 2:0, 3:0.1, 4:1, 5:.5}
 #6:.4, 7:.5, 8:.2, 9:.6}
 #list of parameters that will be used to build graph
@@ -1851,5 +1851,5 @@ kappa=0.5
 #print(D(graph, delta, b, c))
 
 plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
-    rho = None, update_name = 'DB', plotting = True, show_graph = False, saving = False, color_fitness=False)
+    rho = None, update_name = 'DB', plotting = True, show_graph = False, saving = True, color_fitness=False)
 
