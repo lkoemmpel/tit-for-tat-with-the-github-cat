@@ -237,7 +237,10 @@ class game():
             #                                         entry n,t : freq(strat)/number(nodes)
             #                                         at trial n, time t
             props=[]
+            D_list = []
             for i in range(t):
+                D_list.append(D(G,delta,b,c))
+
                 dictio=info(graph)
                 print('********')
                 print('TIME '+ str(i))
@@ -303,7 +306,7 @@ class game():
             #if self.plotting:
             #    plot_proportion_data(time_data, final_data, saving, graph_type,t, update_name, n, u, d, data_iteration)
 
-            return new_graph, concentrations, self.plotting, props
+            return new_graph, concentrations, self.plotting, props, D_list
 
     def trial_utkovski(self, pos, noise, b, c, num_of_trial=None):
         '''
@@ -860,7 +863,109 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
             str(number_trials) + 'trials' + '_' + \
             str(t) + 'timesteps' + '_' + \
             str(file_id) + '.png')
-        
+    
+    #scatter plot X axis! 
+    X=[tictoc for tictoc in range(t)]
+    #three lines to plot: average, and pm stdev
+    Yavg = []
+    for tictoc in range(t):
+        Yavg.append(trial[tictoc] for trial in trial_outcome[4]) 
+
+    if plotting:
+        #plot the 3 lines
+        plt.plot(X, Yavg, color=this_color, marker='', linestyle = '-')
+
+        #change axes ranges
+        plt.xlim(0,t-1)
+        plt.ylim(-.01,.01)
+        #add title
+        plt.title('Relationship between time and D(s) in '+str(number_trials)+ ' trials')
+        #add x and y labels
+        plt.ylabel('D(s)')
+        plt.xlabel('Time')
+
+        #show plot
+        plt.show()
+        pause(1)   
+        #print("Attempting to show plot -----------------")
+        #pause(60)
+    #plt.close()     
+
+    if saving:
+        file_id = 0
+        #randint(10**5, 10**6 - 1)
+    #   print("Attempting to save plot ", data_iteration)+1
+        if graph_type=='dumbell_multiple':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'size_dumbell=' + str(parameters[0]) + '_' + \
+                'num_dumbell=' + str(parameters[1]) + '_' + \
+                'size_path=' + str(parameters[2]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='dumbell':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'n=' + str(parameters[0]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type == 'rich_club':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'size_club=' + str(parameters[0]) + '_' + \
+                'size_periphery=' + str(parameters[1]) + '_' + \
+                'prob_rp=' + str(parameters[2]) + '_' + \
+                'prob_rr=' + str(parameters[3]) + '_' + \
+                'prob_pp=' + str(parameters[4]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='complete' or 'hypercube':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'num_nodes=' + str(parameters[0]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + \
+                str(file_id) + '.png')
+        elif graph_type=='triangular_lattice':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'n_dim=' + str(parameters[0]) + '_' + \
+                'm_dim=' + str(parameters[1]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+        elif graph_type=='random':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'num_nodes=' + str(parameters[0]) + '_' + \
+                'ave_degree=' + str(parameters[1]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + \
+                str(file_id) + '.png')
+
     return None
 
 def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_strat, \
@@ -1162,10 +1267,11 @@ def plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_
         
         result_matrix.append(trial_outcome[3])
 
-
+    '''
     print('~~~~~~~~~~~~~')
     print(result_matrix)
     print('~~~~~~~~~~~~~')
+    '''
 
     #scatter plot X axis! 
     X=[tictoc for tictoc in range(t)]
