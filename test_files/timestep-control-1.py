@@ -734,7 +734,7 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
 
     return Yavg[-1], graph 
 
-def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, the_strat, num_rep, \
+def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, the_strat, num_rep, this_color, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
 
     #matrix in which entry n,t is the concentration 
@@ -823,7 +823,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
         #plot the 3 lines
         for clique in Y_data:
             this_color=remaining_colors.pop()
-            plt.plot(X, Y_data[clique], color='blue', marker='', linestyle = '-', label='clique '+str(clique))
+            plt.plot(X, Y_data[clique], color=this_color, marker='', linestyle = '-', label='clique '+str(clique))
             plt.plot(X, Yplus_data[clique], color='red', marker='', linestyle = ':', label='clique '+str(clique))
             plt.plot(X, Yminus_data[clique], color='green', marker='', linestyle = ':', label='clique '+str(clique))
 
@@ -1866,8 +1866,16 @@ size_dumbell = 30
 #for size_dumbell in range(2, 50):
 parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
 
-plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, \
-    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = True, color_fitness=True)
+
+
+remaining_colors = list(mcolors.CSS4_COLORS.keys())
+for color in light_colors:
+    remaining_colors.remove(color)  
+
+for i in range(10):
+    this_color = remaining_colors.pop()
+    plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, this_color, \
+        rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = True, color_fitness=True)
 #plt.gcf().clear()
 
 
