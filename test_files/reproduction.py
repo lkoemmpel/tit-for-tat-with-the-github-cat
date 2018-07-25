@@ -106,7 +106,7 @@ def birth_death(G, strat_list, u, num_rep):
             '''
             #now decide which strategy will be inherited!
             mistake_indicator = random.uniform(0, 1)
-            #mistake_indicator=0
+            #mistake_indicator = 0
             if mistake_indicator < u:
                 #print("There has been a mutation!")
                 mutation_list = [x for x in strat_list if x != reproduced_strategy]
