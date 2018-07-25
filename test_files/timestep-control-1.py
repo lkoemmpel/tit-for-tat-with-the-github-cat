@@ -1673,10 +1673,10 @@ noise   = 0
 b       = 2
 max_b   = 2
 c       = 1
-
 t       = 500
+
 start_prop_cooperators  = 0.9
-number_trials           = 2
+number_trials           = 4
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
 
@@ -1700,9 +1700,9 @@ num_rep = 5
 
 
 '''-----------Multiple Dumbell, Multiple Proportions Variables----------------'''
-size_dumbell= 40
-num_dumbell = 4
-size_path   = 4
+size_dumbell= 60
+num_dumbell = 2
+size_path   = 10
 
 
 #cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
@@ -1885,3 +1885,7 @@ for i in range(10):
 #print("The nodes of the graph are ", graph.nodes())
 
 #print(D(graph, delta, b, c))
+plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
+    rho = None, update_name = 'DB', plotting = True, show_graph = False, saving = True, color_fitness=False)
+
+

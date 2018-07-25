@@ -88,6 +88,10 @@ def generate_graph(parameters, type = 'random'):
       lengths=parameters[1]
       graph=generate_dumbell_string(sizes,lengths)
 
+    elif type == 'with_indicator':
+      indicator=parameters[0]
+      graph=generate_dumbell_indicator_connectionstrength(indicator)
+
     return graph 
 
   except ValueError:
@@ -372,7 +376,7 @@ def generate_rich_club(size_club, size_periphery, prob_rp=1, prob_rr=1, prob_pp=
         graph.add_edge(m,M)
   return graph
 
-def generate_dumbell_indicator(indicator):
+def generate_dumbell_indicator_pathlength(indicator):
   nodes_so_far=0
   sums={}
   edges=[]
@@ -412,6 +416,52 @@ def generate_dumbell_indicator(indicator):
     else:
       edges.append(((a,a),connector_a), ((b,b),connector_b))
   G.add_edges_from(edges)
+
+  for n in G.nodes():
+    G.node[n]['coord']=n
+  G=nx.convert_node_labels_to_integers(G)
+
+  #for n in G.nodes():
+  #  print(G.node[n]['coord'])
+  return G
+
+def generate_dumbell_indicator_connectionstrength(indicator):
+  nodes_so_far=0
+  sums={}
+  edges=[]
+  G=nx.Graph()
+  index_to_range={}
+  for clique_index in range(len(nx.nodes(indicator))):
+    prev=nodes_so_far
+    nodes_so_far += indicator.node[clique_index]['size']
+    #later going to be used for the paths
+    sums[clique_index]=prev
+
+    range_clique=range(prev+1, nodes_so_far+1)
+    index_to_range[clique_index]=list(range_clique)
+    for pair in itertools.combinations(range_clique,2):
+      a,b = pair[0], pair[1]
+      edges.append( (( (clique_index,clique_index) ,a),( (clique_index,clique_index) ,b)) )
+  #add all of the edges produced so far!
+  G.add_edges_from(edges)
+  strength_dictio={edge: 1 for edge in edges}
+  nx.set_edge_attributes(G, strength_dictio, 'connection')
+  #NOW CONECTIONS BETWEEN PAIRS OF DUMBELLS!
+  strengths=nx.get_edge_attributes(indicator, 'strength')
+  for pair in nx.edges(indicator):
+    #for index in range(len(list_adjs)):
+    a = pair[0]
+    b = pair[1]
+    #path_length=indicator.edge[pair]['length']
+    connection_strength=strengths[pair]
+    #CONNECTEVERY PAIR:
+    for local_in_a in index_to_range[a]:
+      for local_in_b in index_to_range[b]:
+        new=((a,a),local_in_a), ((b,b),local_in_b)
+        L=[new]
+        D={new:strengths[pair]}
+        G.add_edges_from(L)
+        nx.set_edge_attributes(G, D, 'connection')
 
   for n in G.nodes():
     G.node[n]['coord']=n
@@ -816,21 +866,21 @@ def reproductive_value(graph, i):
 indicator=nx.Graph()
 
 #sizes=[3,4,5,6]
-sizes={0:7,
-        1:7,
-        2:7,
-        3:7}
+sizes={0:5,
+        1:5,
+        2:5,
+        3:5}
 
-lengths={(0,1):2,
-        (0,2):2,
-        (0,3):2,
-        (1,2):2,
-        #(1,3):2,
-        (2,3):2}
+strengths={(0,1):0.2,
+        #(0,2):0.01,
+        (0,3):0.01,
+        (1,2):0.01,
+        #(1,3):0.01,
+        (2,3):0.01}
 
-indicator.add_edges_from(lengths.keys())
+indicator.add_edges_from(strengths.keys())
 nx.set_node_attributes(indicator, name='size', values=sizes)
-nx.set_edge_attributes(indicator, name='length', values=lengths)
+nx.set_edge_attributes(indicator, name='strength', values=strengths)
 
 graph={}
 
@@ -842,7 +892,7 @@ graph={}
 # graph[6]=generate_graph([5,4,2], 'dumbell_multiple')
 # graph[7]=generate_graph([10,30, .8,.999, .001],'rich_club')
 # graph[8]=generate_graph([[5,7,9],2], 'dumbell_multiple_sized')
-graph[9]=generate_dumbell_indicator(indicator)
+graph[9]=generate_dumbell_indicator_connectionstrength(indicator)
 
 
 #sizes=[11,11,11,11]
@@ -863,7 +913,7 @@ graph[9]=generate_dumbell_indicator(indicator)
 #color_and_draw_graph(graph[7])
 
 label_birth_death(graph[9], ['Cooperate','Defect'], 0.5)
-color_and_draw_graph(graph[9])
+#color_and_draw_graph(graph[9])
 
 #for edge in graph[2].edges():
 #  print(edge)
