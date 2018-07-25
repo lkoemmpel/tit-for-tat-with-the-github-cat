@@ -746,7 +746,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
         print('\n')
         print("Running trial ", each)
         #print("Evaluating trial ", each)
-        graph=init.generate_graph(parameters, graph_type)
+        graph=init.generate_weighted(parameters, graph_type)
 
         if rho != None:
             # Remove lattice nodes until only rho percent remain
@@ -822,12 +822,12 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
     if plotting:
         #plot the 3 lines
         for clique in Y_data:
-            this_color=remaining_colors.pop()
+            #this_color=remaining_colors.pop()
             plt.plot(X, Y_data[clique], color=this_color, marker='', linestyle = '-', label='clique '+str(clique))
-            plt.plot(X, Yplus_data[clique], color='red', marker='', linestyle = ':', label='clique '+str(clique))
-            plt.plot(X, Yminus_data[clique], color='green', marker='', linestyle = ':', label='clique '+str(clique))
+            plt.plot(X, Yplus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
+            plt.plot(X, Yminus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
 
-        pylab.legend(loc='lower left')
+        #pylab.legend(loc='lower left')
 
         
         #change axes ranges
@@ -1112,7 +1112,7 @@ def plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_coo
 
     return Yavg[-1], graph
 
-def plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
+def plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, this_color, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False):    
 
     #matrix in which entry n,t is the concentration 
@@ -1185,14 +1185,14 @@ def plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_
 
     if plotting:
         #plot the 3 lines
-        plt.plot(X, Yavg, color='green', marker='', linestyle = '-')
-        plt.plot(X, Yplus, color='red', marker='', linestyle = '-')
-        plt.plot(X, Yminus, color='blue', marker='', linestyle = '-')
-        plt.plot(X, AVG, color='orange', marker='', linestyle= '-')
+        plt.plot(X, Yavg, color=this_color, marker='', linestyle = '-')
+        plt.plot(X, Yplus, color=this_color, marker='', linestyle = '-')
+        plt.plot(X, Yminus, color=this_color, marker='', linestyle = '-')
+        #plt.plot(X, AVG, color='orange', marker='', linestyle= '-')
 
         #change axes ranges
         plt.xlim(0,t-1)
-        plt.ylim(-1,1)
+        plt.ylim(-.01,.01)
         #add title
         plt.title('Relationship between time and D(s) in '+str(number_trials)+ ' trials')
         #add x and y labels
@@ -1609,33 +1609,27 @@ def prob_n_step_walk(graph, i, j, n):
     else:
         p_ij_sum = graph[i][j]['weight'] / w_i 
     return p_ij_sum
-
 def reproductive_value(graph, i):
     w_i = 0
     for neighbor in graph.neighbors(i):
         w_i += graph[i][neighbor]['weight']
-
     W_sum = 0
     for j in graph.neighbors(i):
         W_sum += graph[i][j]['weight']
     return w_i/W_sum
-
 def s_indicator(graph, i):
     if graph.node[i]['strategy'] == 'Cooperate':
         s_i = 1
     else:
         s_i = 0
     return s_i
-
 def edge_weighted_payoff(graph, i, n):
     s_i = graph.node[i]['s']
     expectation = 0
-
     for j in graph.neighbors(i):
         print("Node i is ", i)
         print("Node j is ", j)
         expectation += prob_n_step_walk(graph, i, j, n) * s_indicator(graph, j)
-
     f = -c * s_i + b * expectation
     return f
 '''
@@ -1673,7 +1667,7 @@ noise   = 0
 b       = 2
 max_b   = 2
 c       = 1
-t       = 500
+t       = 100
 
 start_prop_cooperators  = 0.9
 number_trials           = 4
@@ -1860,7 +1854,7 @@ cliques_to_proportions = {0 : .9, 1 : .1}
 #list of parameters that will be used to build graph
 num_rep = 5
 
-number_trials = 10
+number_trials = 1
 
 size_dumbell = 30
 #for size_dumbell in range(2, 50):
@@ -1872,10 +1866,27 @@ remaining_colors = list(mcolors.CSS4_COLORS.keys())
 for color in light_colors:
     remaining_colors.remove(color)  
 
+color_list = remaining_colors
+
 for i in range(10):
     this_color = remaining_colors.pop()
+    if i == 10:
+        save_boolean = True
+    else:
+        save_boolean = False
     plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, this_color, \
-        rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = True, color_fitness=True)
+        rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = save_boolean, color_fitness=True)
+
+plt.gcf().clear()
+
+for i in range(10):
+    this_color = color_list.pop()
+    if i == 10:
+        save_boolean = True
+    else:
+        save_boolean = False
+    plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, this_color, \
+        rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = save_boolean, color_fitness=True)
 #plt.gcf().clear()
 
 
@@ -1885,7 +1896,5 @@ for i in range(10):
 #print("The nodes of the graph are ", graph.nodes())
 
 #print(D(graph, delta, b, c))
-plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
-    rho = None, update_name = 'DB', plotting = True, show_graph = False, saving = True, color_fitness=False)
-
-
+#plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
+#    rho = None, update_name = 'DB', plotting = True, show_graph = False, saving = True, color_fitness=False)
