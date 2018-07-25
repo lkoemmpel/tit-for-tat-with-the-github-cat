@@ -156,31 +156,46 @@ def pairwise_comparison(G, strat_list, u, num_rep):
     #Sample for reproductors
     replaced_nodes=random.sample(nx.nodes(G), num_rep)
     #replaced=random.choice(nx.nodes(G))
-    old_strategy=G.node[replaced]['strategy']
+    old_strategies=[G.node[replaced]['strategy'] for replaced in replaced_nodes]
+    #old_strategy=G.node[replaced]['strategy']
+    reproduced_nodes=[]
+
     #competition with e_ij between neighbors
     weights=nx.get_edge_attributes(G, 'weight')
     competition={}
     for n in G.neighbors(replaced):
-        competition[n]=weights[(n,replaced)]
+        m=min(n,replaced)
+        M=max(n,replaced)
+        competition[n]=weights[(m,M)]
     sum_competition=sum(competition.values())
     cutoff=random.uniform(0,sum_competition)
-    sum_so_far=0
+    prev=0
+    mark=0
     for node in G.neighbors(replaced):
-        sum_so_far+=competition[node]
-        if cutoff<sum_so_far:
-            reproduced=node
-    #replacement with probability Theta(F_i-F_j)
-    difference=G.node[reproduced]['fitness']-G.node[replaced]['fitness']
-    if random.random()<=q(difference, .1, 3):
-    #if random.random()<=Theta(difference):
-        #place reproduced into replaced,consider mutation
-        mistake_indicator = random.uniform(0, 1)
-        if mistake_indicator<u:
-            #there is a mutation
-            G.node[replaced]['strategy']=random.choice(strat_list)
-        else:
-            G.node[replaced]['strategy']=G.node[reproduced]['strategy']
-    return [G, G.node[replaced]['strategy'], old_strategy]
+        prev=mark
+        mark+=competition[node]
+        if prev<cutoff<mark:
+            reproduced_nodes.append(node)
+    inheritance = {}
+    for index in len(reproduced_nodes):
+        replaced = replaced_nodes[index]
+        reproduced = reproduced_nodes[index]
+        #replacement with probability Theta(F_i-F_j)
+        difference = G.node[reproduced]['fitness']-G.node[replaced]['fitness']
+        if random.random() <= q(difference, .1, 3):
+            #place reproduced into replaced,consider mutation
+            if random.uniform(0, 1) < u:
+                #there is a mutation
+                inheritance[replaced] = random.choice(strat_list)
+            else:
+                inheritance[replaced] = G.node[reproduced]['strategy']
+
+    
+    for replaced in inheritance.keys():
+        G.node[replaced]['strategy']=inheritance[replaced]
+
+
+    return [G, list(inheritance.values()), old_strategies]
 
 def imitation(G, strat_list, u):
     #Choose node uniformly to be replaced
