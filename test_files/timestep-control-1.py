@@ -239,7 +239,7 @@ class game():
             props=[]
             D_list = []
             for i in range(t):
-                D_list.append(D(G,delta,b,c))
+                D_list.append(D(graph,delta,b,c))
 
                 dictio=info(graph)
                 print('********')
@@ -771,7 +771,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
             cliques_to_proportions = parameters[3]
         except:
             cliques_to_proportions = parameters[2]
-        init.label_dumbell_multiple_cliques(graph, strat_list, cliques_to_proportions)       
+        init.label_dumbell_multiple_cliques_allen(graph, b, c, strat_list, cliques_to_proportions)       
 
 
         this_game=game(graph, update_name, t, u, delta, plotting, show_graph, saving, color_fitness)
@@ -1984,7 +1984,7 @@ for i in range(10):
         rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = save_boolean, color_fitness=True)
 
 plt.gcf().clear()
-
+'''
 for i in range(10):
     this_color = color_list.pop()
     if i == 10:
@@ -1994,7 +1994,7 @@ for i in range(10):
     plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, this_color, \
         rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = save_boolean, color_fitness=True)
 #plt.gcf().clear()
-
+'''
 
 #graph = plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_cooperators, u, this_lambda, kappa, noise, t, number_trials, \
 #    rho=None, plotting = True, show_graph = True, saving = False, color_fitness=True)[1]
