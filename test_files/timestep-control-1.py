@@ -846,6 +846,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
             #plt.plot(X, Yplus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
             #plt.plot(X, Yminus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
 
+
         #pylab.legend(loc='lower left')
 
         
@@ -2008,6 +2009,7 @@ for i in range(10):
 
 #plt.gcf().clear()
 '''
+
 
 ######## T E S T - I S L A N D - M O D E L #########
 graph_type='with_indicator'
