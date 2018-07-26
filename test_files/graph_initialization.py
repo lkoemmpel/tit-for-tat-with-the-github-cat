@@ -445,7 +445,7 @@ def generate_dumbell_indicator_connectionstrength(indicator):
   #add all of the edges produced so far!
   G.add_edges_from(edges)
   strength_dictio={edge: 1 for edge in edges}
-  nx.set_edge_attributes(G, strength_dictio, 'connection')
+  nx.set_edge_attributes(G, strength_dictio, 'weight')
   #NOW CONECTIONS BETWEEN PAIRS OF DUMBELLS!
   strengths=nx.get_edge_attributes(indicator, 'strength')
   for pair in nx.edges(indicator):
@@ -461,7 +461,7 @@ def generate_dumbell_indicator_connectionstrength(indicator):
         L=[new]
         D={new:strengths[pair]}
         G.add_edges_from(L)
-        nx.set_edge_attributes(G, D, 'connection')
+        nx.set_edge_attributes(G, D, 'weight')
 
   for n in G.nodes():
     G.node[n]['coord']=n
@@ -862,28 +862,8 @@ def reproductive_value(graph, i):
 '''---------------------
     TESTING GRAPHS
 ---------------------'''
-
-indicator=nx.Graph()
-
-#sizes=[3,4,5,6]
-sizes={0:5,
-        1:5,
-        2:5,
-        3:5}
-
-strengths={(0,1):0.2,
-        #(0,2):0.01,
-        (0,3):0.01,
-        (1,2):0.01,
-        #(1,3):0.01,
-        (2,3):0.01}
-
-indicator.add_edges_from(strengths.keys())
-nx.set_node_attributes(indicator, name='size', values=sizes)
-nx.set_edge_attributes(indicator, name='strength', values=strengths)
-
 graph={}
-
+#---------------------
 # graph[1]=generate_graph([10], 'hypercube')
 # graph[2]=generate_graph([10, 5], 'random')
 # graph[3]=generate_graph([10,30], 'erdos_renyi')
@@ -892,28 +872,39 @@ graph={}
 # graph[6]=generate_graph([5,4,2], 'dumbell_multiple')
 # graph[7]=generate_graph([10,30, .8,.999, .001],'rich_club')
 # graph[8]=generate_graph([[5,7,9],2], 'dumbell_multiple_sized')
-graph[9]=generate_dumbell_indicator_connectionstrength(indicator)
-
-
+#---------------------
 #sizes=[11,11,11,11]
 #lengths=[2,2,5]
 #graph[9]=generate_graph([sizes, lengths], 'dumbell_string')
-#print(len(graph[9].nodes()))
-
+#---------------------
 #label_birth_death(graph[5], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[5])
-
+#---------------------
 #label_birth_death(graph[3], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[3])
-
+#---------------------
 #label_dumbell_multiple_cliques(graph[6], {0,3})
 #color_and_draw_graph(graph[6])
-
+#---------------------
 #label_birth_death(graph[7], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[7])
+#---------------------
+indicator=nx.Graph()
+sizes={0:10,
+        1:10,
+        2:10,
+        3:10}
 
-label_birth_death(graph[9], ['Cooperate','Defect'], 0.5)
-#color_and_draw_graph(graph[9])
-
-#for edge in graph[2].edges():
-#  print(edge)
+strengths={(0,1):0.2,
+        (0,3):0.01,
+        (1,2):0.01,
+        (2,3):0.01}
+#MAING OF INDICATOR GRAPH
+indicator.add_edges_from(strengths.keys())
+nx.set_node_attributes(indicator, name='size', values=sizes)
+nx.set_edge_attributes(indicator, name='strength', values=strengths)
+#GENERATE graph[10]
+graph[10]=generate_graph([indicator], 'with_indicator')
+clique_to_prop={0:0.5,1:0.9,2:0.9,3:0.9}
+label_dumbell_multiple_cliques_precise(graph[10], ['Cooperate','Defect'], clique_to_prop)
+#color_and_draw_graph(graph[10])

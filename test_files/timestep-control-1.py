@@ -1415,12 +1415,14 @@ def plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_tr
             graph = sparse_graph
 
         #LABEL ALLEN
-        init.label_dumbell_multiple_cliques_allen(graph, b, c, strat_list, parameters[3])
+        init.label_allen(graph,b,c,strat_list, start_prop_cooperators)
+        #init.label_dumbell_multiple_cliques_allen(graph, b, c, strat_list, parameters[3])
 
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
         #LABEL MULTIPLE CLIQUES 
         #init.label_dumbell_multiple_cliques(graph, strat_list, {0: 0.2, 1:0.9, 2:0, 3:0.1, 4:1})       
+
 
 
         this_game=game(graph, update_name, t, u, delta, plotting, show_graph, saving, color_fitness)
@@ -1471,7 +1473,7 @@ def plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_tr
 
         #change axes ranges
         plt.xlim(0,t-1)
-        plt.ylim(-0.1,0.1)
+        plt.ylim(-0.25,0.25)
         #add title
         plt.title('Relationship between time and D(s) in '+str(number_trials)+ ' trials')
         #add x and y labels
@@ -1775,8 +1777,8 @@ max_b   = 2
 c       = 1
 t       = 100
 
-start_prop_cooperators  = 0.9
-number_trials           = 4
+start_prop_cooperators  = 0.7
+number_trials           = 1
 #Number of nodes to reproduce at each timestep 
 num_rep = 5
 
@@ -1954,7 +1956,7 @@ num_dumbell = 2
 size_path   = 4
 
 #cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
-cliques_to_proportions = {0 : .9, 1 : .1}
+cliques_to_proportions = {0 : .5, 1 : .5}
 # 2:0, 3:0.1, 4:1, 5:.5}
 #6:.4, 7:.5, 8:.2, 9:.6}
 #list of parameters that will be used to build graph
@@ -1972,17 +1974,6 @@ remaining_colors = list(mcolors.CSS4_COLORS.keys())
 for color in light_colors:
     remaining_colors.remove(color)  
 
-color_list = remaining_colors
-
-for i in range(10):
-    this_color = remaining_colors.pop()
-    if i == 10:
-        save_boolean = True
-    else:
-        save_boolean = False
-    plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, this_color, \
-        rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = save_boolean, color_fitness=True)
-
 plt.gcf().clear()
 '''
 for i in range(10):
@@ -1993,14 +1984,18 @@ for i in range(10):
         save_boolean = False
     plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, this_color, \
         rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = save_boolean, color_fitness=True)
+
 #plt.gcf().clear()
 '''
 
 #graph = plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_cooperators, u, this_lambda, kappa, noise, t, number_trials, \
 #    rho=None, plotting = True, show_graph = True, saving = False, color_fitness=True)[1]
 
-#print("The nodes of the graph are ", graph.nodes())
+graph_type='complete_bipartite'
+parameters=[10,15]
+
 
 #print(D(graph, delta, b, c))
 #plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
 #    rho = None, update_name = 'DB', plotting = True, show_graph = False, saving = True, color_fitness=False)
+
