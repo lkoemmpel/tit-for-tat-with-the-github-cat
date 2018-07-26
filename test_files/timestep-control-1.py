@@ -794,10 +794,12 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
     X=[tictoc for tictoc in range(t)]
 
     #Currently there are 148 possible colors
+    '''
     remaining_colors = list(mcolors.CSS4_COLORS.keys())
     for color in light_colors:
         #print("Trying to remove ", color)
         remaining_colors.remove(color)
+    '''
 
     Y_data = {}
     Yplus_data = {}
@@ -826,9 +828,10 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
         #plot the 3 lines
         for clique in Y_data:
             #this_color=remaining_colors.pop()
+            plt.figure(1)
             plt.plot(X, Y_data[clique], color=this_color, marker='', linestyle = '-', label='clique '+str(clique))
-            plt.plot(X, Yplus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
-            plt.plot(X, Yminus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
+            #plt.plot(X, Yplus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
+            #plt.plot(X, Yminus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
 
         #pylab.legend(loc='lower left')
 
@@ -873,6 +876,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
     if plotting:
         #plot the 3 lines
+        plt.figure(2)
         plt.plot(X, Yavg, color=this_color, marker='', linestyle = '-')
 
         #change axes ranges
@@ -1972,9 +1976,11 @@ parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
 
 remaining_colors = list(mcolors.CSS4_COLORS.keys())
 for color in light_colors:
-    remaining_colors.remove(color)  
+    remaining_colors.remove(color) 
 
-plt.gcf().clear()
+ 
+
+#plt.gcf().clear()
 '''
 for i in range(10):
     this_color = color_list.pop()
@@ -1987,6 +1993,17 @@ for i in range(10):
 
 #plt.gcf().clear()
 '''
+for i in range(10):
+    this_color = remaining_colors.pop()
+    if i == 10:
+        save_boolean = True
+    else:
+        save_boolean = False
+    plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, this_color, \
+        rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)
+
+
+
 
 #graph = plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_cooperators, u, this_lambda, kappa, noise, t, number_trials, \
 #    rho=None, plotting = True, show_graph = True, saving = False, color_fitness=True)[1]
