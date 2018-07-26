@@ -830,8 +830,8 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
             #this_color=remaining_colors.pop()
             plt.figure(1)
             plt.plot(X, Y_data[clique], color=this_color, marker='', linestyle = '-', label='clique '+str(clique))
-            #plt.plot(X, Yplus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
-            #plt.plot(X, Yminus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
+            plt.plot(X, Yplus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
+            plt.plot(X, Yminus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
 
         #pylab.legend(loc='lower left')
 
@@ -872,16 +872,18 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
     #three lines to plot: average, and pm stdev
     Yavg = []
     for tictoc in range(t):
-        Yavg.append(trial[tictoc] for trial in trial_outcome[4]) 
+        L = [trial[tictoc] for trial in trial_outcome[4]]
+        Yavg.append(sum(L)/len(L))
 
     if plotting:
         #plot the 3 lines
-        plt.figure(2)
-        plt.plot(X, Yavg, color=this_color, marker='', linestyle = '-')
+        #plt.figure(2)
+        print("Attempting to plot D(s)")
+        plt.subplot(X, Yavg, color=this_color, marker='', linestyle = '-')
 
         #change axes ranges
         plt.xlim(0,t-1)
-        plt.ylim(-.01,.01)
+        plt.ylim(-1,1)
         #add title
         plt.title('Relationship between time and D(s) in '+str(number_trials)+ ' trials')
         #add x and y labels
@@ -1993,14 +1995,14 @@ for i in range(10):
 
 #plt.gcf().clear()
 '''
-for i in range(10):
+for i in range(5):
     this_color = remaining_colors.pop()
     if i == 10:
         save_boolean = True
     else:
         save_boolean = False
     plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, this_color, \
-        rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)
+        rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = save_boolean, color_fitness=False)
 
 
 
