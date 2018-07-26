@@ -242,9 +242,11 @@ class game():
                 D_list.append(D(graph,delta,b,c))
 
                 dictio=info(graph)
+                '''
                 print('********')
                 print('TIME '+ str(i))
                 print('********')
+                '''
                 #print("Running time ", t)
                 #----------------------
                 #PROPORTIONS PER CLIQUE
@@ -744,6 +746,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
     #of the_strat at time t in trial n
     clique_data = {}
     result_matrix = []
+    result_matrix_D = []
     #run the game for each trial
     for each in range(number_trials):
         print('\n')
@@ -787,8 +790,12 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
         props = trial_outcome[3]
         result_matrix.append(props)
+        D=trial_outcome[4]
+        result_matrix_D.append(D)
 
-
+    ########################################################
+    ############ P L O T - C O O P - P R O P ###############
+    ########################################################
     # create plot where each line shows prop cooperators over time
     # for a single clique 
     X=[tictoc for tictoc in range(t)]
@@ -851,7 +858,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
     if saving:
         file_id = randint(10**5, 10**6 - 1)
-    #   print("Attempting to save plot ", data_iteration)+1
+        #print("Attempting to save plot ", data_iteration)+1
         plt.savefig(graph_type + '_' + \
             update_name + '_' + \
             'u=' + str(u) + '_' + \
@@ -867,19 +874,22 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
             str(t) + 'timesteps' + '_' + \
             str(file_id) + '.png')
     
+
+    ########################################################
+    #################### P L O T - D #######################
+    ########################################################
     #scatter plot X axis! 
     X=[tictoc for tictoc in range(t)]
     #three lines to plot: average, and pm stdev
+    
     Yavg = []
     for tictoc in range(t):
-        L = [trial[tictoc] for trial in trial_outcome[4]]
-        Yavg.append(sum(L)/len(L))
-
+        L=[trial[tictoc] for trial in result_matrix_D]
+        Yavg.append(sum(L)/len(L)) 
+    
     if plotting:
-        #plot the 3 lines
-        #plt.figure(2)
-        print("Attempting to plot D(s)")
-        plt.subplot(X, Yavg, color=this_color, marker='', linestyle = '-')
+        plt.figure(2)
+        plt.plot(X, Yavg, color=this_color, marker='', linestyle = '-')
 
         #change axes ranges
         plt.xlim(0,t-1)
