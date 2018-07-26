@@ -170,6 +170,11 @@ def generate_weighted(parameters, type = 'random'):
       lengths=parameters[1]
       graph=generate_dumbell_string(sizes,lengths)
 
+    elif type == 'with_indicator':
+      indicator=parameters[0]
+      graph=generate_dumbell_indicator_connectionstrength(indicator)
+
+
     if graph:
       weights={}
       for edge in graph.edges():

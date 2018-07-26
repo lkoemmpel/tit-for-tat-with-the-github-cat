@@ -752,7 +752,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
         print('\n')
         print("Running trial ", each)
         #print("Evaluating trial ", each)
-        graph=init.generate_weighted(parameters, graph_type)
+        graph=init.generate_graph(parameters, graph_type)
 
         if rho != None:
             # Remove lattice nodes until only rho percent remain
@@ -774,6 +774,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
             cliques_to_proportions = parameters[3]
         except:
             cliques_to_proportions = parameters[2]
+
         init.label_dumbell_multiple_cliques_allen(graph, b, c, strat_list, cliques_to_proportions)       
 
 
@@ -833,10 +834,15 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
     if plotting:
         #plot the 3 lines
+        linestyles = [':', '-.', '--', '-']
         for clique in Y_data:
+            ###### WARNING THIS ONLY WORKS FOR \leq 4 MULTIPLE DUMBELLS ######
+            line_type = linestyles[clique]
+            ##################################################################
+
             #this_color=remaining_colors.pop()
             plt.figure(1)
-            plt.plot(X, Y_data[clique], color=this_color, marker='', linestyle = '-', label='clique '+str(clique))
+            plt.plot(X, Y_data[clique], color=this_color, marker='', linestyle = line_type, label='clique '+str(clique))
             #plt.plot(X, Yplus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
             #plt.plot(X, Yminus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
 
@@ -854,7 +860,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
         #show plot
         plt.show() 
-        pause(3)  
+        #pause(3)  
 
     if saving:
         file_id = randint(10**5, 10**6 - 1)
@@ -893,7 +899,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
         #change axes ranges
         plt.xlim(0,t-1)
-        plt.ylim(-.01,.01)
+        plt.ylim(-.25,.25)
         #add title
         plt.title('Relationship between time and D(s) in '+str(number_trials)+ ' trials')
         #add x and y labels
@@ -910,7 +916,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
     if saving:
         file_id = 0
         #randint(10**5, 10**6 - 1)
-    #   print("Attempting to save plot ", data_iteration)+1
+        #print("Attempting to save plot ", data_iteration)+1
         if graph_type=='dumbell_multiple':
             plt.savefig(graph_type + '_' + \
                 update_name + '_' + \
@@ -1791,7 +1797,7 @@ noise   = 0
 b       = 2
 max_b   = 2
 c       = 1
-t       = 100
+t       = 300
 
 start_prop_cooperators  = 0.7
 number_trials           = 1
@@ -1990,9 +1996,6 @@ remaining_colors = list(mcolors.CSS4_COLORS.keys())
 for color in light_colors:
     remaining_colors.remove(color) 
 
- 
-
-#plt.gcf().clear()
 '''
 for i in range(10):
     this_color = color_list.pop()
@@ -2005,9 +2008,57 @@ for i in range(10):
 
 #plt.gcf().clear()
 '''
-for i in range(10):
+
+######## T E S T - I S L A N D - M O D E L #########
+graph_type='with_indicator'
+
+'''------------
+    TEST 1
+-------------'''
+#MAKING OF INDICATOR GRAPH
+indicator=nx.Graph()
+sizes={0:40,
+        1:40,
+        2:40,
+        3:40}
+
+strengths={(0,1):0.2,
+        (0,3):0.01,
+        (1,2):0.01,
+        (2,3):0.01}
+#ADD EDGES
+indicator.add_edges_from(strengths.keys())
+#SET ATTRIBUTES
+nx.set_node_attributes(indicator, name='size', values=sizes)
+nx.set_edge_attributes(indicator, name='strength', values=strengths)
+#PARAMETERS
+cliques_to_proportions = {0 : 0.9, 1 : 0.1, 2:0.8, 3:0.8}
+parameters=[indicator, None, cliques_to_proportions]
+
+'''------------
+    TEST 1
+-------------'''
+#MAKING OF INDICATOR GRAPH
+indicator=nx.Graph()
+sizes={0:40,
+        1:40}
+
+strengths={(0,1):0.0002}
+#ADD EDGES
+indicator.add_edges_from(strengths.keys())
+#SET ATTRIBUTES
+nx.set_node_attributes(indicator, name='size', values=sizes)
+nx.set_edge_attributes(indicator, name='strength', values=strengths)
+#PARAMETERS
+cliques_to_proportions = {0 : 0.9, 1 : 0.1}
+parameters=[indicator, None, cliques_to_proportions]
+
+
+
+iterations=3
+for i in range(iterations):
     this_color = remaining_colors.pop()
-    if i == 10:
+    if i == iterations-1:
         save_boolean = True
     else:
         save_boolean = False
@@ -2019,10 +2070,6 @@ for i in range(10):
 
 #graph = plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_cooperators, u, this_lambda, kappa, noise, t, number_trials, \
 #    rho=None, plotting = True, show_graph = True, saving = False, color_fitness=True)[1]
-
-graph_type='complete_bipartite'
-parameters=[10,15]
-
 
 #print(D(graph, delta, b, c))
 #plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
