@@ -598,7 +598,7 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
         #LABEL BIRTH DEATH
 
         print("We are labelling allen")
-        init.label_allen(graph, strat_list, start_prop_cooperators)
+        init.label_allen(graph, b, c, strat_list, start_prop_cooperators)
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
         #LABEL MULTIPLE CLIQUES 
