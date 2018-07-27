@@ -667,6 +667,7 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
         #randint(10**5, 10**6 - 1)
     #   print("Attempting to save plot ", data_iteration)+1
         if graph_type=='dumbell_multiple':
+            print("Printing from line 670")
             plt.savefig(graph_type + '_' + \
                 update_name + '_' + \
                 'u=' + str(u) + '_' + \
@@ -874,9 +875,9 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
             'c=' + str(c) + '_' + \
             'noise=' + str(noise) + '_' + \
             'size_dumbell=' + str(parameters[0]) + '_' + \
-            'num_dumbell=' + str(parameters[1]) + '_' + \
-            'size_path=' + str(parameters[2]) + '_' + \
-            'prop_coop=' + str(start_prop_cooperators) + '_' + \
+            'num_dumbell=' + str(len(parameters[2])) + '_' + \
+            'prop_left=' + str(parameters[2][0]) + '_' + \
+            'prop_right=' + str(parameters[2][1]) + '_' + \
             str(number_trials) + 'trials' + '_' + \
             str(t) + 'timesteps' + '_' + \
             str(file_id) + '.png')
@@ -918,14 +919,28 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
         file_id = 0
         #randint(10**5, 10**6 - 1)
         #print("Attempting to save plot ", data_iteration)+1
+        if graph_type=='with_indicator':
+            plt.savefig(graph_type + '_' + \
+                update_name + '_' + \
+                'u=' + str(u) + '_' + \
+                'noise=' + str(noise) + '_' + \
+                'size_dumbell=' + str(parameters[0]) + '_' + \
+                'num_dumbell=' + str(len(parameters[2])) + '_' + \
+                'size_left=' + str(parameters[2][0]) + '_' + \
+                'size_right=' + str(parameters[2][1]) + '_' + \
+                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                str(number_trials) + 'trials' + '_' + \
+                str(t) + 'timesteps' + '_' + \
+                'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
         if graph_type=='dumbell_multiple':
             plt.savefig(graph_type + '_' + \
                 update_name + '_' + \
                 'u=' + str(u) + '_' + \
                 'noise=' + str(noise) + '_' + \
                 'size_dumbell=' + str(parameters[0]) + '_' + \
-                'num_dumbell=' + str(parameters[1]) + '_' + \
-                'size_path=' + str(parameters[2]) + '_' + \
+                'num_dumbell=' + str(len(parameters[2])) + '_' + \
+                'size_left=' + str(parameters[2][0]) + '_' + \
+                'size_right=' + str(parameters[2][1]) + '_' + \
                 'prop_coop=' + str(start_prop_cooperators) + '_' + \
                 str(number_trials) + 'trials' + '_' + \
                 str(t) + 'timesteps' + '_' + \
@@ -941,6 +956,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
                 str(t) + 'timesteps' + '_' + \
                 'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
         elif graph_type == 'rich_club':
+            print("Saving rich club")
             plt.savefig(graph_type + '_' + \
                 update_name + '_' + \
                 'u=' + str(u) + '_' + \
@@ -1168,6 +1184,7 @@ def plot_many_trials_utkovski(parameters, graph_type, strat_list, start_prop_coo
         #randint(10**5, 10**6 - 1)
     #   print("Attempting to save plot ", data_iteration)+1
         if graph_type=='dumbell_multiple':
+            print("Printing from line 1185")
             plt.savefig(graph_type + '_' + \
                 update_name + '_' + \
                 'u=' + str(u) + '_' + \
@@ -1340,6 +1357,7 @@ def plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_
         #randint(10**5, 10**6 - 1)
     #   print("Attempting to save plot ", data_iteration)+1
         if graph_type=='dumbell_multiple':
+            print("Printing from line 1358")
             plt.savefig(graph_type + '_' + \
                 update_name + '_' + \
                 'u=' + str(u) + '_' + \
@@ -1798,7 +1816,7 @@ noise   = 0
 b       = 2
 max_b   = 2
 c       = 1
-t       = 300
+t       = 1000
 
 start_prop_cooperators  = 0.7
 number_trials           = 1
@@ -1996,6 +2014,9 @@ parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
 remaining_colors = list(mcolors.CSS4_COLORS.keys())
 for color in light_colors:
     remaining_colors.remove(color) 
+remaining_colors.remove('yellowgreen')
+remaining_colors.remove('violet')
+
 
 '''
 for i in range(10):
