@@ -900,7 +900,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
         #change axes ranges
         plt.xlim(0,t-1)
-        plt.ylim(-.25,.25)
+        plt.ylim(-.05,.05)
         #add title
         plt.title('Relationship between time and D(s) in '+str(number_trials)+ ' trials')
         #add x and y labels
@@ -1496,7 +1496,7 @@ def plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_tr
 
         #change axes ranges
         plt.xlim(0,t-1)
-        plt.ylim(-0.25,0.25)
+        plt.ylim(-0.05,0.05)
         #add title
         plt.title('Relationship between time and D(s) in '+str(number_trials)+ ' trials')
         #add x and y labels
@@ -1792,8 +1792,8 @@ graph_type  = 'dumbell_multiple'
 update_name = 'BD'
 
 
-u       = 0.0001
-delta   = 0.005
+u       = 0
+delta   = 0
 noise   = 0
 b       = 2
 max_b   = 2
@@ -1802,8 +1802,7 @@ t       = 300
 
 start_prop_cooperators  = 0.7
 number_trials           = 1
-#Number of nodes to reproduce at each timestep 
-num_rep = 5
+num_rep                 = 5
 
 
 #To run a particular graph simulation, uncomment the parameters line
@@ -1825,13 +1824,12 @@ num_rep = 5
 
 
 '''-----------Multiple Dumbell, Multiple Proportions Variables----------------'''
-size_dumbell= 60
-num_dumbell = 2
-size_path   = 10
-
+size_dumbell = 60
+num_dumbell  = 2
+size_path    = 10
 
 #cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
-cliques_to_proportions = {0 : 1, 1 : 1, 2:0.5, 3:0.5}
+#cliques_to_proportions = {0 : 1, 1 : 1, 2:0.5, 3:0.5}
 
 # 2:0, 3:0.1, 4:1, 5:.5}
 #6:.4, 7:.5, 8:.2, 9:.6}
@@ -1903,12 +1901,9 @@ LABELS
 #dis.color_fitness_and_draw_graph(G, nx.spring_layout(G))
 
 
-'''-------------
-TIMESTEP
---------------'''
-
-#1                      Test for trial_with_plot
-
+'''--------------------
+Test for trial_with_plot
+---------------------'''
 # for data_iteration in range(5):
 #     #init.label_birth_death(G, strat_list, start_prop_cooperators)
 #     G=init.generate_dumbell_multiple_cliques(10,5,1)
@@ -1918,16 +1913,12 @@ TIMESTEP
 #     game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, \
 #         update_name= 'BD', plotting = True, show_graph = False, saving = False)
 
-
-#2                      Test for plot_many_trials
-
 '''------------------------
-CODE FOR LATTICES
+Test for plot_many_trials
 -------------------------'''
 #for start_prop_cooperators in prop_increments:
 #plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, 'Cooperate', update_name = 'BD', \
 #    plotting = True, show_graph = False, saving = True, color_fitness = True)
-
 
 '''------------------------
 CODE FOR MULTIPLE DUMBELLS
@@ -1941,10 +1932,9 @@ for start_prop_cooperators in prop_increments:
     plotting=True, show_graph=False, saving=True, color_fitness=True)
 '''
 
-'''------------------------
-CODE FOR MULTIPLE DUMBELLS
-AND MULTIPLE PROPORTIONS
--------------------------'''
+'''---------------------------------------
+MULTIPLE DUMBELLS AND MULTIPLE PROPORTIONS
+---------------------------------------'''
 
 #plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, None, \
 #    'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
@@ -1952,7 +1942,6 @@ AND MULTIPLE PROPORTIONS
 
 #plot_trial_until_stable(parameters, graph_type, u, t, 'Cooperate', num_rep, \
 #    update_name = 'BD', plotting = True, show_graph = True, saving = False, color_fitness=False)
-
 '''
 graph=init.generate_graph([[5,7,9],2], 'dumbell_multiple_sized')
 init.label_dumbell_multiple_cliques_precise(graph, strat_list, {0:0.2, 1:0.9, 2:0.9})
@@ -2014,9 +2003,9 @@ for i in range(10):
 ######## T E S T - I S L A N D - M O D E L #########
 graph_type='with_indicator'
 
-'''------------
-    TEST 1
--------------'''
+'''-----------------------------------
+    Island model test, 4 islands 
+-----------------------------------'''
 #MAKING OF INDICATOR GRAPH
 indicator=nx.Graph()
 sizes={0:40,
@@ -2037,13 +2026,13 @@ nx.set_edge_attributes(indicator, name='strength', values=strengths)
 cliques_to_proportions = {0 : 0.9, 1 : 0.1, 2:0.8, 3:0.8}
 parameters=[indicator, None, cliques_to_proportions]
 
-'''------------
-    TEST 1
--------------'''
+'''---------------------------------
+    Island model test, 2 islands 
+---------------------------------'''
 #MAKING OF INDICATOR GRAPH
 indicator=nx.Graph()
-sizes={0:40,
-        1:40}
+sizes={0:10,
+        1:10}
 
 strengths={(0,1):0.0002}
 #ADD EDGES
@@ -2052,12 +2041,14 @@ indicator.add_edges_from(strengths.keys())
 nx.set_node_attributes(indicator, name='size', values=sizes)
 nx.set_edge_attributes(indicator, name='strength', values=strengths)
 #PARAMETERS
-cliques_to_proportions = {0 : 0.9, 1 : 0.1}
+cliques_to_proportions = {0 : 0.8, 1 : 0.8}
 parameters=[indicator, None, cliques_to_proportions]
 
+'''---------------------------------
+    Island model RUNNING TEST
+---------------------------------'''
 
-
-iterations=3
+iterations=5
 for i in range(iterations):
     this_color = remaining_colors.pop()
     if i == iterations-1:
@@ -2065,7 +2056,19 @@ for i in range(iterations):
     else:
         save_boolean = False
     plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, this_color, \
-        rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = save_boolean, color_fitness=False)
+        rho = None, update_name = 'BD', plotting = True, show_graph = True, saving = save_boolean, color_fitness=True)
+
+
+'''---------------------------------
+    Rich club Test 
+---------------------------------'''
+'''
+graph_type='rich_club'
+parameters=[5, 30, 1, 1, 0]
+plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
+    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)  
+
+'''
 
 
 
@@ -2076,4 +2079,3 @@ for i in range(iterations):
 #print(D(graph, delta, b, c))
 #plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, \
 #    rho = None, update_name = 'DB', plotting = True, show_graph = False, saving = True, color_fitness=False)
-
