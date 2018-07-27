@@ -1864,13 +1864,13 @@ cliques_to_proportions = {0 : 1, 1 : 1, 2:0.5, 3:0.5}
 #parameters = [side_1, side_2]
 
 '''-----------Rich Club Variables----------------'''
-#size_club       = 10
-#size_periphery  = 20
-#prob_rp         = .2
-#prob_rr         = .2
-#prob_pp         = .2
+size_club       = 10
+size_periphery  = 20
+prob_rp         = .2
+prob_rr         = .2
+prob_pp         = .2
 #list of parameters that will be used to build graph
-#parameters = [size_club, size_periphery, prob_rp, prob_rr, prob_pp]
+parameters = [size_club, size_periphery, prob_rp, prob_rr, prob_pp]
 
 '''-----------String Dumbell Variables----------------'''
 #size of each dumbell in the string
@@ -2030,8 +2030,12 @@ for i in range(10):
 
 #plt.gcf().clear()
 '''
+######## T E S T - I S L A N D - M O D E L #########
+graph_type='rich_club'
 
 
+
+'''
 ######## T E S T - I S L A N D - M O D E L #########
 graph_type='with_indicator'
 
@@ -2075,7 +2079,7 @@ nx.set_edge_attributes(indicator, name='strength', values=strengths)
 #PARAMETERS
 cliques_to_proportions = {0 : 0.9, 1 : 0.1}
 parameters=[indicator, None, cliques_to_proportions]
-
+'''
 
 
 iterations=3
