@@ -894,6 +894,7 @@ graph={}
 #label_birth_death(graph[7], ['Cooperate','Defect'], 0.5)
 #color_and_draw_graph(graph[7])
 #---------------------
+'''
 indicator=nx.Graph()
 sizes={0:10,
         1:10,
@@ -913,3 +914,4 @@ graph[10]=generate_graph([indicator], 'with_indicator')
 clique_to_prop={0:0.5,1:0.9,2:0.9,3:0.9}
 label_dumbell_multiple_cliques_precise(graph[10], ['Cooperate','Defect'], clique_to_prop)
 #color_and_draw_graph(graph[10])
+'''

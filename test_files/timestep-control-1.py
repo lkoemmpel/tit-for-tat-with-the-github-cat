@@ -2047,7 +2047,7 @@ parameters=[indicator, None, cliques_to_proportions]
 '''---------------------------------
     Island model RUNNING TEST
 ---------------------------------'''
-
+'''
 iterations=5
 for i in range(iterations):
     this_color = remaining_colors.pop()
@@ -2056,19 +2056,19 @@ for i in range(iterations):
     else:
         save_boolean = False
     plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, this_color, \
-        rho = None, update_name = 'BD', plotting = True, show_graph = True, saving = save_boolean, color_fitness=True)
-
+        rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = save_boolean, color_fitness=False)
+'''
 
 '''---------------------------------
     Rich club Test 
 ---------------------------------'''
-'''
+
 graph_type='rich_club'
 parameters=[5, 30, 1, 1, 0]
 plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)  
 
-'''
+
 
 
 
