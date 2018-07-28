@@ -770,10 +770,14 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
         #LABEL FOR A LATTICE WITH ONE SLICE OF DEFECTORS
         #init.label_BD_according_to_one_dim(graph, strat_list, parameters[1]) 
         #LABEL MULTIPLE CLIQUES 
+
         try:
             cliques_to_proportions = parameters[3]
         except:
             cliques_to_proportions = parameters[2]
+
+        if graph_type == 'rich_club':
+            cliques_to_proportions=parameters[6]
 
         init.label_dumbell_multiple_cliques_allen(graph, b, c, strat_list, cliques_to_proportions)       
 
@@ -861,7 +865,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
         #show plot
         plt.show() 
-        #pause(3)  
+        pause(15)  
 
     if saving:
         file_id = randint(10**5, 10**6 - 1)
@@ -876,7 +880,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
             'size_dumbell=' + str(parameters[0]) + '_' + \
             'num_dumbell=' + str(parameters[1]) + '_' + \
             'size_path=' + str(parameters[2]) + '_' + \
-            'prop_coop=' + str(start_prop_cooperators) + '_' + \
+            'prop_coop=' + str(clique_to_prop) + '_' + \
             str(number_trials) + 'trials' + '_' + \
             str(t) + 'timesteps' + '_' + \
             str(file_id) + '.png')
@@ -909,7 +913,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
         #show plot
         plt.show()
-        pause(1)   
+        pause(3)   
         #print("Attempting to show plot -----------------")
         #pause(60)
     #plt.close()     
@@ -947,10 +951,11 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
                 'noise=' + str(noise) + '_' + \
                 'size_club=' + str(parameters[0]) + '_' + \
                 'size_periphery=' + str(parameters[1]) + '_' + \
-                'prob_rp=' + str(parameters[2]) + '_' + \
-                'prob_rr=' + str(parameters[3]) + '_' + \
-                'prob_pp=' + str(parameters[4]) + '_' + \
-                'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                'num_peripheries=' + str(parameters[2]) + '_' + \
+                'a=' + str(parameters[3]) + '_' + \
+                'b=' + str(parameters[4]) + '_' + \
+                'c=' + str(parameters[5]) + '_' + \
+                'prop_coop=' + str(parameters[6]) + '_' + \
                 str(number_trials) + 'trials' + '_' + \
                 str(t) + 'timesteps' + '_' + \
                 'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
@@ -1798,7 +1803,7 @@ noise   = 0
 b       = 2
 max_b   = 2
 c       = 1
-t       = 300
+t       = 500
 
 start_prop_cooperators  = 0.7
 number_trials           = 1
@@ -1962,7 +1967,7 @@ UTKOVSKI TRIALS
 
 
 
-
+'''
 
 num_dumbell = 2
 size_path   = 4
@@ -1972,6 +1977,7 @@ cliques_to_proportions = {0 : .5, 1 : .5}
 # 2:0, 3:0.1, 4:1, 5:.5}
 #6:.4, 7:.5, 8:.2, 9:.6}
 #list of parameters that will be used to build graph
+
 num_rep = 5
 
 number_trials = 1
@@ -1981,10 +1987,13 @@ size_dumbell = 30
 parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
 
 
-
+#COLOR LIST
 remaining_colors = list(mcolors.CSS4_COLORS.keys())
 for color in light_colors:
     remaining_colors.remove(color) 
+'''
+
+
 
 '''
 for i in range(10):
@@ -2063,11 +2072,14 @@ for i in range(iterations):
     Rich club Test 
 ---------------------------------'''
 
-graph_type='rich_club'
-parameters=[5, 30, 1, 1, 0]
-plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
-    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)  
 
+graph_type='rich_club'
+clique_to_prop={0:0.05,1:0.8,2:0.1,3:0.1}
+parameters=[5, 30, 3, 0.9, 0.5, 0.3, clique_to_prop]
+#plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
+#    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)  
+plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, 'darkcyan', \
+    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = True, color_fitness=False)
 
 
 

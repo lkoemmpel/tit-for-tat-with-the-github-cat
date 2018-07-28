@@ -73,10 +73,14 @@ def generate_graph(parameters, type = 'random'):
     elif type == 'rich_club':
       size_club = parameters[0]
       size_periphery = parameters[1]
-      prob_rp = parameters[2]
-      prob_rr = parameters[3]
-      prob_pp = parameters[4]
-      graph=generate_rich_club(size_club, size_periphery, prob_rp, prob_rr, prob_pp)
+      #prob_rp = parameters[2]
+      #prob_rr = parameters[3]
+      #prob_pp = parameters[4]
+      num_peripheries=parameters[2]
+      a = parameters[3]
+      b = parameters[4]
+      c = parameters[5]
+      graph=generate_rich_club_adapted_version(size_club, size_periphery, num_peripheries, a, b, c)
 
     elif type == 'dumbell_multiple_sized':
       size_list=parameters[0]
@@ -379,6 +383,46 @@ def generate_rich_club(size_club, size_periphery, prob_rp=1, prob_rr=1, prob_pp=
       #add edge with Pr[poor<->poor]
       if random.random()<prob_pp:
         graph.add_edge(m,M)
+  return graph
+
+def generate_rich_club_adapted_version(size_club, size_periphery, num_peripheries, a, b, c):
+  indicator=nx.Graph()
+  sizes={0:size_club}
+  strengths={}
+  for index in range(num_peripheries):
+    sizes[index+1]=size_periphery
+    strengths[(0,index+1)]=b
+  #MAING OF INDICATOR GRAPH
+  indicator.add_edges_from(strengths.keys())
+  nx.set_node_attributes(indicator, name='size', values=sizes)
+  nx.set_edge_attributes(indicator, name='strength', values=strengths)
+  graph=generate_dumbell_indicator_connectionstrength(indicator)
+  #GETTING CLIQUE RANGES:
+  cliques_to_sets={x:set() for x in range(num_peripheries+1)}
+  #put every node in a box, labeled with the number of clique that the node is in
+  for n in nx.nodes(graph):
+    k = graph.node[n]['coord'][0][0]
+    cliques_to_sets[k].add(n)
+  #for every clique
+  for k in cliques_to_sets.keys():
+    clique_set = cliques_to_sets[k]
+    visited=set()
+    for A in clique_set:
+      for B in clique_set:
+        #Thre conditionals: not visited yet, the two different
+        if A!=B and (A,B) not in visited:
+            visited.add((A,B))
+            visited.add((B,A))
+            m, M = min(A,B), max(A,B)
+            #new=((k,k),m), ((k,k),M)
+            new=(m,M)
+            L=[new]
+            if k == 0:
+              D = {new : a}
+            else:
+              D = {new : c}
+            graph.add_edges_from(L)
+            nx.set_edge_attributes(graph, D, 'weight')
   return graph
 
 def generate_dumbell_indicator_pathlength(indicator):
@@ -953,4 +997,17 @@ graph[10]=generate_graph([indicator], 'with_indicator')
 clique_to_prop={0:0.5,1:0.9,2:0.9,3:0.9}
 label_dumbell_multiple_cliques_precise(graph[10], ['Cooperate','Defect'], clique_to_prop)
 #color_and_draw_graph(graph[10])
+'''
+
+
+
+'''
+graph_type='rich_club'
+parameters=[5, 30, 3, 1, 1, 0]
+#GENERATE graph[10]
+graph[11]=generate_graph(parameters, 'rich_club')
+clique_to_prop={0:0.5,1:0.9,2:0.9,3:0.9}
+label_dumbell_multiple_cliques_precise(graph[11], ['Cooperate','Defect'], clique_to_prop)
+color_and_draw_graph(graph[11])
+print(len(nx.nodes(graph[11])))
 '''
