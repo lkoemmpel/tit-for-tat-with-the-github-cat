@@ -916,7 +916,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
         pause(3)   
         #print("Attempting to show plot -----------------")
         #pause(60)
-    #plt.close()     
+        plt.close()     
 
     if saving:
         file_id = 0
@@ -994,7 +994,116 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
                 'b_over_c=' + str(b) + '_' + \
                 str(file_id) + '.png')
 
+
+    ########################################################
+    ######### P L O T - D I F F E R E N C E ################
+    ########################################################
+    #scatter plot X axis! 
+    X=[tictoc for tictoc in range(t)]
+    #three lines to plot: average, and pm stdev
+    clique_list = list(Y_data.keys())
+    if len(clique_list) == 2:
+        A = Y_data[clique_list[0]]
+        B = Y_data[clique_list[1]]
+        C = [A[i]-B[i] for i in range(len(A))]
+    
+        if plotting:
+            plt.figure(2)
+            plt.plot(X, C, color=this_color, marker='', linestyle = '-')
+
+            #change axes ranges
+            plt.xlim(0,t-1)
+            plt.ylim(-1,1)
+            #add title
+            plt.title('Difference between dumbell proportions in' + str(number_trials) + ' trials')
+            #add x and y labels
+            plt.ylabel('Difference component A minus component B')
+            plt.xlabel('Time')
+
+            #show plot
+            plt.show()
+            pause(3)   
+            #print("Attempting to show plot -----------------")
+            #pause(60)
+            plt.close()     
+
+        if saving:
+            file_id = 0
+            #randint(10**5, 10**6 - 1)
+            #print("Attempting to save plot ", data_iteration)+1
+            if graph_type=='dumbell_multiple':
+                plt.savefig('Difference____' + graph_type + '_' + \
+                    update_name + '_' + \
+                    'u=' + str(u) + '_' + \
+                    'noise=' + str(noise) + '_' + \
+                    'size_dumbell=' + str(parameters[0]) + '_' + \
+                    'num_dumbell=' + str(parameters[1]) + '_' + \
+                    'size_path=' + str(parameters[2]) + '_' + \
+                    'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                    str(number_trials) + 'trials' + '_' + \
+                    str(t) + 'timesteps' + '_' + \
+                    'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+            elif graph_type=='dumbell':
+                plt.savefig('Difference____' + graph_type + '_' + \
+                    update_name + '_' + \
+                    'u=' + str(u) + '_' + \
+                    'noise=' + str(noise) + '_' + \
+                    'n=' + str(parameters[0]) + '_' + \
+                    'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                    str(number_trials) + 'trials' + '_' + \
+                    str(t) + 'timesteps' + '_' + \
+                    'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+            elif graph_type == 'rich_club':
+                plt.savefig('Difference____' + graph_type + '_' + \
+                    update_name + '_' + \
+                    'u=' + str(u) + '_' + \
+                    'noise=' + str(noise) + '_' + \
+                    'size_club=' + str(parameters[0]) + '_' + \
+                    'size_periphery=' + str(parameters[1]) + '_' + \
+                    'num_peripheries=' + str(parameters[2]) + '_' + \
+                    'a=' + str(parameters[3]) + '_' + \
+                    'b=' + str(parameters[4]) + '_' + \
+                    'c=' + str(parameters[5]) + '_' + \
+                    'prop_coop=' + str(parameters[6]) + '_' + \
+                    str(number_trials) + 'trials' + '_' + \
+                    str(t) + 'timesteps' + '_' + \
+                    'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+            elif graph_type=='complete' or 'hypercube':
+                plt.savefig('Difference____' + graph_type + '_' + \
+                    update_name + '_' + \
+                    'u=' + str(u) + '_' + \
+                    'noise=' + str(noise) + '_' + \
+                    'num_nodes=' + str(parameters[0]) + '_' + \
+                    'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                    str(number_trials) + 'trials' + '_' + \
+                    str(t) + 'timesteps' + '_' + \
+                    'b_over_c=' + str(b) + '_' + \
+                    str(file_id) + '.png')
+            elif graph_type=='triangular_lattice':
+                plt.savefig('Difference____' + graph_type + '_' + \
+                    update_name + '_' + \
+                    'u=' + str(u) + '_' + \
+                    'noise=' + str(noise) + '_' + \
+                    'n_dim=' + str(parameters[0]) + '_' + \
+                    'm_dim=' + str(parameters[1]) + '_' + \
+                    'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                    str(number_trials) + 'trials' + '_' + \
+                    str(t) + 'timesteps' + '_' + \
+                    'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
+            elif graph_type=='random':
+                plt.savefig('Difference____' + graph_type + '_' + \
+                    update_name + '_' + \
+                    'u=' + str(u) + '_' + \
+                    'noise=' + str(noise) + '_' + \
+                    'num_nodes=' + str(parameters[0]) + '_' + \
+                    'ave_degree=' + str(parameters[1]) + '_' + \
+                    'prop_coop=' + str(start_prop_cooperators) + '_' + \
+                    str(number_trials) + 'trials' + '_' + \
+                    str(t) + 'timesteps' + '_' + \
+                    'b_over_c=' + str(b) + '_' + \
+                    str(file_id) + '.png')
     return None
+
 
 def plot_lattice_density_and_payoff(parameters, graph_type, u, t, max_b, the_strat, \
     update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness = True):    
@@ -1985,13 +2094,13 @@ number_trials = 1
 size_dumbell = 30
 #for size_dumbell in range(2, 50):
 parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
-
+'''
 
 #COLOR LIST
 remaining_colors = list(mcolors.CSS4_COLORS.keys())
 for color in light_colors:
     remaining_colors.remove(color) 
-'''
+
 
 
 
@@ -2040,8 +2149,8 @@ parameters=[indicator, None, cliques_to_proportions]
 ---------------------------------'''
 #MAKING OF INDICATOR GRAPH
 indicator=nx.Graph()
-sizes={0:10,
-        1:10}
+sizes={0:30,
+        1:30}
 
 strengths={(0,1):0.0002}
 #ADD EDGES
@@ -2050,14 +2159,14 @@ indicator.add_edges_from(strengths.keys())
 nx.set_node_attributes(indicator, name='size', values=sizes)
 nx.set_edge_attributes(indicator, name='strength', values=strengths)
 #PARAMETERS
-cliques_to_proportions = {0 : 0.8, 1 : 0.8}
+clique_to_prop = {0 : 0.9, 1 : 0.1}
 parameters=[indicator, None, cliques_to_proportions]
 
 '''---------------------------------
     Island model RUNNING TEST
 ---------------------------------'''
-'''
-iterations=5
+
+iterations=3
 for i in range(iterations):
     this_color = remaining_colors.pop()
     if i == iterations-1:
@@ -2066,7 +2175,7 @@ for i in range(iterations):
         save_boolean = False
     plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, this_color, \
         rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = save_boolean, color_fitness=False)
-'''
+
 
 '''---------------------------------
     Rich club Test 
