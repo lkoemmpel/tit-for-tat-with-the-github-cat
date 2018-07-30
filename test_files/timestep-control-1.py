@@ -1006,11 +1006,11 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
         A = Y_data[clique_list[0]]
         B = Y_data[clique_list[1]]
         C = [A[i]-B[i] for i in range(len(A))]
-    
+        D = [0 for i in range(t) ]
         if plotting:
             plt.figure(2)
             plt.plot(X, C, color=this_color, marker='', linestyle = '-')
-
+            plt.plot(X, D, color='red', marker='', linestyle = '-')
             #change axes ranges
             plt.xlim(0,t-1)
             plt.ylim(-1,1)
@@ -1906,13 +1906,13 @@ graph_type  = 'dumbell_multiple'
 update_name = 'BD'
 
 
-u       = 0
-delta   = 0
-noise   = 0
+u       = 0.00005
+delta   = 0.0002
+noise   = 0.00005
 b       = 2
 max_b   = 2
 c       = 1
-t       = 500
+t       = 50
 
 start_prop_cooperators  = 0.7
 number_trials           = 1
@@ -2149,8 +2149,8 @@ parameters=[indicator, None, cliques_to_proportions]
 ---------------------------------'''
 #MAKING OF INDICATOR GRAPH
 indicator=nx.Graph()
-sizes={0:30,
-        1:30}
+sizes={0:10,
+        1:10}
 
 strengths={(0,1):0.0002}
 #ADD EDGES
@@ -2159,14 +2159,15 @@ indicator.add_edges_from(strengths.keys())
 nx.set_node_attributes(indicator, name='size', values=sizes)
 nx.set_edge_attributes(indicator, name='strength', values=strengths)
 #PARAMETERS
-clique_to_prop = {0 : 0.9, 1 : 0.1}
+cliques_to_proportions = {0 : 0.7, 1 : 0.7}
+clique_to_prop=cliques_to_proportions
 parameters=[indicator, None, cliques_to_proportions]
 
 '''---------------------------------
     Island model RUNNING TEST
 ---------------------------------'''
 
-iterations=3
+iterations=4
 for i in range(iterations):
     this_color = remaining_colors.pop()
     if i == iterations-1:
@@ -2174,22 +2175,24 @@ for i in range(iterations):
     else:
         save_boolean = False
     plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, this_color, \
-        rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = save_boolean, color_fitness=False)
+        rho = None, update_name = 'BD', plotting = True, show_graph = True, saving = save_boolean, color_fitness=True)
+
+plt.gcf().clear()
 
 
 '''---------------------------------
     Rich club Test 
 ---------------------------------'''
 
-
+'''
 graph_type='rich_club'
-clique_to_prop={0:0.05,1:0.8,2:0.1,3:0.1}
-parameters=[5, 30, 3, 0.9, 0.5, 0.3, clique_to_prop]
+clique_to_prop={0:0.1,1:0.8,2:0.1,3:0.1}
+parameters=[10, 100, 1, 0.9, 0.5, 0.3, clique_to_prop]
 #plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
 #    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)  
 plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, 'darkcyan', \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = True, color_fitness=False)
-
+'''
 
 
 
