@@ -1992,7 +1992,7 @@ cliques_to_proportions = {0 : .5, 1 : .5}
 #list of parameters that will be used to build graph
 num_rep = 5
 
-number_trials = 1
+number_trials = 10
 
 size_dumbell = 30
 #for size_dumbell in range(2, 50):
@@ -2006,7 +2006,10 @@ for color in light_colors:
 remaining_colors.remove('yellowgreen')
 remaining_colors.remove('violet')
 
+this_color = 'blue'
 
+plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, this_color, \
+        rho = None, update_name = 'BD', plotting = True, show_graph = False, saving=True, color_fitness=True)
 '''
 for i in range(10):
     this_color = color_list.pop()
@@ -2016,12 +2019,11 @@ for i in range(10):
         save_boolean = False
     plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_rep, this_color, \
         rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = save_boolean, color_fitness=True)
-
-#plt.gcf().clear()
 '''
+#plt.gcf().clear()
+
 ######## T E S T - I S L A N D - M O D E L #########
 graph_type='rich_club'
-
 
 
 
@@ -2032,6 +2034,7 @@ graph_type='with_indicator'
     Island model test, 4 islands 
 -----------------------------------'''
 #MAKING OF INDICATOR GRAPH
+'''
 indicator=nx.Graph()
 sizes={0:40,
         1:40,
@@ -2050,11 +2053,12 @@ nx.set_edge_attributes(indicator, name='strength', values=strengths)
 #PARAMETERS
 cliques_to_proportions = {0 : 0.9, 1 : 0.1, 2:0.8, 3:0.8}
 parameters=[indicator, None, cliques_to_proportions]
-
+'''
 '''---------------------------------
     Island model test, 2 islands 
 ---------------------------------'''
 #MAKING OF INDICATOR GRAPH
+'''
 indicator=nx.Graph()
 sizes={0:10,
         1:10}
@@ -2072,6 +2076,7 @@ parameters=[indicator, None, cliques_to_proportions]
 
 
 iterations=3
+'''
 
 '''---------------------------------
     Island model RUNNING TEST
@@ -2092,13 +2097,24 @@ for i in range(iterations):
 '''---------------------------------
     Rich club Test 
 ---------------------------------'''
+'''
+size_club       = 10
+size_periphery  = 20
+prob_rp         = .2
+prob_rr         = .2
+prob_pp         = .2
+#list of parameters that will be used to build graph
+parameters = [size_club, size_periphery, prob_rp, prob_rr, prob_pp]
+
 
 graph_type='rich_club'
-parameters=[5, 30, 1, 1, 0]
+
+
+#parameters=[5, 30, 1, 1, 0]
 plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)  
 
-
+'''
 
 
 
