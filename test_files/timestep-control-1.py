@@ -10,6 +10,7 @@ import numpy as np
 import pylab
 
 from matplotlib import colors as mcolors
+from matplotlib.animation import FuncAnimation
 
 '''-------------------
         IMPORTS
@@ -109,7 +110,7 @@ class game():
         #do we want to use a heat map for fitness?
         self.color_fitness=color_fitness
 
-    def trial(self, pos, num_rep, noise=0, graph_type = 'random', num_of_trial=None):
+    def trial(self, pos, num_rep, b, c, noise=0, graph_type = 'random', num_of_trial=None):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -151,7 +152,7 @@ class game():
                 #------------
                 #REPRODUCTION
                 #------------ 
-                birth_death_results = names_to_functions[update_name](G, strat_list, u, num_rep)
+                birth_death_results = names_to_functions[update_name](G, strat_list, u, num_rep, b, c)
                 #naming the results from rep
                 new_graph = birth_death_results[0]
                 new_strategies=birth_death_results[1]
@@ -226,7 +227,7 @@ class game():
         if type(self.name)==str:
 
             if self.show_graph:
-                dis.color_fitness_and_draw_graph(graph, pos, None, num_of_trial, 0)
+                frames.append(dis.color_fitness_and_draw_graph_gif(graph, pos, None, num_of_trial, 0))
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print("-----------------------------------------------")
             
@@ -255,7 +256,7 @@ class game():
                 #------------
                 #REPRODUCTION
                 #------------ 
-                birth_death_results = names_to_functions[update_name](graph, strat_list, u, num_rep)
+                birth_death_results = names_to_functions[update_name](graph, strat_list, u, num_rep, b, c)
                 #naming the results from rep
                 new_graph = birth_death_results[0]
                 new_strategies=birth_death_results[1]
@@ -368,7 +369,7 @@ class game():
 
             return G, help_accross_time
 
-    def lattice_density_and_payoff_trial(self, pos, num_rep, graph_type = 'random'):
+    def lattice_density_and_payoff_trial(self, b, c, pos, num_rep, graph_type = 'random'):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -403,7 +404,7 @@ class game():
                 #------------
                 #REPRODUCTION
                 #------------ 
-                birth_death_results = names_to_functions[update_name](G, strat_list, u, num_rep)
+                birth_death_results = names_to_functions[update_name](G, strat_list, u, num_rep, b, c)
                 #naming the results from rep
                 new_graph = birth_death_results[0]
                 new_strategies=birth_death_results[1]
@@ -463,7 +464,7 @@ class game():
 
             return new_graph, concentrations, self.plotting
 
-    def trial_with_plot(G, n, d, data_iteration, u, t, num_rep = 1, graph_type = 'random'):
+    def trial_with_plot(G, n, d, b, c, data_iteration, u, t, num_rep = 1, graph_type = 'random'):
         '''
         INPUTS:     G: networkx graph object with fitness and strategy attributes
                     u: rate of mutation for reproduction
@@ -505,7 +506,7 @@ class game():
                 # into the birth-death function
 
                 #adjust node strategies 
-                birth_death_results = rep.birth_death(G, strat_list, u, num_rep)
+                birth_death_results = rep.birth_death(G, strat_list, u, num_rep, b, c)
                 new_graph = birth_death_results[0]
                 new_strategy = birth_death_results[1]
                 old_strategy = birth_death_results[2]
@@ -613,7 +614,7 @@ def plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 
         else:
             pos = nx.spring_layout(graph)
 
-        trial_outcome = this_game.trial(pos, num_rep, noise, graph_type, each+1)
+        trial_outcome = this_game.trial(pos, num_rep, b, c, noise, graph_type, each+1)
         
 
         #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
@@ -753,7 +754,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
         print('\n')
         print("Running trial ", each)
         #print("Evaluating trial ", each)
-        graph=init.generate_graph(parameters, graph_type)
+        graph=init.generate_weighted(parameters, graph_type)
 
         if rho != None:
             # Remove lattice nodes until only rho percent remain
@@ -807,12 +808,14 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
     X=[tictoc for tictoc in range(t)]
 
     #Currently there are 148 possible colors
-    '''
+    
     remaining_colors = list(mcolors.CSS4_COLORS.keys())
     for color in light_colors:
         #print("Trying to remove ", color)
         remaining_colors.remove(color)
-    '''
+    remaining_colors.remove('yellowgreen')
+    remaining_colors.remove('violet')
+    
 
     Y_data = {}
     Yplus_data = {}
@@ -845,7 +848,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
             line_type = linestyles[clique]
             ##################################################################
 
-            #this_color=remaining_colors.pop()
+            this_color=remaining_colors.pop()
             plt.figure(1)
             plt.plot(X, Y_data[clique], color=this_color, marker='', linestyle = line_type, label='clique '+str(clique))
             #plt.plot(X, Yplus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
@@ -866,12 +869,12 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
         #show plot
         plt.show() 
-        pause(15)  
+        pause(1)  
 
     if saving:
         file_id = randint(10**5, 10**6 - 1)
         #print("Attempting to save plot ", data_iteration)+1
-        plt.savefig(graph_type + '_' + \
+        plt.savefig('PLOTCOOP' + '_' + graph_type + '_' + \
             update_name + '_' + \
             'u=' + str(u) + '_' + \
             'delta=' + str(delta) + '_' + \
@@ -881,12 +884,13 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
             'size_dumbell=' + str(parameters[0]) + '_' + \
             'num_dumbell=' + str(parameters[1]) + '_' + \
             'size_path=' + str(parameters[2]) + '_' + \
-            'prop_coop=' + str(clique_to_prop) + '_' + \
+            'prop_coop1=' + str(cliques_to_proportions[0]) + '_' + \
+            'prop_coop2=' + str(cliques_to_proportions[1]) + '_' + \
             str(number_trials) + 'trials' + '_' + \
             str(t) + 'timesteps' + '_' + \
             str(file_id) + '.png')
     
-
+    plt.gcf().clear()
     ########################################################
     #################### P L O T - D #######################
     ########################################################
@@ -900,12 +904,12 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
         Yavg.append(sum(L)/len(L)) 
     
     if plotting:
-        plt.figure(2)
+        #plt.figure(2)
         plt.plot(X, Yavg, color=this_color, marker='', linestyle = '-')
 
         #change axes ranges
         plt.xlim(0,t-1)
-        plt.ylim(-.05,.05)
+        plt.ylim(-.005,.005)
         #add title
         plt.title('Relationship between time and D(s) in '+str(number_trials)+ ' trials')
         #add x and y labels
@@ -914,14 +918,13 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
         #show plot
         plt.show()
-        pause(3)   
+        pause(1)   
         #print("Attempting to show plot -----------------")
         #pause(60)
-        plt.close()     
+        #plt.close()     
 
     if saving:
-        file_id = 0
-        #randint(10**5, 10**6 - 1)
+        file_id = randint(10**5, 10**6 - 1)
         #print("Attempting to save plot ", data_iteration)+1
         if graph_type=='with_indicator':
             plt.savefig(graph_type + '_' + \
@@ -937,14 +940,14 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
                 str(t) + 'timesteps' + '_' + \
                 'b_over_c=' + str(b) + '_' + str(file_id) + '.png')
         if graph_type=='dumbell_multiple':
-            plt.savefig(graph_type + '_' + \
+            plt.savefig('PLOTD' + '_' + graph_type + '_' + \
                 update_name + '_' + \
                 'u=' + str(u) + '_' + \
                 'noise=' + str(noise) + '_' + \
                 'size_dumbell=' + str(parameters[0]) + '_' + \
-                'num_dumbell=' + str(len(parameters[2])) + '_' + \
-                'size_left=' + str(parameters[2][0]) + '_' + \
-                'size_right=' + str(parameters[2][1]) + '_' + \
+                'num_dumbell=' + str(len(parameters[3])) + '_' + \
+                'size_left=' + str(parameters[3][0]) + '_' + \
+                'size_right=' + str(parameters[3][1]) + '_' + \
                 'prop_coop=' + str(start_prop_cooperators) + '_' + \
                 str(number_trials) + 'trials' + '_' + \
                 str(t) + 'timesteps' + '_' + \
@@ -1015,6 +1018,10 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
     ######### P L O T - D I F F E R E N C E ################
     ########################################################
     #scatter plot X axis! 
+
+    plt.gcf().clear()
+
+
     X=[tictoc for tictoc in range(t)]
     #three lines to plot: average, and pm stdev
     clique_list = list(Y_data.keys())
@@ -1024,7 +1031,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
         C = [A[i]-B[i] for i in range(len(A))]
     
         if plotting:
-            plt.figure(2)
+            #plt.figure(3)
             plt.plot(X, C, color=this_color, marker='', linestyle = '-')
 
             #change axes ranges
@@ -1038,14 +1045,13 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
             #show plot
             plt.show()
-            pause(3)   
+            pause(1)   
             #print("Attempting to show plot -----------------")
             #pause(60)
-            plt.close()     
+            #plt.close()     
 
         if saving:
-            file_id = 0
-            #randint(10**5, 10**6 - 1)
+            file_id = randint(10**5, 10**6 - 1)
             #print("Attempting to save plot ", data_iteration)+1
             if graph_type=='dumbell_multiple':
                 plt.savefig('Difference____' + graph_type + '_' + \
@@ -1412,7 +1418,7 @@ def plot_D(parameters, graph_type, u, b, c, delta, noise, t, number_trials, num_
         else:
             pos = nx.spring_layout(graph)
 
-        trial_outcome = this_game.trial(pos, num_rep, noise, graph_type, each+1)
+        trial_outcome = this_game.trial(pos, num_rep, b, c, noise, graph_type, each+1)
         
 
         #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
@@ -1588,7 +1594,7 @@ def plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_tr
         else:
             pos = nx.spring_layout(graph)
 
-        trial_outcome = this_game.trial(pos, num_rep, noise, graph_type, each+1)
+        trial_outcome = this_game.trial(pos, num_rep, b, c, noise, graph_type, each+1)
         
 
         #trial_outcome=this_game.trial(graph, u, t, nx.spring_layout(graph, 1/n**.2), \
@@ -1637,7 +1643,7 @@ def plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_tr
 
         #show plot
         plt.show()
-        pause(5)   
+        pause(1)   
         #print("Attempting to show plot -----------------")
         #pause(60)
     #plt.close()     
@@ -1760,7 +1766,7 @@ def plot_D_and_coops(parameters, graph_type, u, b, c, delta, noise, t, number_tr
 
         #show plot
         plt.show()
-        pause(5)   
+        pause(1)   
         #print("Attempting to show plot -----------------")
         #pause(60)
     #plt.close()     
@@ -1930,7 +1936,7 @@ noise   = 0
 b       = 2
 max_b   = 2
 c       = 1
-t       = 500
+t       = 10
 
 
 start_prop_cooperators  = 0.7
@@ -1959,7 +1965,7 @@ num_rep                 = 5
 '''-----------Multiple Dumbell, Multiple Proportions Variables----------------'''
 size_dumbell = 60
 num_dumbell  = 2
-size_path    = 10
+size_path    = 3
 
 #cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
 #cliques_to_proportions = {0 : 1, 1 : 1, 2:0.5, 3:0.5}
@@ -2043,7 +2049,7 @@ Test for trial_with_plot
 #     init.label_birth_death(G, strat_list, start_prop_cooperators)
 #     #rep.color_and_draw_graph(G)
 
-#     game.trial_with_plot(G, n, d, data_iteration, u, time_length, graph_type, \
+#     game.trial_with_plot(G, n, d, b, c, data_iteration, u, time_length, graph_type, \
 #         update_name= 'BD', plotting = True, show_graph = False, saving = False)
 
 '''------------------------
@@ -2069,8 +2075,28 @@ for start_prop_cooperators in prop_increments:
 MULTIPLE DUMBELLS AND MULTIPLE PROPORTIONS
 ---------------------------------------'''
 
-#plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, None, \
-#    'BD', plotting=True, show_graph=True, saving=False, color_fitness=True)
+size_dumbell = 30
+num_dumbell  = 2
+size_path    = 4
+
+cliques_to_proportions = {0 : .9, 1 : .1, 2:1, 3:1, 4:1}
+#cliques_to_proportions = {0 : 1, 1 : 1, 2:0.5, 3:0.5}
+
+# 2:0, 3:0.1, 4:1, 5:.5}
+#6:.4, 7:.5, 8:.2, 9:.6}
+#list of parameters that will be used to build graph
+parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
+
+global frames
+frames = []
+
+fig = plt.figure()
+
+plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, 'blue', \
+    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = True, color_fitness=False)
+
+im_ani = animation.ArtistAnimation(fig, frames, interval=50, repeat_delay=3000, blit=True)
+im_ani.save('im.mp4', writer=writer)
 
 
 #plot_trial_until_stable(parameters, graph_type, u, t, 'Cooperate', num_rep, \
@@ -2137,12 +2163,12 @@ for i in range(10):
 #plt.gcf().clear()
 
 ######## T E S T - I S L A N D - M O D E L #########
-graph_type='rich_club'
+#graph_type='rich_club'
 
 
 
 ######## T E S T - I S L A N D - M O D E L #########
-graph_type='with_indicator'
+#graph_type='with_indicator'
 
 '''-----------------------------------
     Island model test, 4 islands 

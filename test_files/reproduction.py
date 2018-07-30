@@ -19,7 +19,7 @@ REPRODUCTION
 make all of the reproduction process based on the fitness, weight and mutation parameters.
 --------'''
 
-def birth_death(G, strat_list, u, num_rep):
+def birth_death(G, strat_list, u, num_rep, b, c):
     '''
     print('REPRODUCTION')
     print('---------')
@@ -100,9 +100,18 @@ def birth_death(G, strat_list, u, num_rep):
         else:
             G.node[j]['s'] = 0
 
+    for i in G.nodes():
+        G.node[i]['f0'] = -c*G.node[i]['s']
+        for j in G.neighbors(i):
+            G.node[i]['f0'] += b*init.prob_n_step_walk(G,i,j,1)*G.node[j]['s']
+
+        G.node[i]['f2'] = -c*G.node[i]['s']
+        for j in G.neighbors(i):
+            G.node[i]['f2'] += b*init.prob_n_step_walk(G,i,j,2)*G.node[j]['s']
+
     return [G, reproduced_strategies, old_strategies, reproduced_nodes]
 
-def death_birth(G, strat_list, u, num_rep):
+def death_birth(G, strat_list, u, num_rep, b, c):
     #CHOOSE num_rep REPLACED NODES 
     replaced_nodes = random.sample(list(G.nodes()),num_rep)
     old_strategies = []
@@ -149,6 +158,15 @@ def death_birth(G, strat_list, u, num_rep):
                 G.node[i]['s'] = 1
             else:
                 G.node[i]['s'] = 0
+
+    for i in G.nodes():
+        G.node[i]['f0'] = -c*G.node[i]['s']
+        for j in G.neighbors(i):
+            G.node[i]['f0'] += b*init.prob_n_step_walk(G,i,j,1)*G.node[j]['s']
+
+        G.node[i]['f2'] = -c*G.node[i]['s']
+        for j in G.neighbors(i):
+            G.node[i]['f2'] += b*init.prob_n_step_walk(G,i,j,2)*G.node[j]['s']  
 
     return [G, reproduced_strategies, old_strategies, reproduced_nodes]
 

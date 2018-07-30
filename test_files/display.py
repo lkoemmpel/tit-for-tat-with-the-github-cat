@@ -184,6 +184,91 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None, num_of_trial=No
 
     plt.gcf().clear()
 
+def color_fitness_and_draw_graph_gif(G, pos, reproducing_nodes=None, num_of_trial=None, timestep=None):
+    '''
+    INPUTS:     Graph with strategy node attributes
+    OUTPUTS:    Graph where color maps has colors according to 
+                node strategy attributes
+    '''
+    # initializes color map
+    node_labels = nx.get_node_attributes(G,'fitness')
+
+    coop_labels = {}
+    defect_labels = {}
+
+    for i in node_labels:
+        node_labels[i] = round(node_labels[i], 3)
+        if G.node[i]['strategy'] == 'Cooperate':
+            coop_labels[i] = node_labels[i]
+        else:
+            defect_labels[i] = node_labels[i]
+
+
+    cmap_type = plt.cm.GnBu
+    cmap_type_defectors = plt.cm.OrRd
+    vmin_val = 0
+    vmax_val = 1
+
+    plt.gcf().clear()
+
+    if reproducing_nodes != None:
+        rep_coop_node_labels = {}
+        rep_defect_node_labels = {}
+        for j in reproducing_nodes:
+            if G.node[j]['strategy'] == 'Cooperate':
+                rep_coop_node_labels[j] = round(G.node[j]['fitness'], 3)
+            else:
+                rep_defect_node_labels[j] = round(G.node[j]['fitness'], 3)
+
+        #Display cooperating nodes that have just reproduced
+        nx.draw_networkx_nodes(G, pos, nodelist=rep_coop_node_labels.keys(), node_color='lime', node_size=400, \
+            node_shape='o', vmin=vmin_val, vmax=vmax_val)
+
+        #Display defecting nodes that have just reproduced
+        nx.draw_networkx_nodes(G, pos, nodelist=rep_defect_node_labels.keys(), node_color='lime', node_size=400, \
+            node_shape='o', vmin=vmin_val, vmax=vmax_val)
+
+
+
+    #Display all types of nodes at once
+    #nx.draw_networkx_nodes(G, pos, nodelist=G.nodes, node_color=[fitness for fitness in nx.get_node_attributes(G,'fitness')], node_shape='^', cmap=plt.cm.Blues)
+
+    #Display cooperator nodes
+    nx.draw_networkx_nodes(G, pos, nodelist=coop_labels.keys(), node_color=[fitness for fitness in coop_labels.values()], \
+        node_shape='o', vmin=vmin_val, vmax=vmax_val, cmap=cmap_type)
+
+    #Display defector nodes
+    nx.draw_networkx_nodes(G, pos, nodelist=defect_labels.keys(), node_color=[fitness for fitness in defect_labels.values()], \
+        node_shape='o', vmin=vmin_val, vmax=vmax_val, cmap=cmap_type_defectors)
+
+    #Display edges
+    nx.draw_networkx_edges(G, pos)
+
+    #Display node labels
+    nx.draw_networkx_labels(G, pos, labels=None, font_size=12, font_color='darkgreen', font_family='sans-serif', font_weight='normal')
+
+    plt.title('Cooperators-> Blue     Defectors -> Red \n Number of trial: '+str(num_of_trial)+ '   Timestep: '+str(timestep))
+    plt.axis('off')
+    fig = pylab.draw()
+
+    sm = plt.cm.ScalarMappable(cmap=cmap_type, norm=plt.Normalize(vmin=vmin_val, vmax=vmax_val))
+    sm._A = []
+    plt.colorbar(sm)
+
+
+    sm2 = plt.cm.ScalarMappable(cmap=cmap_type_defectors, norm=plt.Normalize(vmin=vmin_val, vmax=vmax_val))
+    sm2._A = []
+    plt.colorbar(sm2)
+
+
+    plt.show()
+    pause(.001)
+
+    print("Returning figure ", fig)
+
+    return fig
+    
+
 def heat_map_utkovski(G, pos, helpers, num_of_trial=None, timestep=None):
     '''
     INPUTS:     Graph with strategy node attributes
