@@ -124,8 +124,8 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None, num_of_trial=No
 
     cmap_type = plt.cm.GnBu
     cmap_type_defectors = plt.cm.OrRd
-    vmin_val = 0
-    vmax_val = 1
+    vmin_val = -2
+    vmax_val = 2
 
 
     if reproducing_nodes != None:
