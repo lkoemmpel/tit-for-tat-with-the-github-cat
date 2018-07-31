@@ -11,6 +11,7 @@ import pylab
 
 from matplotlib import colors as mcolors
 from matplotlib.animation import FuncAnimation
+import matplotlib.animation as animation
 
 '''-------------------
         IMPORTS
@@ -20,7 +21,10 @@ import reproduction as rep
 import interaction as inter
 import display as dis
 
+import matplotlib
 from matplotlib.pyplot import pause
+
+#matplotlib.use("Agg")
 
 light_colors = ['whitesmoke','bisque','floralwhite','lightgoldenrodyellow','aliceblue','ghostwhite',\
                 'ivory','lemonchiffon','seashell','lightgray','lightgrey','white','beige','honeydew',\
@@ -224,10 +228,15 @@ class game():
         u=self.u
         t=self.t
 
+        # Set up formatting for the movie files
+        #Writer = animation.writers['ffmpeg']
+        #writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+
         if type(self.name)==str:
 
             if self.show_graph:
-                frames.append(dis.color_fitness_and_draw_graph_gif(graph, pos, None, num_of_trial, 0))
+                dis.color_fitness_and_draw_graph(graph, pos, None, num_of_trial, 0)
+                #frames.append(dis.color_fitness_and_draw_graph_gif(graph, pos, None, num_of_trial, 0))
                 #print(nx.get_node_attributes(G, 'strategy'))
                 #print("-----------------------------------------------")
             
@@ -2097,8 +2106,8 @@ fig = plt.figure()
 plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, 'blue', \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = True, color_fitness=False)
 
-im_ani = animation.ArtistAnimation(fig, frames, interval=50, repeat_delay=3000, blit=True)
-im_ani.save('im.mp4', writer=writer)
+#im_ani = animation.ArtistAnimation(fig, frames, interval=50, repeat_delay=3000, blit=True)
+#im_ani.save('im.mp4', writer=writer)
 
 
 #plot_trial_until_stable(parameters, graph_type, u, t, 'Cooperate', num_rep, \
@@ -2261,7 +2270,7 @@ graph_type='rich_club'
 #parameters=[5, 30, 1, 1, 0]
 plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)  
-
+'''
 
 '''
 graph_type='rich_club'
@@ -2272,10 +2281,6 @@ parameters=[10, 100, 1, 0.9, 0.5, 0.3, clique_to_prop]
 plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, 'darkcyan', \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = True, color_fitness=False)
 '''
-<<<<<<< HEAD
-
-=======
->>>>>>> ed265938e2d505bea0aec785d33edf38b194b7e4
 
 
 
