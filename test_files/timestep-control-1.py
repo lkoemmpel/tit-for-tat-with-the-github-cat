@@ -860,6 +860,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
             this_color=remaining_colors.pop()
             plt.figure(1)
             plt.plot(X, Y_data[clique], color=this_color, marker='', linestyle = line_type, label='clique '+str(clique))
+            #plt.plot(X, Y_data[clique], color=this_color, marker='', linestyle = line_type, label='clique '+str(clique))
             #plt.plot(X, Yplus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
             #plt.plot(X, Yminus_data[clique], color=this_color, marker='', linestyle = ':', label='clique '+str(clique))
 
@@ -927,7 +928,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
         #show plot
         plt.show()
-        pause(1)   
+        pause(10)   
         #print("Attempting to show plot -----------------")
         #pause(60)
         #plt.close()     
@@ -1028,7 +1029,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
     ########################################################
     #scatter plot X axis! 
 
-    plt.gcf().clear()
+    #plt.gcf().clear()
 
 
     X=[tictoc for tictoc in range(t)]
@@ -1054,7 +1055,7 @@ def plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, no
 
             #show plot
             plt.show()
-            pause(1)   
+            pause(10)   
             #print("Attempting to show plot -----------------")
             #pause(60)
             #plt.close()     
@@ -1940,18 +1941,18 @@ update_name = 'BD'
 
 
 u       = 0.00005
-delta   = 0.0002
+delta   = 0.002
 noise   = 0.00005
 b       = 2
 max_b   = 2
 c       = 1
 
-t       = 10
+t       = 100
 
 
 
 start_prop_cooperators  = 0.7
-number_trials           = 1
+number_trials           = 3
 num_rep                 = 5
 
 
@@ -2088,23 +2089,33 @@ MULTIPLE DUMBELLS AND MULTIPLE PROPORTIONS
 
 size_dumbell = 30
 num_dumbell  = 2
-size_path    = 4
+size_path    = 1
+cliques_to_proportions = {0 : .9, 1 : .3}
 
-cliques_to_proportions = {0 : .9, 1 : .1, 2:1, 3:1, 4:1}
+#cliques_to_proportions = {0 : .9, 1 : .1, 2:1, 3:1, 4:1}
 #cliques_to_proportions = {0 : 1, 1 : 1, 2:0.5, 3:0.5}
 
 # 2:0, 3:0.1, 4:1, 5:.5}
 #6:.4, 7:.5, 8:.2, 9:.6}
 #list of parameters that will be used to build graph
-parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
 
+
+
+
+
+'''
+parameters = [size_dumbell, num_dumbell, size_path, cliques_to_proportions]
 global frames
 frames = []
-
 fig = plt.figure()
-
 plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, 'blue', \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = True, color_fitness=False)
+'''
+
+
+
+
+
 
 #im_ani = animation.ArtistAnimation(fig, frames, interval=50, repeat_delay=3000, blit=True)
 #im_ani.save('im.mp4', writer=writer)
@@ -2174,7 +2185,6 @@ for i in range(10):
 #plt.gcf().clear()
 
 ######## T E S T - I S L A N D - M O D E L #########
-#graph_type='rich_club'
 
 
 
@@ -2271,16 +2281,22 @@ graph_type='rich_club'
 plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)  
 '''
+'''-----
+RICH CLUB
+-----'''
+#start new plot
 
-'''
+#plt.gcf().clear()
+
 graph_type='rich_club'
-clique_to_prop={0:0.1,1:0.8,2:0.1,3:0.1}
-parameters=[10, 100, 1, 0.9, 0.5, 0.3, clique_to_prop]
+clique_to_prop = {0:0.2, 1:0.7}
+#clique_to_prop={0:0.1,1:0.8,2:0.1,3:0.1}
+parameters=[10, 80, 1, 0.9, 0.5, 0.3, clique_to_prop]
 #plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
 #    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)  
 plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise, t, number_trials, 'Cooperate', num_rep, 'darkcyan', \
     rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = True, color_fitness=False)
-'''
+
 
 
 

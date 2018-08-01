@@ -159,10 +159,14 @@ def generate_weighted(parameters, type = 'random'):
     elif type == 'rich_club':
       size_club = parameters[0]
       size_periphery = parameters[1]
-      prob_rp = parameters[2]
-      prob_rr = parameters[3]
-      prob_pp = parameters[4]
-      graph=generate_rich_club(size_club, size_periphery, prob_rp, prob_rr, prob_pp)
+      #prob_rp = parameters[2]
+      #prob_rr = parameters[3]
+      #prob_pp = parameters[4]
+      num_peripheries=parameters[2]
+      a = parameters[3]
+      b = parameters[4]
+      c = parameters[5]
+      graph=generate_rich_club_adapted_version(size_club, size_periphery, num_peripheries, a, b, c)
 
     elif type == 'dumbell_multiple_sized':
       size_list=parameters[0]
@@ -680,16 +684,55 @@ def label_dumbell_multiple_cliques(G, strat_list, clique_to_prop):
   G                   A multiple dumbell graph
   clique_to_prop      dictionary maps clique_index---->prop of cooperators    
   '''
+  sizes={}
+  num_cliques=0
   for n in G.nodes():
     #if this is a clique node
     if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
       clique_num = G.node[n]['coord'][0][0]
+      num_cliques = max(num_cliques, clique_num)
+      try:
+        sizes[clique_num] += 1
+      except:
+        sizes[clique_num] = 1
+  
+  sets={clique_num:set() for clique_num in range(num_cliques+1)}
+  for n in G.nodes():
+    #if this is a clique node
+    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
+      clique_num = G.node[n]['coord'][0][0]
+      sets[clique_num].add(n)
+  chosen = {}
+  for index in sizes.keys():
+    prop = clique_to_prop[index]
+    num_coop = round(prop*sizes[index])
+    chosen[index] = random.sample(sets[index], num_coop)
+
+  for n in G.nodes():
+    #if this is a clique node
+    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
+      clique_num = G.node[n]['coord'][0][0]
+      if n in chosen[clique_num]:
+        G.node[n]['strategy'] = 'Cooperate'
+        G.node[n]['s'] = 1
+      else:
+        G.node[n]['strategy'] = 'Defect'
+        G.node[n]['s'] = 0
+    else:
+      G.node[n]['strategy'] = random.choice(strat_list)
+      if G.node[n]['strategy'] == 'Defect':
+        G.node[n]['s'] = 0
+      elif G.node[n]['strategy'] == 'Cooperate':
+        G.node[n]['s'] = 1
+
+    '''
       if random.uniform(0,1)<clique_to_prop[clique_num]:
         G.node[n]['strategy'] = 'Cooperate'
       else:
         G.node[n]['strategy'] = 'Defect'
     else:
       G.node[n]['strategy'] = random.choice(strat_list)
+    '''
     G.node[n]['fitness'] = random.uniform(0,1)
     G.node[n]['payoffs'] = []
 
@@ -698,22 +741,49 @@ def label_dumbell_multiple_cliques_allen(G, b, c, strat_list, clique_to_prop):
   G                   A multiple dumbell graph
   clique_to_prop      dictionary maps clique_index---->prop of cooperators    
   '''
+  sizes={}
+  num_cliques=0
   for n in G.nodes():
     #if this is a clique node
     if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
       clique_num = G.node[n]['coord'][0][0]
-      if random.uniform(0,1)<clique_to_prop[clique_num]:
+      num_cliques = max(num_cliques, clique_num)
+      try:
+        sizes[clique_num] += 1
+      except:
+        sizes[clique_num] = 1
+  
+  sets={clique_num:set() for clique_num in range(num_cliques+1)}
+  for n in G.nodes():
+    #if this is a clique node
+    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
+      clique_num = G.node[n]['coord'][0][0]
+      sets[clique_num].add(n)
+
+  chosen = {}
+  for index in sizes.keys():
+    prop = clique_to_prop[index]
+    num_coop = round(prop*sizes[index])
+    chosen[index] = random.sample(sets[index], num_coop)
+
+  for n in G.nodes():
+    #if this is a clique node
+    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
+      clique_num = G.node[n]['coord'][0][0]
+      if n in chosen[clique_num]:
         G.node[n]['strategy'] = 'Cooperate'
-        G.node[n]['s']=1
+        G.node[n]['s'] = 1
       else:
         G.node[n]['strategy'] = 'Defect'
-        G.node[n]['s']=0
+        G.node[n]['s'] = 0
     else:
       G.node[n]['strategy'] = random.choice(strat_list)
-      if G.node[n]['strategy']== 'Cooperate':
-        G.node[n]['s']=1
-      elif G.node[n]['strategy']== 'Defect':
-        G.node[n]['s']=0
+      if G.node[n]['strategy'] == 'Defect':
+        G.node[n]['s'] = 0
+      elif G.node[n]['strategy'] == 'Cooperate':
+        G.node[n]['s'] = 1
+
+
   #SET f_i VALUES
   for i in G.nodes():
 
