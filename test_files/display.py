@@ -28,15 +28,15 @@ cmaps = OrderedDict()
 
 viridis = cmaps['Perceptually Uniform Sequential'][0]
 
-nx.draw(G, node_color=[ viridis[G.node[n]['fitness'] ] for n in G.nodes()], node_shape='^', with_labels=True, hold=True)
+nx.draw(G, node_color=[ viridis[G.nodes[n]['fitness'] ] for n in G.nodes()], node_shape='^', with_labels=True, hold=True)
 '''
 
 
 '''
 val_map = {}
 for n in nx.nodes(G):
-    val_map[n] = G.node[n]['fitness']
-    print("Fitness of node ", n, " is ", G.node[n]['fitness'])
+    val_map[n] = G.nodes[n]['fitness']
+    print("Fitness of node ", n, " is ", G.nodes[n]['fitness'])
 
 values = [val_map.get(node, 0.25) for node in G.nodes()]
 
@@ -87,7 +87,7 @@ def color_and_draw_graph(G):
     # initializes color map
     color_map = []
     for n in nx.nodes(G):
-        if G.node[n]['strategy'] == 'Cooperate':
+        if G.nodes[n]['strategy'] == 'Cooperate':
             color_map.append('green')
         else:
             color_map.append('red')
@@ -116,7 +116,7 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None, num_of_trial=No
 
     for i in node_labels:
         node_labels[i] = round(node_labels[i], 3)
-        if G.node[i]['strategy'] == 'Cooperate':
+        if G.nodes[i]['strategy'] == 'Cooperate':
             coop_labels[i] = node_labels[i]
         else:
             defect_labels[i] = node_labels[i]
@@ -132,10 +132,10 @@ def color_fitness_and_draw_graph(G, pos, reproducing_nodes=None, num_of_trial=No
         rep_coop_node_labels = {}
         rep_defect_node_labels = {}
         for j in reproducing_nodes:
-            if G.node[j]['strategy'] == 'Cooperate':
-                rep_coop_node_labels[j] = round(G.node[j]['fitness'], 3)
+            if G.nodes[j]['strategy'] == 'Cooperate':
+                rep_coop_node_labels[j] = round(G.nodes[j]['fitness'], 3)
             else:
-                rep_defect_node_labels[j] = round(G.node[j]['fitness'], 3)
+                rep_defect_node_labels[j] = round(G.nodes[j]['fitness'], 3)
 
         #Display cooperating nodes that have just reproduced
         nx.draw_networkx_nodes(G, pos, nodelist=rep_coop_node_labels.keys(), node_color='lime', node_size=400, \
@@ -198,7 +198,7 @@ def color_fitness_and_draw_graph_gif(G, pos, reproducing_nodes=None, num_of_tria
 
     for i in node_labels:
         node_labels[i] = round(node_labels[i], 3)
-        if G.node[i]['strategy'] == 'Cooperate':
+        if G.nodes[i]['strategy'] == 'Cooperate':
             coop_labels[i] = node_labels[i]
         else:
             defect_labels[i] = node_labels[i]
@@ -215,10 +215,10 @@ def color_fitness_and_draw_graph_gif(G, pos, reproducing_nodes=None, num_of_tria
         rep_coop_node_labels = {}
         rep_defect_node_labels = {}
         for j in reproducing_nodes:
-            if G.node[j]['strategy'] == 'Cooperate':
-                rep_coop_node_labels[j] = round(G.node[j]['fitness'], 3)
+            if G.nodes[j]['strategy'] == 'Cooperate':
+                rep_coop_node_labels[j] = round(G.nodes[j]['fitness'], 3)
             else:
-                rep_defect_node_labels[j] = round(G.node[j]['fitness'], 3)
+                rep_defect_node_labels[j] = round(G.nodes[j]['fitness'], 3)
 
         #Display cooperating nodes that have just reproduced
         nx.draw_networkx_nodes(G, pos, nodelist=rep_coop_node_labels.keys(), node_color='lime', node_size=400, \
@@ -284,7 +284,7 @@ def heat_map_utkovski(G, pos, helpers, num_of_trial=None, timestep=None):
 
     for i in node_labels:
         node_labels[i] = round(node_labels[i], 3)
-        #if G.node[i]['strategy'] == 'Cooperate':
+        #if G.nodes[i]['strategy'] == 'Cooperate':
         #    coop_labels[i] = node_labels[i]
         #else:
         #    defect_labels[i] = node_labels[i]
@@ -299,7 +299,7 @@ def heat_map_utkovski(G, pos, helpers, num_of_trial=None, timestep=None):
     if helpers != None:
         helper_node_labels = {}
         for j in helpers:
-            helper_node_labels[j] = round(G.node[j]['coop_state'], 3)
+            helper_node_labels[j] = round(G.nodes[j]['coop_state'], 3)
             
         #Display helping nodes in a round
         nx.draw_networkx_nodes(G, pos, nodelist=helper_node_labels.keys(), node_color='lime', node_size=400, \
@@ -362,8 +362,8 @@ def heat_map_utkovski(G, pos, helpers, num_of_trial=None, timestep=None):
 '''
     val_map = {}
     for n in nx.nodes(G):
-        val_map[n] = G.node[n]['fitness']
-        #if G.node[n]['strategy'] == 'Cooperate':
+        val_map[n] = G.nodes[n]['fitness']
+        #if G.nodes[n]['strategy'] == 'Cooperate':
         #    shapes[n] = 'o'
         #else:
         #    shapes[n] = '^'

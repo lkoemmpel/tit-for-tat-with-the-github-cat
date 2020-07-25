@@ -63,17 +63,17 @@ def get_props_cliques (G):
     '''
     num_cliques=0
     for n in G.nodes():
-        if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
-            num_cliques = max(G.node[n]['coord'][0][0]+1, num_cliques)
+        if G.nodes[n]['coord'][0][0] == G.nodes[n]['coord'][0][1]:
+            num_cliques = max(G.nodes[n]['coord'][0][0]+1, num_cliques)
     #print(num_cliques)
     counts = [ 0 for k in range(num_cliques) ]
     sizes = [ 0 for k in range(num_cliques) ]
 
     for n in G.nodes():
-        if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
-            k = G.node[n]['coord'][0][0]
+        if G.nodes[n]['coord'][0][0] == G.nodes[n]['coord'][0][1]:
+            k = G.nodes[n]['coord'][0][0]
             sizes[k]+=1
-            if G.node[n]['strategy'] == 'Cooperate':
+            if G.nodes[n]['strategy'] == 'Cooperate':
                 counts[k]+=1
 
     #MAKE A LIST:       props[k]=proportion at clique k
@@ -83,7 +83,7 @@ def get_props_cliques (G):
 def info(G):
     fits={}
     for n in G.nodes():
-        fits[n]=G.node[n]['fitness']
+        fits[n]=G.nodes[n]['fitness']
     return fits
 
 
@@ -503,7 +503,7 @@ class game():
 
                 # if a strategy is found in the graph, adjust its tally
                 for n in nx.nodes(G):
-                    strat_data_dict[G.node[n]['strategy']] += 1
+                    strat_data_dict[G.nodes[n]['strategy']] += 1
                 # final_data maps       strategy ---> freq(strat)/number(nodes)
                 for strat in strat_data_dict:
                     final_data[strat].append(strat_data_dict[strat]/nx.number_of_nodes(G))
@@ -1897,13 +1897,13 @@ def reproductive_value(graph, i):
         W_sum += graph[i][j]['weight']
     return w_i/W_sum
 def s_indicator(graph, i):
-    if graph.node[i]['strategy'] == 'Cooperate':
+    if graph.nodes[i]['strategy'] == 'Cooperate':
         s_i = 1
     else:
         s_i = 0
     return s_i
 def edge_weighted_payoff(graph, i, n):
-    s_i = graph.node[i]['s']
+    s_i = graph.nodes[i]['s']
     expectation = 0
     for j in graph.neighbors(i):
         print("Node i is ", i)
@@ -1916,12 +1916,12 @@ def edge_weighted_payoff(graph, i, n):
 def D(graph, delta, b, c):
     d_sum = 0
     for i in graph.nodes():
-        f_0i = graph.node[i]['f0']
+        f_0i = graph.nodes[i]['f0']
         '''
         print("f_0i code worked")
         '''
-        f_2i = graph.node[i]['f2']
-        d_sum += graph.node[i]['pi'] * graph.node[i]['s'] * (f_0i - f_2i)
+        f_2i = graph.nodes[i]['f2']
+        d_sum += graph.nodes[i]['pi'] * graph.nodes[i]['s'] * (f_0i - f_2i)
     return delta * d_sum
 
 
@@ -1936,7 +1936,7 @@ def D(graph, delta, b, c):
 
 '''--------------VARIABLES ALWAYS USED ----------------'''
 strat_list  = ['Cooperate', 'Defect']
-graph_type  = 'dumbell_multiple'
+graph_type  = 'dumbell'
 update_name = 'BD'
 
 
@@ -1976,7 +1976,7 @@ num_rep                 = 5
 
 '''-----------Multiple Dumbell, Multiple Proportions Variables----------------'''
 size_dumbell = 60
-num_dumbell  = 2
+num_dumbell  = 10
 size_path    = 3
 
 #cliques_to_proportions = {0 : 1, 1 : 1, 2:1, 3:1, 4:1}
@@ -1995,7 +1995,7 @@ size_path    = 3
 #parameters = [side_1, side_2]
 
 '''-----------Rich Club Variables----------------'''
-size_club       = 10
+size_club       = 20
 size_periphery  = 20
 prob_rp         = .2
 prob_rr         = .2
@@ -2087,10 +2087,10 @@ for start_prop_cooperators in prop_increments:
 MULTIPLE DUMBELLS AND MULTIPLE PROPORTIONS
 ---------------------------------------'''
 
-size_dumbell = 30
+size_dumbell = 50
 num_dumbell  = 2
-size_path    = 1
-cliques_to_proportions = {0 : .9, 1 : .3}
+size_path    = 3
+cliques_to_proportions = {0 : .8, 1 : .2}
 
 #cliques_to_proportions = {0 : .9, 1 : .1, 2:1, 3:1, 4:1}
 #cliques_to_proportions = {0 : 1, 1 : 1, 2:0.5, 3:0.5}
@@ -2125,14 +2125,20 @@ plot_multiple_dumbell_each_clique(parameters, graph_type, u, b, c, delta, noise,
 #    update_name = 'BD', plotting = True, show_graph = True, saving = False, color_fitness=False)
 '''
 graph=init.generate_graph([[5,7,9],2], 'dumbell_multiple_sized')
+
+init.generate_graph([20],'dumbell')
+
 init.label_dumbell_multiple_cliques_precise(graph, strat_list, {0:0.2, 1:0.9, 2:0.9})
 dis.color_and_draw_graph(graph)
 dis.color_fitness_and_draw_graph(graph, nx.spring_layout(graph))
+
 print(get_props_cliques(graph))
 '''
 
-#graph = plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
-#    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=True)[1]
+graph = plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
+    rho = None, update_name = 'BD', plotting = True, show_graph = True, saving = False, color_fitness=True)[1]
+
+
 
 '''------------------------
 UTKOVSKI TRIALS
@@ -2171,10 +2177,9 @@ remaining_colors.remove('yellowgreen')
 remaining_colors.remove('violet')
 
 
-
 '''
 for i in range(10):
-    this_color = color_list.pop()
+    this_color = light_colors.pop()
     if i == 10:
         save_boolean = True
     else:
@@ -2289,8 +2294,8 @@ RICH CLUB
 #plt.gcf().clear()
 
 graph_type='rich_club'
-clique_to_prop = {0:0.2, 1:0.7}
-#clique_to_prop={0:0.1,1:0.8,2:0.1,3:0.1}
+#clique_to_prop = {0:0.2, 1:0.7}
+clique_to_prop={0:0.1,1:0.8,2:0.1,3:0.1}
 parameters=[10, 80, 1, 0.9, 0.5, 0.3, clique_to_prop]
 #plot_many_trials(parameters, graph_type, u, delta, noise, t, number_trials, 'Cooperate', num_rep, \
 #    rho = None, update_name = 'BD', plotting = True, show_graph = False, saving = False, color_fitness=False)  

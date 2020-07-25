@@ -56,12 +56,12 @@ def birth_death(G, strat_list, u, num_rep, b, c):
     print(reproduced_nodes)
     '''
     for i in reproduced_nodes:
-        reproduced_strategy=G.node[i]['strategy']
+        reproduced_strategy=G.nodes[i]['strategy']
         #set reproduced strategy
         j = random.choice(list(G.adj[i].keys()))
-        old_strategy = G.node[j]['strategy']
+        old_strategy = G.nodes[j]['strategy']
 
-        difference=G.node[i]['fitness']-G.node[j]['fitness']
+        difference=G.nodes[i]['fitness']-G.nodes[j]['fitness']
         if random.random()<=q(difference, .1, 6):
             '''
             print(str(i) + ' replaced '+ str(j))
@@ -79,12 +79,12 @@ def birth_death(G, strat_list, u, num_rep, b, c):
                 else:
                     inheritance[j] = np.random.choice(mutation_list)
                     reproduced_strategy = inheritance[j]
-                #print("Node ", j, " now has strategy ", G.node[j]['strategy'])        
+                #print("Node ", j, " now has strategy ", G.nodes[j]['strategy'])        
             else:
                 # there is not a mutation
                 inheritance[j] = reproduced_strategy
             # Node j has now just been born, so we set its fitness to 0
-            G.node[j]['fitness'] = random.uniform(0,1)
+            G.nodes[j]['fitness'] = random.uniform(0,1)
             reproduced_strategies.append(reproduced_strategy)
             old_strategies.append(old_strategy)
     #do all the replacements according to inheritance
@@ -94,20 +94,20 @@ def birth_death(G, strat_list, u, num_rep, b, c):
     print(inheritance)
     '''
     for j in inheritance.keys():
-        G.node[j]['strategy'] = inheritance[j]
+        G.nodes[j]['strategy'] = inheritance[j]
         if inheritance[j] == 'Cooperate':
-            G.node[j]['s'] = 1
+            G.nodes[j]['s'] = 1
         else:
-            G.node[j]['s'] = 0
+            G.nodes[j]['s'] = 0
 
     for i in G.nodes():
-        G.node[i]['f0'] = -c*G.node[i]['s']
+        G.nodes[i]['f0'] = -c*G.nodes[i]['s']
         for j in G.neighbors(i):
-            G.node[i]['f0'] += b*init.prob_n_step_walk(G,i,j,1)*G.node[j]['s']
+            G.nodes[i]['f0'] += b*init.prob_n_step_walk(G,i,j,1)*G.nodes[j]['s']
 
-        G.node[i]['f2'] = -c*G.node[i]['s']
+        G.nodes[i]['f2'] = -c*G.nodes[i]['s']
         for j in G.neighbors(i):
-            G.node[i]['f2'] += b*init.prob_n_step_walk(G,i,j,2)*G.node[j]['s']
+            G.nodes[i]['f2'] += b*init.prob_n_step_walk(G,i,j,2)*G.nodes[j]['s']
 
     return [G, reproduced_strategies, old_strategies, reproduced_nodes]
 
@@ -116,7 +116,7 @@ def death_birth(G, strat_list, u, num_rep, b, c):
     replaced_nodes = random.sample(list(G.nodes()),num_rep)
     old_strategies = []
     for replaced in replaced_nodes:
-        old_strategies.append(G.node[replaced]['strategy'])  
+        old_strategies.append(G.nodes[replaced]['strategy'])  
     
     #get fitnesses
     fits=nx.get_node_attributes(G, 'fitness')
@@ -149,24 +149,24 @@ def death_birth(G, strat_list, u, num_rep, b, c):
                         #there was a mutation
                         reproduced_strategies.append(random.choice(strat_list))
                     else:
-                        reproduced_strategies.append(G.node[n]['strategy'])
+                        reproduced_strategies.append(G.nodes[n]['strategy'])
                 break
         for index in len(replaced_nodes):
             i = replaced_nodes[index]
-            G.node[i]['strategy'] = reproduced_strategies[index]
-            if G.node[i]['strategy'] == 'Cooperate':
-                G.node[i]['s'] = 1
+            G.nodes[i]['strategy'] = reproduced_strategies[index]
+            if G.nodes[i]['strategy'] == 'Cooperate':
+                G.nodes[i]['s'] = 1
             else:
-                G.node[i]['s'] = 0
+                G.nodes[i]['s'] = 0
 
     for i in G.nodes():
-        G.node[i]['f0'] = -c*G.node[i]['s']
+        G.nodes[i]['f0'] = -c*G.nodes[i]['s']
         for j in G.neighbors(i):
-            G.node[i]['f0'] += b*init.prob_n_step_walk(G,i,j,1)*G.node[j]['s']
+            G.nodes[i]['f0'] += b*init.prob_n_step_walk(G,i,j,1)*G.nodes[j]['s']
 
-        G.node[i]['f2'] = -c*G.node[i]['s']
+        G.nodes[i]['f2'] = -c*G.nodes[i]['s']
         for j in G.neighbors(i):
-            G.node[i]['f2'] += b*init.prob_n_step_walk(G,i,j,2)*G.node[j]['s']  
+            G.nodes[i]['f2'] += b*init.prob_n_step_walk(G,i,j,2)*G.nodes[j]['s']  
 
     return [G, reproduced_strategies, old_strategies, reproduced_nodes]
 
@@ -174,8 +174,8 @@ def pairwise_comparison(G, strat_list, u, num_rep):
     #Sample for reproductors
     replaced_nodes=random.sample(nx.nodes(G), num_rep)
     #replaced=random.choice(nx.nodes(G))
-    old_strategies=[G.node[replaced]['strategy'] for replaced in replaced_nodes]
-    #old_strategy=G.node[replaced]['strategy']
+    old_strategies=[G.nodes[replaced]['strategy'] for replaced in replaced_nodes]
+    #old_strategy=G.nodes[replaced]['strategy']
     reproduced_nodes=[]
 
     #competition with e_ij between neighbors
@@ -199,18 +199,18 @@ def pairwise_comparison(G, strat_list, u, num_rep):
         replaced = replaced_nodes[index]
         reproduced = reproduced_nodes[index]
         #replacement with probability Theta(F_i-F_j)
-        difference = G.node[reproduced]['fitness']-G.node[replaced]['fitness']
+        difference = G.nodes[reproduced]['fitness']-G.nodes[replaced]['fitness']
         if random.random() <= q(difference, .1, 3):
             #place reproduced into replaced,consider mutation
             if random.uniform(0, 1) < u:
                 #there is a mutation
                 inheritance[replaced] = random.choice(strat_list)
             else:
-                inheritance[replaced] = G.node[reproduced]['strategy']
+                inheritance[replaced] = G.nodes[reproduced]['strategy']
 
     
     for replaced in inheritance.keys():
-        G.node[replaced]['strategy']=inheritance[replaced]
+        G.nodes[replaced]['strategy']=inheritance[replaced]
 
 
     return [G, list(inheritance.values()), old_strategies]
@@ -218,12 +218,12 @@ def pairwise_comparison(G, strat_list, u, num_rep):
 def imitation(G, strat_list, u):
     #Choose node uniformly to be replaced
     replaced=random.choice(nx.nodes(G))
-    old_strategy=G.node[replaced]['strategy']
+    old_strategy=G.nodes[replaced]['strategy']
     #competition with e_ij between neighbors
     weights=nx.get_edge_attributes(G, 'weight')
     competition={}
     for n in G.neighbors(replaced):
-        competition[n]=G.node[n]['fitness']
+        competition[n]=G.nodes[n]['fitness']
     sum_competition=sum(competition.values())
     cutoff=random.uniform(0,sum_competition)
     sum_so_far=0
@@ -235,10 +235,10 @@ def imitation(G, strat_list, u):
     mistake_indicator = random.uniform(0, 1)
     if mistake_indicator<u:
         #there is a mutation
-        G.node[replaced]['strategy']=random.choice(strat_list)
+        G.nodes[replaced]['strategy']=random.choice(strat_list)
     else:
-        G.node[replaced]['strategy']=G.node[reproduced]['strategy']
-    return [G, G.node[replaced]['strategy'], old_strategy]
+        G.nodes[replaced]['strategy']=G.nodes[reproduced]['strategy']
+    return [G, G.nodes[replaced]['strategy'], old_strategy]
 
 '''--------------
  HELPER FUNCTIONS

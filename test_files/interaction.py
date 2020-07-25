@@ -49,9 +49,9 @@ def action(G, intention_v, noise):
   return coop_index[action]
 
 def intention(G, v):
-  if G.node[v]['strategy'] == 'Cooperate':
+  if G.nodes[v]['strategy'] == 'Cooperate':
     return 'Cooperate'
-  elif G.node[v]['strategy'] == 'Defect':
+  elif G.nodes[v]['strategy'] == 'Defect':
     return 'Defect'
 
 def normalization(val):
@@ -77,21 +77,21 @@ def general_reciprocity_simple(G, set_nodes, b, c, f, asynchronous=False):
     requested_to=random.choice(list(G.adj[v].keys()))
 
     #interact1(v,w): If the node w decides to help (with probability p_w(t)
-    if random.random()<=G.node[requested_to]['coop_state']:
+    if random.random()<=G.nodes[requested_to]['coop_state']:
       num_help_actions+=1
       helpers.add(requested_to)
       #update payoffs, fitness, probabilities, etc for next timestep
-      G.node[requested_to]['turn_payoff']-=c
-      G.node[v]['turn_payoff']+=b
+      G.nodes[requested_to]['turn_payoff']-=c
+      G.nodes[v]['turn_payoff']+=b
   for v in set_nodes:
-    G.node[v]['total_payoff']+=G.node[v]['turn_payoff']
+    G.nodes[v]['total_payoff']+=G.nodes[v]['turn_payoff']
   if asynchronous:
-    A=(G.node[v]['coop_state'])**(1-this_lambda)
-    B=(F(G.node[v]['total_payoff']))**(this_lambda)
-    G.node[v]['coop_state']=A*B
+    A=(G.nodes[v]['coop_state'])**(1-this_lambda)
+    B=(F(G.nodes[v]['total_payoff']))**(this_lambda)
+    G.nodes[v]['coop_state']=A*B
   else:
-    G.node[v]['coop_state']=F(G.node[v]['total_payoff'])
-  G.node[v]['turn_payoff']=0
+    G.nodes[v]['coop_state']=F(G.nodes[v]['total_payoff'])
+  G.nodes[v]['turn_payoff']=0
   #return modified graph 
   return G, helpers, num_help_actions
 
@@ -100,26 +100,26 @@ def general_reciprocity_bernoulli(self, set_nodes, b, c, asynchronous=False):
   for v in set_nodes:
     requested=random.choice(G.neighbors(v))
     #set x for node v
-    G.node[v]['x']=bernoulli(G.node[v]['coop_state'])
-    x_v=G.node[v]['x']
+    G.nodes[v]['x']=bernoulli(G.nodes[v]['coop_state'])
+    x_v=G.nodes[v]['x']
     #set x for requested node
-    G.node[requested]['x']=bernoulli(G.node[requested]['coop_state'])
-    x_req=G.node[requested]['x']
+    G.nodes[requested]['x']=bernoulli(G.nodes[requested]['coop_state'])
+    x_req=G.nodes[requested]['x']
     #sum bernoullis for rho values
     sum_rhos=0
     for k in G.adj[v].keys():
       deg_k=len(G.adj[k])
       sum_rhos+=bernoulli(deg_k**(-1))
       #now, set the turn payoff value that was determined stochastically
-      G.node[v]['turn_payoff']=b*x_v-c*x_req*sum_rhos
+      G.nodes[v]['turn_payoff']=b*x_v-c*x_req*sum_rhos
       #b*x_requested-c*x_v*sum_(nbhd of i)[rho_k at t]
       if asynchronous:
-        A=(G.node[v]['coop_state'])**(1-this_lambda)
-        B=(f(G.node[v]['total_payoff']))**(this_lambda)
-        G.node[v]['coop_state']=A*B
+        A=(G.nodes[v]['coop_state'])**(1-this_lambda)
+        B=(f(G.nodes[v]['total_payoff']))**(this_lambda)
+        G.nodes[v]['coop_state']=A*B
       else:
-        G.node[v]['coop_state']=f(G.node[v]['total_payoff'])
-        G.node[v]['turn_payoff']=0
+        G.nodes[v]['coop_state']=f(G.nodes[v]['total_payoff'])
+        G.nodes[v]['turn_payoff']=0
   #return modified graph 
   return G
 
@@ -148,24 +148,24 @@ def interaction_BD(G, payoff_mtx, delta=0, noise=0):
           #print('action of v is: ' + strat_index[action_v])
           #print('action of w is: ' + strat_index[action_w])
           record.add((v,w))
-          G.node[v]['payoffs'].append(payoff_mtx[action_v][action_w][0])
-          G.node[w]['payoffs'].append(payoff_mtx[action_v][action_w][1])
-    if len(G.node[v]['payoffs']) != 0:
-      old=G.node[v]['fitness']
-      avg_payoff=sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs'])
+          G.nodes[v]['payoffs'].append(payoff_mtx[action_v][action_w][0])
+          G.nodes[w]['payoffs'].append(payoff_mtx[action_v][action_w][1])
+    if len(G.nodes[v]['payoffs']) != 0:
+      old=G.nodes[v]['fitness']
+      avg_payoff=sum(G.nodes[v]['payoffs'])/len(G.nodes[v]['payoffs'])
       #max_deg=max([G.degree[n] for n in G.nodes()])
-      #G.node[v]['fitness']=normalization2(sum(G.node[v]['payoffs']), delta, max_p, min_p, max_deg)
+      #G.nodes[v]['fitness']=normalization2(sum(G.nodes[v]['payoffs']), delta, max_p, min_p, max_deg)
       
       '''
       new=normalization(Theta_paper1(avg_payoff, delta))
-      G.node[v]['fitness']=(old+new)/2
+      G.nodes[v]['fitness']=(old+new)/2
       '''
 
-      G.node[v]['fitness']=1+delta*avg_payoff
+      G.nodes[v]['fitness']=1+delta*avg_payoff
 
-      #print('Fitness changed from ' +str(old)+ ' to '+ str(G.node[v]['fitness']))
+      #print('Fitness changed from ' +str(old)+ ' to '+ str(G.nodes[v]['fitness']))
       #restart payoff list for next round
-      G.node[v]['payoffs']=[]
+      G.nodes[v]['payoffs']=[]
   return G
 
 def interaction_depends_fitness(G, payoff_mtx, delta=0, noise=0, function=f1):
@@ -173,7 +173,7 @@ def interaction_depends_fitness(G, payoff_mtx, delta=0, noise=0, function=f1):
   #D[(A,B)]=whether A cooperates with B or not
   for a in nx.nodes(G):
     for b in G.neighbors(a):
-      if random.random()<function(G.node[b]['fitness']):
+      if random.random()<function(G.nodes[b]['fitness']):
         D[(a,b)]='Defect'
       else:
         D[(a,b)]='Cooperate'
@@ -181,12 +181,12 @@ def interaction_depends_fitness(G, payoff_mtx, delta=0, noise=0, function=f1):
     for b in G.neighbors(a):
       action_a=action(G, D[(a,b)], noise)
       action_b=action(G, D[(b,a)], noise)
-      G.node[a]['payoffs'].append(payoff_mtx[action_a][action_b][0])
-      G.node[b]['payoffs'].append(payoff_mtx[action_a][action_b][1])
+      G.nodes[a]['payoffs'].append(payoff_mtx[action_a][action_b][0])
+      G.nodes[b]['payoffs'].append(payoff_mtx[action_a][action_b][1])
   for v in nx.nodes(G):
-    if len(G.node[v]['payoffs']) != 0:
-      G.node[v]['fitness']=normalization(Theta_paper1(sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']), delta))
-      G.node[v]['payoffs']=[]
+    if len(G.nodes[v]['payoffs']) != 0:
+      G.nodes[v]['fitness']=normalization(Theta_paper1(sum(G.nodes[v]['payoffs'])/len(G.nodes[v]['payoffs']), delta))
+      G.nodes[v]['payoffs']=[]
   return G
 
 def interaction_some_edges_strat(G,k, num_interactions, matrices, delta=0, noise=0):
@@ -198,13 +198,13 @@ def interaction_some_edges_strat(G,k, num_interactions, matrices, delta=0, noise
     w=pair[1]
     action_v=action(G, intention(G,v), noise)
     action_w=action(G, intention(G,w), noise)
-    G.node[v]['payoffs'].append(payoff_mtx[action_v][action_w][0])
-    G.node[w]['payoffs'].append(payoff_mtx[action_v][action_w][1])
+    G.nodes[v]['payoffs'].append(payoff_mtx[action_v][action_w][0])
+    G.nodes[w]['payoffs'].append(payoff_mtx[action_v][action_w][1])
   for v in nx.nodes(G):
-    if len(G.node[v]['payoffs']) != 0:
-      G.node[v]['fitness']=normalization(Theta_paper1(sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']), delta))
+    if len(G.nodes[v]['payoffs']) != 0:
+      G.nodes[v]['fitness']=normalization(Theta_paper1(sum(G.nodes[v]['payoffs'])/len(G.nodes[v]['payoffs']), delta))
     #restart payoff list for next round
-    G.node[v]['payoffs']=[]
+    G.nodes[v]['payoffs']=[]
   return
 
 def interaction_some_edges_fitness(G,k, num_interactions, matrices, delta=0, noise=0):
@@ -214,11 +214,11 @@ def interaction_some_edges_fitness(G,k, num_interactions, matrices, delta=0, noi
   for pair in sleected:
     a=pair[0]
     b=pair[1]
-    if random.random()<function(G.node[b]['fitness']):
+    if random.random()<function(G.nodes[b]['fitness']):
       D[(a,b)]='Defect'
     else:
       D[(a,b)]='Cooperate'
-    if random.random()<function(G.node[a]['fitness']):
+    if random.random()<function(G.nodes[a]['fitness']):
       D[(b,a)]='Defect'
     else:
       D[(b,a)]='Cooperate'
@@ -226,12 +226,12 @@ def interaction_some_edges_fitness(G,k, num_interactions, matrices, delta=0, noi
     for b in G.neighbors(a):
       action_a=action(G, D[(a,b)], noise)
       action_b=action(G, D[(b,a)], noise)
-      G.node[a]['payoffs'].append(payoff_mtx[action_a][action_b][0])
-      G.node[b]['payoffs'].append(payoff_mtx[action_a][action_b][1])
+      G.nodes[a]['payoffs'].append(payoff_mtx[action_a][action_b][0])
+      G.nodes[b]['payoffs'].append(payoff_mtx[action_a][action_b][1])
   for v in nx.nodes(G):
-    if len(G.node[v]['payoffs']) != 0:
-      G.node[v]['fitness']=normalization(Theta_paper1(sum(G.node[v]['payoffs'])/len(G.node[v]['payoffs']), delta))
-      G.node[v]['payoffs']=[]
+    if len(G.nodes[v]['payoffs']) != 0:
+      G.nodes[v]['fitness']=normalization(Theta_paper1(sum(G.nodes[v]['payoffs'])/len(G.nodes[v]['payoffs']), delta))
+      G.nodes[v]['payoffs']=[]
   return G
 
 '''-------------------

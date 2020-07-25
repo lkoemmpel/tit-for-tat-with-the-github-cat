@@ -271,7 +271,7 @@ def generate_dumbell_multiple_cliques(m, N, L):
     a=pair[0]
     b=pair[1]
     if L>1:
-      edges.append( (((a,a),a*m+1),(pair,1)) )
+      edges.append( ( ((a,a),a*m+1),(pair,1) ) )
       edges.append( ((pair,L), ((b,b),b*m+1)) )
       for k in range(1,L):
         edges.append( ((pair,k),(pair,k+1)) )
@@ -279,11 +279,11 @@ def generate_dumbell_multiple_cliques(m, N, L):
       edges.append( (((a,a),a*m+1),(pair,1)) )
       edges.append( ((pair,1),((b,b),b*m+1)) )
     else:
-      edges.append(((a,a),a*m+1), ((b,b),b*m+1))
+      edges.append( (((a,a),a*m+1), ((b,b),b*m+1) )) 
   G.add_edges_from(edges)
 
   for n in G.nodes():
-    G.node[n]['coord']=n
+    G.nodes[n]['coord']=n
   G=nx.convert_node_labels_to_integers(G)
   return G
 
@@ -319,11 +319,11 @@ def generate_dumbell_multiple_sizes(sizes, path_length):
   G.add_edges_from(edges)
 
   for n in G.nodes():
-    G.node[n]['coord']=n
+    G.nodes[n]['coord']=n
   G=nx.convert_node_labels_to_integers(G)
 
   #for n in G.nodes():
-  #  print(G.node[n]['coord'])
+  #  print(G.nodes[n]['coord'])
   return G
 
 def generate_dumbell_string(sizes, lengths):
@@ -361,11 +361,11 @@ def generate_dumbell_string(sizes, lengths):
   G.add_edges_from(edges)
 
   for n in G.nodes():
-    G.node[n]['coord']=n
+    G.nodes[n]['coord']=n
   G=nx.convert_node_labels_to_integers(G)
 
-  #for n in G.nodes():
-  #  print(G.node[n]['coord'])
+  #for n in G.nodess():
+  #  print(G.nodes[n]['coord'])
   return G
 
 def generate_rich_club(size_club, size_periphery, prob_rp=1, prob_rr=1, prob_pp=0):
@@ -405,7 +405,7 @@ def generate_rich_club_adapted_version(size_club, size_periphery, num_peripherie
   cliques_to_sets={x:set() for x in range(num_peripheries+1)}
   #put every node in a box, labeled with the number of clique that the node is in
   for n in nx.nodes(graph):
-    k = graph.node[n]['coord'][0][0]
+    k = graph.nodes[n]['coord'][0][0]
     cliques_to_sets[k].add(n)
   #for every clique
   for k in cliques_to_sets.keys():
@@ -437,7 +437,7 @@ def generate_dumbell_indicator_pathlength(indicator):
   index_to_range={}
   for clique_index in range(len(nx.nodes(indicator))):
     prev=nodes_so_far
-    nodes_so_far += indicator.node[clique_index]['size']
+    nodes_so_far += indicator.nodes[clique_index]['size']
     #later going to be used for the paths
     sums[clique_index]=prev
 
@@ -471,11 +471,11 @@ def generate_dumbell_indicator_pathlength(indicator):
   G.add_edges_from(edges)
 
   for n in G.nodes():
-    G.node[n]['coord']=n
+    G.nodes[n]['coord']=n
   G=nx.convert_node_labels_to_integers(G)
 
   #for n in G.nodes():
-  #  print(G.node[n]['coord'])
+  #  print(G.nodes[n]['coord'])
   return G
 
 def generate_dumbell_indicator_connectionstrength(indicator):
@@ -486,7 +486,7 @@ def generate_dumbell_indicator_connectionstrength(indicator):
   index_to_range={}
   for clique_index in range(len(nx.nodes(indicator))):
     prev=nodes_so_far
-    nodes_so_far += indicator.node[clique_index]['size']
+    nodes_so_far += indicator.nodes[clique_index]['size']
     #later going to be used for the paths
     sums[clique_index]=prev
 
@@ -517,11 +517,11 @@ def generate_dumbell_indicator_connectionstrength(indicator):
         nx.set_edge_attributes(G, D, 'weight')
 
   for n in G.nodes():
-    G.node[n]['coord']=n
+    G.nodes[n]['coord']=n
   G=nx.convert_node_labels_to_integers(G)
 
   #for n in G.nodes():
-  #  print(G.node[n]['coord'])
+  #  print(G.nodes[n]['coord'])
   return G
 
 '''---------------------
@@ -543,16 +543,16 @@ def label_birth_death(G, strat_list, start_prop_coop=None):
   for n in nx.nodes(G):
     if start_prop_coop != None:
       if random.uniform(0,1) <= start_prop_coop:
-        G.node[n]['strategy']= 'Cooperate'
+        G.nodes[n]['strategy']= 'Cooperate'
       else:
         strat_list.remove('Cooperate')
-        G.node[n]['strategy'] = random.choice(strat_list)
+        G.nodes[n]['strategy'] = random.choice(strat_list)
         strat_list.append('Cooperate')
     else:
-        G.node[n]['strategy'] = random.choice(strat_list)
+        G.nodes[n]['strategy'] = random.choice(strat_list)
 
-    G.node[n]['fitness'] = random.uniform(0,1)
-    G.node[n]['payoffs'] = []
+    G.nodes[n]['fitness'] = random.uniform(0,1)
+    G.nodes[n]['payoffs'] = []
 
 def label_allen(G,b,c,strat_list, start_prop_coop=None):
   #SET STRATEGIES and s_i
@@ -562,30 +562,30 @@ def label_allen(G,b,c,strat_list, start_prop_coop=None):
   selected_coops=set(selected_coops)
   for n in G.nodes():
     if n in selected_coops:
-      G.node[n]['strategy'] = 'Cooperate'
-      G.node[n]['s']=1
+      G.nodes[n]['strategy'] = 'Cooperate'
+      G.nodes[n]['s']=1
     else:
-      G.node[n]['strategy'] = 'Defect'
-      G.node[n]['s']=0
+      G.nodes[n]['strategy'] = 'Defect'
+      G.nodes[n]['s']=0
 
 
   #SET f_i VALUES
   for i in G.nodes():
 
-    G.node[i]['w'] = w_i(G, i)
+    G.nodes[i]['w'] = w_i(G, i)
 
-    G.node[i]['f0'] = -c*G.node[i]['s']
+    G.nodes[i]['f0'] = -c*G.nodes[i]['s']
     for j in G.neighbors(i):
-      G.node[i]['f0'] += b*prob_n_step_walk(G,i,j,1)*G.node[j]['s']
+      G.nodes[i]['f0'] += b*prob_n_step_walk(G,i,j,1)*G.nodes[j]['s']
 
-    G.node[i]['f2'] = -c*G.node[i]['s']
+    G.nodes[i]['f2'] = -c*G.nodes[i]['s']
     for j in G.neighbors(i):
-      G.node[i]['f2'] += b*prob_n_step_walk(G,i,j,2)*G.node[j]['s']
+      G.nodes[i]['f2'] += b*prob_n_step_walk(G,i,j,2)*G.nodes[j]['s']
 
-    G.node[i]['F'] = 1+delta*G.node[i]['f0']
-    G.node[i]['pi'] = reproductive_value(G,i)
-    G.node[i]['payoffs'] = []
-    G.node[i]['fitness'] = random.uniform(0,1)
+    G.nodes[i]['F'] = 1+delta*G.nodes[i]['f0']
+    G.nodes[i]['pi'] = reproductive_value(G,i)
+    G.nodes[i]['payoffs'] = []
+    G.nodes[i]['fitness'] = random.uniform(0,1)
 
 def label_birth_death_precise_prop(G,strat_list, start_prop_coop=None):
   num_nodes=len(G.nodes())
@@ -594,11 +594,11 @@ def label_birth_death_precise_prop(G,strat_list, start_prop_coop=None):
   selected_coops=set(selected_coops)
   for n in G.nodes():
     if n in selected_coops:
-      G.node[n]['strategy'] = 'Cooperate'
+      G.nodes[n]['strategy'] = 'Cooperate'
     else:
-      G.node[n]['strategy'] = 'Defect'
-    G.node[n]['fitness'] = random.uniform(0,1)
-    G.node[n]['payoffs'] = []
+      G.nodes[n]['strategy'] = 'Defect'
+    G.nodes[n]['fitness'] = random.uniform(0,1)
+    G.nodes[n]['payoffs'] = []
 
 def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=0):
   '''
@@ -625,29 +625,29 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
         
         print("This node is the first clique node; we assign strategy cooperate.")
         
-        G.node[n]['strategy'] = 'Cooperate'
+        G.nodes[n]['strategy'] = 'Cooperate'
         first_node = False
       else:
         print("This node is not the first clique node")
         labeled = False
         for neighbor in G.neighbors(n):
           try:
-            if G.node[neighbor]['strategy'] == 'Cooperate':
+            if G.nodes[neighbor]['strategy'] == 'Cooperate':
               #We're on the cooperate end of the dumbbell
               
               print("------We found a neighbor ", neighbor, " with a cooperative strategy")
               print("Assigning strategy cooperate to node ", n)
               
-              G.node[n]['strategy'] = 'Cooperate'
+              G.nodes[n]['strategy'] = 'Cooperate'
               labeled = True
               break
-            if G.node[neighbor]['strategy'] == 'Defect':
+            if G.nodes[neighbor]['strategy'] == 'Defect':
               #We're on the defect end of the dumbbell
               
               print("------We found a neighbor ", neighbor, " with a defect strategy")
               print("Assigning strategy defect to node ", n)
               
-              G.node[n]['strategy'] = 'Defect'
+              G.nodes[n]['strategy'] = 'Defect'
               labeled = True
               break
           except KeyError:
@@ -659,7 +659,7 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
           #The node was not determined to be a cooperator or defector because of it's neighbors
           # The defector end may have no labels yet, but the cooperator end has at least one
           # so the node can't be on the cooperator end.
-          G.node[n]['strategy'] = 'Defect'
+          G.nodes[n]['strategy'] = 'Defect'
 
     else:
       # We're at one of the connecting nodes
@@ -668,8 +668,8 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
     
     print("Assigning fitness and payoffs")
     
-    G.node[n]['fitness'] = 1
-    G.node[n]['payoffs'] = []
+    G.nodes[n]['fitness'] = 1
+    G.nodes[n]['payoffs'] = []
 
 
   #Now we go back and label the connecting nodes
@@ -677,7 +677,7 @@ def label_dumbbell_birth_death(G, strat_list, prop_coop_left=1, prop_coop_right=
     
     print("Labeling connecting node ", c)
     
-    G.node[c]['strategy'] = random.choice(strat_list)   
+    G.nodes[c]['strategy'] = random.choice(strat_list)   
 
 def label_dumbell_multiple_cliques(G, strat_list, clique_to_prop):
   '''
@@ -688,8 +688,8 @@ def label_dumbell_multiple_cliques(G, strat_list, clique_to_prop):
   num_cliques=0
   for n in G.nodes():
     #if this is a clique node
-    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
-      clique_num = G.node[n]['coord'][0][0]
+    if G.nodes[n]['coord'][0][0] == G.nodes[n]['coord'][0][1]:
+      clique_num = G.nodes[n]['coord'][0][0]
       num_cliques = max(num_cliques, clique_num)
       try:
         sizes[clique_num] += 1
@@ -699,8 +699,8 @@ def label_dumbell_multiple_cliques(G, strat_list, clique_to_prop):
   sets={clique_num:set() for clique_num in range(num_cliques+1)}
   for n in G.nodes():
     #if this is a clique node
-    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
-      clique_num = G.node[n]['coord'][0][0]
+    if G.nodes[n]['coord'][0][0] == G.nodes[n]['coord'][0][1]:
+      clique_num = G.nodes[n]['coord'][0][0]
       sets[clique_num].add(n)
   chosen = {}
   for index in sizes.keys():
@@ -710,31 +710,31 @@ def label_dumbell_multiple_cliques(G, strat_list, clique_to_prop):
 
   for n in G.nodes():
     #if this is a clique node
-    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
-      clique_num = G.node[n]['coord'][0][0]
+    if G.nodes[n]['coord'][0][0] == G.nodes[n]['coord'][0][1]:
+      clique_num = G.nodes[n]['coord'][0][0]
       if n in chosen[clique_num]:
-        G.node[n]['strategy'] = 'Cooperate'
-        G.node[n]['s'] = 1
+        G.nodes[n]['strategy'] = 'Cooperate'
+        G.nodes[n]['s'] = 1
       else:
-        G.node[n]['strategy'] = 'Defect'
-        G.node[n]['s'] = 0
+        G.nodes[n]['strategy'] = 'Defect'
+        G.nodes[n]['s'] = 0
     else:
-      G.node[n]['strategy'] = random.choice(strat_list)
-      if G.node[n]['strategy'] == 'Defect':
-        G.node[n]['s'] = 0
-      elif G.node[n]['strategy'] == 'Cooperate':
-        G.node[n]['s'] = 1
+      G.nodes[n]['strategy'] = random.choice(strat_list)
+      if G.nodes[n]['strategy'] == 'Defect':
+        G.nodes[n]['s'] = 0
+      elif G.nodes[n]['strategy'] == 'Cooperate':
+        G.nodes[n]['s'] = 1
 
     '''
       if random.uniform(0,1)<clique_to_prop[clique_num]:
-        G.node[n]['strategy'] = 'Cooperate'
+        G.nodes[n]['strategy'] = 'Cooperate'
       else:
-        G.node[n]['strategy'] = 'Defect'
+        G.nodes[n]['strategy'] = 'Defect'
     else:
-      G.node[n]['strategy'] = random.choice(strat_list)
+      G.nodes[n]['strategy'] = random.choice(strat_list)
     '''
-    G.node[n]['fitness'] = random.uniform(0,1)
-    G.node[n]['payoffs'] = []
+    G.nodes[n]['fitness'] = random.uniform(0,1)
+    G.nodes[n]['payoffs'] = []
 
 def label_dumbell_multiple_cliques_allen(G, b, c, strat_list, clique_to_prop):
   '''
@@ -745,8 +745,8 @@ def label_dumbell_multiple_cliques_allen(G, b, c, strat_list, clique_to_prop):
   num_cliques=0
   for n in G.nodes():
     #if this is a clique node
-    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
-      clique_num = G.node[n]['coord'][0][0]
+    if G.nodes[n]['coord'][0][0] == G.nodes[n]['coord'][0][1]:
+      clique_num = G.nodes[n]['coord'][0][0]
       num_cliques = max(num_cliques, clique_num)
       try:
         sizes[clique_num] += 1
@@ -756,8 +756,8 @@ def label_dumbell_multiple_cliques_allen(G, b, c, strat_list, clique_to_prop):
   sets={clique_num:set() for clique_num in range(num_cliques+1)}
   for n in G.nodes():
     #if this is a clique node
-    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
-      clique_num = G.node[n]['coord'][0][0]
+    if G.nodes[n]['coord'][0][0] == G.nodes[n]['coord'][0][1]:
+      clique_num = G.nodes[n]['coord'][0][0]
       sets[clique_num].add(n)
 
   chosen = {}
@@ -768,39 +768,39 @@ def label_dumbell_multiple_cliques_allen(G, b, c, strat_list, clique_to_prop):
 
   for n in G.nodes():
     #if this is a clique node
-    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
-      clique_num = G.node[n]['coord'][0][0]
+    if G.nodes[n]['coord'][0][0] == G.nodes[n]['coord'][0][1]:
+      clique_num = G.nodes[n]['coord'][0][0]
       if n in chosen[clique_num]:
-        G.node[n]['strategy'] = 'Cooperate'
-        G.node[n]['s'] = 1
+        G.nodes[n]['strategy'] = 'Cooperate'
+        G.nodes[n]['s'] = 1
       else:
-        G.node[n]['strategy'] = 'Defect'
-        G.node[n]['s'] = 0
+        G.nodes[n]['strategy'] = 'Defect'
+        G.nodes[n]['s'] = 0
     else:
-      G.node[n]['strategy'] = random.choice(strat_list)
-      if G.node[n]['strategy'] == 'Defect':
-        G.node[n]['s'] = 0
-      elif G.node[n]['strategy'] == 'Cooperate':
-        G.node[n]['s'] = 1
+      G.nodes[n]['strategy'] = random.choice(strat_list)
+      if G.nodes[n]['strategy'] == 'Defect':
+        G.nodes[n]['s'] = 0
+      elif G.nodes[n]['strategy'] == 'Cooperate':
+        G.nodes[n]['s'] = 1
 
 
   #SET f_i VALUES
   for i in G.nodes():
 
-    G.node[i]['w'] = w_i(G, i)
+    G.nodes[i]['w'] = w_i(G, i)
 
-    G.node[i]['f0'] = -c*G.node[i]['s']
+    G.nodes[i]['f0'] = -c*G.nodes[i]['s']
     for j in G.neighbors(i):
-      G.node[i]['f0'] += b*prob_n_step_walk(G,i,j,1)*G.node[j]['s']
+      G.nodes[i]['f0'] += b*prob_n_step_walk(G,i,j,1)*G.nodes[j]['s']
 
-    G.node[i]['f2'] = -c*G.node[i]['s']
+    G.nodes[i]['f2'] = -c*G.nodes[i]['s']
     for j in G.neighbors(i):
-      G.node[i]['f2'] += b*prob_n_step_walk(G,i,j,2)*G.node[j]['s']
+      G.nodes[i]['f2'] += b*prob_n_step_walk(G,i,j,2)*G.nodes[j]['s']
 
-    G.node[i]['F'] = 1+delta*G.node[i]['f0']
-    G.node[i]['pi'] = reproductive_value(G,i)
-    G.node[i]['payoffs'] = []
-    G.node[i]['fitness'] = random.uniform(0,1)  
+    G.nodes[i]['F'] = 1+delta*G.nodes[i]['f0']
+    G.nodes[i]['pi'] = reproductive_value(G,i)
+    G.nodes[i]['payoffs'] = []
+    G.nodes[i]['fitness'] = random.uniform(0,1)  
 
 def label_rich_club_allen(G, b, c, strat_list, clique_to_prop):
   '''
@@ -809,37 +809,37 @@ def label_rich_club_allen(G, b, c, strat_list, clique_to_prop):
   '''
   for n in G.nodes():
     #if this is a clique node
-    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
-      clique_num = G.node[n]['coord'][0][0]
+    if G.nodes[n]['coord'][0][0] == G.nodes[n]['coord'][0][1]:
+      clique_num = G.nodes[n]['coord'][0][0]
       if random.uniform(0,1)<clique_to_prop[clique_num]:
-        G.node[n]['strategy'] = 'Cooperate'
-        G.node[n]['s']=1
+        G.nodes[n]['strategy'] = 'Cooperate'
+        G.nodes[n]['s']=1
       else:
-        G.node[n]['strategy'] = 'Defect'
-        G.node[n]['s']=0
+        G.nodes[n]['strategy'] = 'Defect'
+        G.nodes[n]['s']=0
     else:
-      G.node[n]['strategy'] = random.choice(strat_list)
-      if G.node[n]['strategy']== 'Cooperate':
-        G.node[n]['s']=1
-      elif G.node[n]['strategy']== 'Defect':
-        G.node[n]['s']=0
+      G.nodes[n]['strategy'] = random.choice(strat_list)
+      if G.nodes[n]['strategy']== 'Cooperate':
+        G.nodes[n]['s']=1
+      elif G.nodes[n]['strategy']== 'Defect':
+        G.nodes[n]['s']=0
   #SET f_i VALUES
   for i in G.nodes():
 
-    G.node[i]['w'] = w_i(G, i)
+    G.nodes[i]['w'] = w_i(G, i)
 
-    G.node[i]['f0'] = -c*G.node[i]['s']
+    G.nodes[i]['f0'] = -c*G.nodes[i]['s']
     for j in G.neighbors(i):
-      G.node[i]['f0'] += b*prob_n_step_walk(G,i,j,1)*G.node[j]['s']
+      G.nodes[i]['f0'] += b*prob_n_step_walk(G,i,j,1)*G.nodes[j]['s']
 
-    G.node[i]['f2'] = -c*G.node[i]['s']
+    G.nodes[i]['f2'] = -c*G.nodes[i]['s']
     for j in G.neighbors(i):
-      G.node[i]['f2'] += b*prob_n_step_walk(G,i,j,2)*G.node[j]['s']
+      G.nodes[i]['f2'] += b*prob_n_step_walk(G,i,j,2)*G.nodes[j]['s']
 
-    G.node[i]['F'] = 1+delta*G.node[i]['f0']
-    G.node[i]['pi'] = reproductive_value(G,i)
-    G.node[i]['payoffs'] = []
-    G.node[i]['fitness'] = random.uniform(0,1)  
+    G.nodes[i]['F'] = 1+delta*G.nodes[i]['f0']
+    G.nodes[i]['pi'] = reproductive_value(G,i)
+    G.nodes[i]['payoffs'] = []
+    G.nodes[i]['fitness'] = random.uniform(0,1)  
 
 def label_dumbell_multiple_cliques_precise(G, strat_list, clique_to_prop):
   '''
@@ -850,8 +850,8 @@ def label_dumbell_multiple_cliques_precise(G, strat_list, clique_to_prop):
   selected_overall=set()
   num_cliques=0
   for n in G.nodes():
-      if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
-        clique=G.node[n]['coord'][0][0]
+      if G.nodes[n]['coord'][0][0] == G.nodes[n]['coord'][0][1]:
+        clique=G.nodes[n]['coord'][0][0]
         try:
           index_to_set[clique].add(n)
         except:
@@ -867,15 +867,15 @@ def label_dumbell_multiple_cliques_precise(G, strat_list, clique_to_prop):
 
   for n in G.nodes():
     #if this is a clique node
-    if G.node[n]['coord'][0][0] == G.node[n]['coord'][0][1]:
+    if G.nodes[n]['coord'][0][0] == G.nodes[n]['coord'][0][1]:
       if n in selected_overall:
-        G.node[n]['strategy'] = 'Cooperate'
+        G.nodes[n]['strategy'] = 'Cooperate'
       else:
-        G.node[n]['strategy'] = 'Defect'
+        G.nodes[n]['strategy'] = 'Defect'
     else:
-      G.node[n]['strategy'] = random.choice(strat_list)
-    G.node[n]['fitness'] = random.uniform(0,1)
-    G.node[n]['payoffs'] = []
+      G.nodes[n]['strategy'] = random.choice(strat_list)
+    G.nodes[n]['fitness'] = random.uniform(0,1)
+    G.nodes[n]['payoffs'] = []
 
 def label_BD_according_to_one_dim(G, strat_list, width):
   '''
@@ -896,13 +896,13 @@ def label_BD_according_to_one_dim(G, strat_list, width):
     if n[0] == width//2:
     #if n[0] == math.floor(width/2):
       # this node is along the dimension we want 
-      G.node[n]['strategy']= 'Defect'
+      G.nodes[n]['strategy']= 'Defect'
     else:
-      G.node[n]['strategy']= 'Cooperate'
+      G.nodes[n]['strategy']= 'Cooperate'
 
-    #G.node[n]['fitness'] = random.uniform(0,1)
-    G.node[n]['fitness'] = 0.5
-    G.node[n]['payoffs'] = []
+    #G.nodes[n]['fitness'] = random.uniform(0,1)
+    G.nodes[n]['fitness'] = 0.5
+    G.nodes[n]['payoffs'] = []
 
 def label_utkovski(G):
   '''
@@ -916,11 +916,11 @@ def label_utkovski(G):
         assigns a random number from 0 to 1 as 'fitness'
   '''
   for n in nx.nodes(G):
-    G.node[n]['turn_payoff']=0
-    G.node[n]['total_payoff']=0
+    G.nodes[n]['turn_payoff']=0
+    G.nodes[n]['total_payoff']=0
     #cooperative_state = probability of helping another node
-    G.node[n]['coop_state'] = random.uniform(0,1)
-    G.node[n]['strategy']=G.node[n]['coop_state']
+    G.nodes[n]['coop_state'] = random.uniform(0,1)
+    G.nodes[n]['strategy']=G.nodes[n]['coop_state']
 
 def label_more_strategies(G, strat_list, dist_prob_strats=None):
   for n in nx.nodes(G):
@@ -937,17 +937,17 @@ def label_more_strategies(G, strat_list, dist_prob_strats=None):
         prev=sum_now
         sum_now+=dist_prob_strats[strat]
         if prev<cutoff<sum_now:
-          G.node[n]['strategy']=strat
+          G.nodes[n]['strategy']=strat
     else:
-      G.node[n]['strategy']=random.choice(strat_list)
+      G.nodes[n]['strategy']=random.choice(strat_list)
     #--------------
     #LABEL FOR ASSESSMENT
     #--------------
     #memory
-    G.node[n]['assessment']='good'
-    G.node[n]['memory']=('helped','good')
-    G.node[n]['fitness']=random.random()
-    G.node[n]['payoffs']=[]
+    G.nodes[n]['assessment']='good'
+    G.nodes[n]['memory']=('helped','good')
+    G.nodes[n]['fitness']=random.random()
+    G.nodes[n]['payoffs']=[]
 
 
 '''---------------------
@@ -963,7 +963,7 @@ def color_and_draw_graph(G):
     # initializes color map
     color_map = []
     for n in nx.nodes(G):
-        if G.node[n]['strategy'] == 'Cooperate':
+        if G.nodes[n]['strategy'] == 'Cooperate':
             color_map.append('green')
         else:
             color_map.append('red')
@@ -990,7 +990,7 @@ def w_i(graph, i):
   return w_i
 
 def prob_n_step_walk(graph, i, j, n):
-    w_i = graph.node[i]['w']
+    w_i = graph.nodes[i]['w']
     p_ij_sum = 0
     if n == 2:
         '''
@@ -1009,7 +1009,7 @@ def prob_n_step_walk(graph, i, j, n):
     return p_ij_sum
 
 def reproductive_value(graph, i):
-  w_i = graph.node[i]['w']
+  w_i = graph.nodes[i]['w']
   W_sum = 0
   for j in graph.neighbors(i):
       W_sum += graph[i][j]['weight']
